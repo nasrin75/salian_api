@@ -18,7 +18,9 @@ namespace salian_api.Models
         public string? Email { get; set; }
 
         public string? Mobile { get; set; }
-        public bool isAdmin { get; set; }
+        public bool IsAdmin { get; set; } // TODO:: save in another table
+        public bool IsCheckIP { get; set; }
+        public bool LoginType { get; set; } // 2 => otp , 1 => password
 
     }
 
