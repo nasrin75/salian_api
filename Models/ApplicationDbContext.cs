@@ -11,7 +11,7 @@ namespace salian_api.Models
         public DbSet<Location> Locations { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Equipment> Equipments { get; set; }
-        public DbSet<Action> Actions { get; set; }
+        public DbSet<ActionType> ActionTypes { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
     }
 }

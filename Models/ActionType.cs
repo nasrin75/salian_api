@@ -1,6 +1,6 @@
 ﻿namespace salian_api.Models
 {
-    public class Action
+    public class ActionType
     {
         public long Id { get; set; }
         public string FaName { get; set; }

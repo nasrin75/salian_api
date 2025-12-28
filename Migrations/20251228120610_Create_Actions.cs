@@ -5,13 +5,13 @@
 namespace salian_api.Migrations
 {
     /// <inheritdoc />
-    public partial class Create_Actions : Migration
+    public partial class Create_ActionTypes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Actions",
+                name: "ActionTypes",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
@@ -22,7 +22,7 @@ namespace salian_api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Actions", x => x.Id);
+                    table.PrimaryKey("PK_ActionTypes", x => x.Id);
                 });
         }
 
@@ -30,7 +30,7 @@ namespace salian_api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Actions");
+                name: "ActionTypes");
         }
     }
 }
