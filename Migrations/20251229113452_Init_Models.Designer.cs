@@ -11,8 +11,8 @@ using salian_api.Models;
 namespace salian_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251228120610_Create_Actions")]
-    partial class Create_Actions
+    [Migration("20251229113452_Init_Models")]
+    partial class Init_Models
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace salian_api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("salian_api.Models.Action", b =>
+            modelBuilder.Entity("salian_api.Models.ActionType", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -45,7 +45,7 @@ namespace salian_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Actions");
+                    b.ToTable("ActionTypes");
                 });
 
             modelBuilder.Entity("salian_api.Models.Employee", b =>

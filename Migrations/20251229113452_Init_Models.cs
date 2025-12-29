@@ -11,6 +11,21 @@ namespace salian_api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "ActionTypes",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FaName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EnName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsShow = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActionTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
@@ -104,6 +119,9 @@ namespace salian_api.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ActionTypes");
+
             migrationBuilder.DropTable(
                 name: "Employees");
 

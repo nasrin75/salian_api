@@ -21,7 +21,7 @@ namespace salian_api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("salian_api.Models.Action", b =>
+            modelBuilder.Entity("salian_api.Models.ActionType", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,7 +42,7 @@ namespace salian_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Actions");
+                    b.ToTable("ActionTypes");
                 });
 
             modelBuilder.Entity("salian_api.Models.Employee", b =>
