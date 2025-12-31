@@ -26,6 +26,7 @@ namespace salian_api.Models
             modelBuilder.ApplyConfiguration(new EquipmentMapping());
             modelBuilder.ApplyConfiguration(new FeatureMapping());
             modelBuilder.ApplyConfiguration(new EquipmentFeatureMapping());
+            modelBuilder.ApplyConfiguration(new InventoryFeatureMapping());
 
             base.OnModelCreating(modelBuilder);
         }
