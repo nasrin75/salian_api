@@ -24,6 +24,8 @@ namespace salian_api.Models
             modelBuilder.ApplyConfiguration(new IpWhiteListMapping());
             modelBuilder.ApplyConfiguration(new UserMapping());
             modelBuilder.ApplyConfiguration(new EquipmentMapping());
+            modelBuilder.ApplyConfiguration(new FeatureMapping());
+            modelBuilder.ApplyConfiguration(new EquipmentFeatureMapping());
 
             base.OnModelCreating(modelBuilder);
         }
