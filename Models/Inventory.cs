@@ -15,6 +15,7 @@
         public string InvoiceNumber { get; set; }
         public string InvoiceImage { get; set; }
         public string Description { get; set; }
+        public string Details { get; set; }
         public string BrandName { get; set; }
         public string ModelName { get; set; }
         public string RamType { get; set; }
@@ -23,7 +24,9 @@
         public int Bus { get; set; }
         // clock
         public string Clock { get; set; }
+        public string Core { get; set; }
         public DateOnly ExpireWarrantyDate { get; set; }
+        public DateOnly DeliveryDate { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
