@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using salian_api.Mapping;
 
 namespace salian_api.Models
 {
@@ -13,5 +14,17 @@ namespace salian_api.Models
         public DbSet<Equipment> Equipments { get; set; }
         public DbSet<ActionType> ActionTypes { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfiguration(new RoleMapping());
+            modelBuilder.ApplyConfiguration(new ActionTypeMapping());
+            modelBuilder.ApplyConfiguration(new LocationMapping());
+            modelBuilder.ApplyConfiguration(new EmployeeMapping());
+            modelBuilder.ApplyConfiguration(new IpWhiteListMapping());
+            modelBuilder.ApplyConfiguration(new UserMapping());
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
