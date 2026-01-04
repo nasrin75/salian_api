@@ -13,6 +13,8 @@ namespace salian_api.Dtos.User
 
         public LoginTypes LoginType { get; set; }
         public StatusLists? Status { get; set; }
+
+        public long RoleId { get; set; }
     }
     public enum LoginTypes
     {

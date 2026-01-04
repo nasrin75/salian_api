@@ -3,6 +3,7 @@ using salian_api.Dtos.User;
 using salian_api.Entities;
 using salian_api.Interface;
 
+
 namespace salian_api.Services
 {
     public class UserService(ApplicationDbContext dbContext) : IUserService
@@ -15,6 +16,7 @@ namespace salian_api.Services
                 Password = dto.Password,
                 Email = dto.Email,
                 Mobile = dto.Mobile,
+                RoleId = dto.RoleId,
                 IsCheckIp = (bool)dto.IsCheckIp,
                 LoginType = (Entities.LoginTypes)dto.LoginType,
                 Status = (StatusLists)dto.Status,
@@ -29,6 +31,7 @@ namespace salian_api.Services
                 Username = newUser.Username,
                 Email = newUser.Email,
                 Mobile = newUser.Mobile,
+                RoleId = newUser.RoleId,
                 IsCheckIp = (bool)newUser.IsCheckIp,
                 LoginType = (Dtos.User.LoginTypes)newUser.LoginType,
                 Status = newUser.Status,
@@ -57,7 +60,9 @@ namespace salian_api.Services
                    Email = u.Email,
                    Mobile = u.Mobile,
                    IsCheckIp = (bool)u.IsCheckIp,
-                   LoginType = (Dtos.User.LoginTypes)u.LoginType
+                   LoginType = (Dtos.User.LoginTypes)u.LoginType,
+                   Status = u.Status,
+                   RoleId = u.RoleId,
                })
                 .ToListAsync();
 
@@ -80,7 +85,9 @@ namespace salian_api.Services
                 Email = user.Email,
                 Mobile = user.Mobile,
                 IsCheckIp = (bool)user.IsCheckIp,
-                LoginType = (Dtos.User.LoginTypes)user.LoginType
+                LoginType = (Dtos.User.LoginTypes)user.LoginType,
+                Status = user.Status,
+                RoleId = user.RoleId,
             };
 
             return response;
@@ -112,6 +119,7 @@ namespace salian_api.Services
                 IsCheckIp = (bool)user.IsCheckIp,
                 LoginType = (Dtos.User.LoginTypes)user.LoginType,
                 Status = user.Status,
+                RoleId = user.RoleId,
             };
         }
     }

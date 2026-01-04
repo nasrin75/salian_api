@@ -14,7 +14,8 @@ namespace salian_api.Entities
 
         [Required]
         public string EnName { get; set; }
-
         public bool IsDeleted { get; set; }
+
+        public List<UserEntity> Users { get; set; }
     }
 }

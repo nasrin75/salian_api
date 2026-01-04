@@ -23,6 +23,11 @@ namespace salian_api.Mapping
                .HasDefaultValue(false);
 
             builder.HasQueryFilter(r => !r.IsDeleted);
+
+            // define relation
+            builder.HasMany(u => u.Users)
+                .WithOne(r => r.Role)
+                .HasForeignKey(r => r.RoleId);
         }
     }
 }

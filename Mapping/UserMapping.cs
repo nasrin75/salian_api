@@ -27,6 +27,9 @@ namespace salian_api.Mapping
                    .HasMaxLength(11)
                    .IsRequired(false);
 
+            builder.Property("RoleId")
+                   .IsRequired();
+
             builder.Property("IsCheckIp")
                    .HasDefaultValue(false);
 
@@ -44,7 +47,11 @@ namespace salian_api.Mapping
             // define relation
             builder.HasMany(e => e.IpWhiteLists)
                 .WithOne(e => e.User)
-                .HasForeignKey(e=>e.Id);
+                .HasForeignKey(e => e.Id);
+
+            builder.HasOne(r => r.Role)
+                .WithMany(u => u.Users)
+                .HasForeignKey(u => u.RoleId);
 
         }
     }

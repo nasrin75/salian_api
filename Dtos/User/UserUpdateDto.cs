@@ -15,6 +15,7 @@ namespace salian_api.Dtos.User
         public string? Email { get; set; }
         public string? Mobile { get; set; }
         public bool? IsCheckIp { get; set; }
+        public long? RoleId { get; set; }
         public LoginTypes? LoginType { get; set; }
         public StatusLists? Status { get; set; }
     }

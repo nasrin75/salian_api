@@ -25,6 +25,8 @@ namespace salian_api.Entities
 
         public List<IpWhiteListEntity>? IpWhiteLists { get; set; }
 
+        public long RoleId { get; set; }
+        public RoleEntity Role { get; set; }
     }
 
     public enum LoginTypes {
