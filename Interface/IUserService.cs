@@ -8,7 +8,7 @@ namespace salian_api.Interface
         Task<UserResponse> Create(UserCreateDto user);
         Task<UserResponse?> Update(UserUpdateDto user);
         Task<UserResponse?> GetUserByID(long userID);
-        Task<List<UserResponse>> GetAllUser();
+        Task<List<UserResponse>> GetAllUsers();
         Task Delete(long id);
     }
 }

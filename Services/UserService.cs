@@ -48,7 +48,7 @@ namespace salian_api.Services
             return;
         }
 
-        public async Task<List<UserResponse>> GetAllUser()
+        public async Task<List<UserResponse>> GetAllUsers()
         {
              List <UserResponse> userList = await dbContext.Users
                .Select(u => new UserResponse

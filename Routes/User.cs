@@ -11,7 +11,7 @@ namespace salian_api.Routes
 
             route.MapGet("/", async (IUserService service) =>
             {
-                List<UserResponse> user = await service.GetAllUser();
+                List<UserResponse> user = await service.GetAllUsers();
                 return user != null ? Results.Ok(user) : Results.NotFound();
             }).WithTags(tag);
 
