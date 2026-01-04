@@ -15,7 +15,7 @@ namespace salian_api.Routes
                 return user != null ? Results.Ok(user) : Results.NotFound();
             }).WithTags(tag);
 
-            route.MapPost("/{id:long}", async (IUserService service,long id) =>
+            route.MapGet("/{id:long}", async (IUserService service,long id) =>
             {
                 var user = await service.GetUserByID(id);
                 return  user != null ? Results.Ok(user) : Results.NotFound();

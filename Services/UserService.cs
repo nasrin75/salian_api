@@ -39,7 +39,7 @@ namespace salian_api.Services
 
         public async Task Delete(long userID)
         {
-         UserEntity? user =  await dbContext.Users.FindAsync(userID);
+            UserEntity? user =  await dbContext.Users.FindAsync(userID);
             if (user == null) return;
 
             user.IsDeleted = true;

@@ -18,6 +18,11 @@ namespace salian_api.Mapping
             builder.Property("EnName")
                 .HasMaxLength(100)
                 .IsRequired(false);
+
+            builder.Property("IsDeleted")
+               .HasDefaultValue(false);
+
+            builder.HasQueryFilter(r => !r.IsDeleted);
         }
     }
 }

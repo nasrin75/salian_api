@@ -27,6 +27,7 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddScoped<IUserService,UserService>();
+builder.Services.AddScoped<IRoleService,RoleService>();
 
 
 
@@ -46,5 +47,6 @@ app.UseAuthorization();
 
 // add routes
 app.MapUserRoutes("User");
+app.MapRoleRoutes("Role");
 
 app.Run();
