@@ -6,7 +6,7 @@ namespace salian_api.Entities
     [Table("Users")]
     public class UserEntity
     {
-
+        [Key]
         public long Id { get; set; }
 
         public string Username { get; set; }
@@ -18,10 +18,30 @@ namespace salian_api.Entities
         public string Mobile { get; set; }
         /*public bool IsAdmin { get; set; } // TODO:: save in another table*/
         public bool IsCheckIp { get; set; }
-        public int LoginType { get; set; } // 2 => otp , 1 => password
+        public bool IsDeleted { get; set; }
 
-        public List<IpWhiteListEntity> IpWhiteLists { get; set; }
+        public LoginTypes LoginType { get; set; }
+        public StatusLists Status { get; set; }
+
+        public List<IpWhiteListEntity>? IpWhiteLists { get; set; }
 
     }
+
+    public enum LoginTypes {
+        [Display(Name = "کلمه عبور")]
+        password = 1,
+
+        [Display(Name = "رمز یکبار مصرف")]
+        otp = 2,
+    };
+
+    public enum StatusLists
+    {
+        [Display(Name = "فعال")]
+        deactive = 0,
+
+        [Display(Name = "غیرفعال")]
+        active = 1,
+    };
 
 }

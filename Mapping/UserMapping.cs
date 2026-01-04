@@ -31,7 +31,15 @@ namespace salian_api.Mapping
                    .HasDefaultValue(false);
 
             builder.Property("LoginType")
-                   .HasDefaultValue("1");
+                   .HasDefaultValue(LoginTypes.password);
+
+            builder.Property("Status")
+                  .HasDefaultValue(StatusLists.deactive);
+
+            builder.Property("IsDeleted")
+                .HasDefaultValue(false);
+
+            builder.HasQueryFilter(u => !u.IsDeleted);
 
             // define relation
             builder.HasMany(e => e.IpWhiteLists)

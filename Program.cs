@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using salian_api.Entities;
+using salian_api.Interface;
+using salian_api.Routes;
+using salian_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +23,11 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = null;
+
     });
+
+builder.Services.AddScoped<IUserService,UserService>();
+
 
 
 var app = builder.Build();
@@ -36,6 +43,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+
+// add routes
+app.MapUserRoutes("User");
 
 app.Run();
