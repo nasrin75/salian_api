@@ -1,6 +1,9 @@
-﻿namespace salian_api.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace salian_api.Entities
 {
-    public class ActionType
+    [Table("ActionTypes")]
+    public class ActionTypeEntity
     {
         public long Id { get; set; }
         public string FaName { get; set; }

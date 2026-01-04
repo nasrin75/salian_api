@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using salian_api.Models;
+using salian_api.Entities;
 
 namespace salian_api.Mapping
 {
-    public class UserMapping : IEntityTypeConfiguration<User>
+    public class UserMapping : IEntityTypeConfiguration<UserEntity>
     {
-        public void Configure(EntityTypeBuilder<User> builder) {
+        public void Configure(EntityTypeBuilder<UserEntity> builder) {
 
             builder.ToTable("Users");
             builder.HasKey(x => x.Id);

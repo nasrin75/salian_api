@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using salian_api.Models;
+using salian_api.Entities;
 
 namespace salian_api.Mapping
 {
-    public class ActionTypeMapping : IEntityTypeConfiguration<ActionType>
+    public class ActionTypeMapping : IEntityTypeConfiguration<ActionTypeEntity>
     {
-        public void Configure(EntityTypeBuilder<ActionType> builder)
+        public void Configure(EntityTypeBuilder<ActionTypeEntity> builder)
         {
             builder.ToTable("ActionTypes");
             builder.HasKey(x=> x.Id );

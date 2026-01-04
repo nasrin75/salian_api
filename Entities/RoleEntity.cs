@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace salian_api.Models
+namespace salian_api.Entities
 {
-    public class Role
+    [Table("Roles")]
+    public class RoleEntity
     {
         [Key]
         public long Id { get; set; }

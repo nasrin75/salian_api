@@ -1,6 +1,9 @@
-﻿namespace salian_api.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace salian_api.Entities
 {
-    public class InventoryFeature
+    [Table("InventoryFeatures")]
+    public class InventoryFeatureEntity
     {
         public long Id { get; set; }
         public long InventoryId { get; set; }

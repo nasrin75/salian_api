@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using salian_api.Models;
+using salian_api.Entities;
 
 namespace salian_api.Mapping
 {
-    public class RoleMapping : IEntityTypeConfiguration<Role>
+    public class RoleMapping : IEntityTypeConfiguration<RoleEntity>
     {
-        public void Configure(EntityTypeBuilder<Role> builder)
+        public void Configure(EntityTypeBuilder<RoleEntity> builder)
         {
             builder.ToTable("Roles");
             builder.HasKey(x => x.Id);

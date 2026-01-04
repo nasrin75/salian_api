@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using salian_api.Models;
+using salian_api.Entities;
 
 namespace salian_api.Mapping
 {
-    public class IpWhiteListMapping :IEntityTypeConfiguration<IpWhiteList>
+    public class IpWhiteListMapping :IEntityTypeConfiguration<IpWhiteListEntity>
     {
-        public void Configure(EntityTypeBuilder<IpWhiteList> builder) {
+        public void Configure(EntityTypeBuilder<IpWhiteListEntity> builder) {
             builder.ToTable("IpWhiteLists");
             builder.HasKey(x => x.Id);
 

@@ -1,8 +1,10 @@
-﻿using System.Net;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Net;
 
-namespace salian_api.Models
+namespace salian_api.Entities
 {
-    public class Log
+    [Table("Logs")]
+    public class LogEntity
     {
         public long Id { get; set; }
         public long UserID { get; set; }

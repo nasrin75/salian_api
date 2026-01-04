@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using salian_api.Models;
+using salian_api.Entities;
 
 namespace salian_api.Mapping
 {
-    public class LocationMapping :IEntityTypeConfiguration<Location>
+    public class LocationMapping :IEntityTypeConfiguration<LocationEntity>
     {
-        public void Configure(EntityTypeBuilder<Location> builder)
+        public void Configure(EntityTypeBuilder<LocationEntity> builder)
         {
             builder.ToTable("Locations");
             builder.HasKey(x => x.Id);
@@ -24,7 +24,7 @@ namespace salian_api.Mapping
 
             builder.HasOne(x => x.Employee)
                 .WithOne(x => x.Location)
-                .HasForeignKey<Employee>(x=>x.LocationID);
+                .HasForeignKey<EmployeeEntity>(x=>x.LocationID);
 
         }
     }

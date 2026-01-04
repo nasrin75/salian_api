@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using salian_api.Models;
+using salian_api.Entities;
 
 namespace salian_api.Mapping
 {
-    public class InventoryFeatureMapping : IEntityTypeConfiguration<InventoryFeature>
+    public class InventoryFeatureMapping : IEntityTypeConfiguration<InventoryFeatureEntity>
     {
-        public void Configure(EntityTypeBuilder<InventoryFeature> builder)
+        public void Configure(EntityTypeBuilder<InventoryFeatureEntity> builder)
         {
             builder.ToTable("InventoryFeatures");
             builder.HasKey(e => e.Id);

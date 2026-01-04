@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace salian_api.Models
+namespace salian_api.Entities
 {
-    public class User
+    [Table("Users")]
+    public class UserEntity
     {
+
         public long Id { get; set; }
 
         public string Username { get; set; }
@@ -17,7 +20,7 @@ namespace salian_api.Models
         public bool IsCheckIp { get; set; }
         public int LoginType { get; set; } // 2 => otp , 1 => password
 
-        public List<IpWhiteList> IpWhiteLists { get; set; }
+        public List<IpWhiteListEntity> IpWhiteLists { get; set; }
 
     }
 

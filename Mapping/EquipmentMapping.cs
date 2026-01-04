@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using salian_api.Models;
+using salian_api.Entities;
 
 namespace salian_api.Mapping
 {
-    public class EquipmentMapping : IEntityTypeConfiguration<Equipment>
+    public class EquipmentMapping : IEntityTypeConfiguration<EquipmentEntity>
     {
-        public void Configure(EntityTypeBuilder<Equipment> builder)
+        public void Configure(EntityTypeBuilder<EquipmentEntity> builder)
         {
             builder.ToTable("Equipments");
             builder.HasKey(x => x.Id);

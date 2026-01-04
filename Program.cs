@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using salian_api.Models;
+using salian_api.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 

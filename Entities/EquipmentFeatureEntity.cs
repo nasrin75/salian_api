@@ -1,6 +1,9 @@
-﻿namespace salian_api.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace salian_api.Entities
 {
-    public class EquipmentFeature
+    [Table("EquipmentFeatures")]
+    public class EquipmentFeatureEntity
     {
         public long Id { get; set; }
         public long FeatureId { get; set; }

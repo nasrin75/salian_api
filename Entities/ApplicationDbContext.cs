@@ -1,18 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using salian_api.Mapping;
 
-namespace salian_api.Models
+namespace salian_api.Entities
 {
     public class ApplicationDbContext : DbContext
     {
        
-        public DbSet<Role> Roles { get; set; }
-        public DbSet<Permission> Permissions { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Location> Locations { get; set; }
-        public DbSet<Employee> Employees { get; set; }
-        public DbSet<Equipment> Equipments { get; set; }
-        public DbSet<ActionType> ActionTypes { get; set; }
+        public DbSet<RoleEntity> Roles { get; set; }
+        public DbSet<PermissionEntity> Permissions { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
+        public DbSet<LocationEntity> Locations { get; set; }
+        public DbSet<EmployeeEntity> Employees { get; set; }
+        public DbSet<EquipmentEntity> Equipments { get; set; }
+        public DbSet<ActionTypeEntity> ActionTypes { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

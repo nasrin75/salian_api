@@ -1,7 +1,10 @@
 ﻿
-namespace salian_api.Models
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace salian_api.Entities
 {
-    public class Equipment
+    [Table("Equipments")]
+    public class EquipmentEntity
     {
         public long Id { get; set; }
         public string Name { get; set; }
