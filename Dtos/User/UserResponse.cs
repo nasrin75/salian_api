@@ -1,4 +1,5 @@
 ﻿using salian_api.Entities;
+using salian_api.Response;
 using System.ComponentModel.DataAnnotations;
 
 namespace salian_api.Dtos.User
@@ -15,6 +16,8 @@ namespace salian_api.Dtos.User
         public StatusLists? Status { get; set; }
 
         public long RoleId { get; set; }
+
+        public List<IpWhiteListResponse>? IpWhiteLists { get; set; }
     }
     public enum LoginTypes
     {
@@ -24,5 +27,6 @@ namespace salian_api.Dtos.User
         [Display(Name = "رمز یکبار مصرف")]
         otp = 2,
     };
+
 
 }

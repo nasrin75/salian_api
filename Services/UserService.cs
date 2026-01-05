@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using salian_api.Dtos.User;
 using salian_api.Entities;
 using salian_api.Interface;
-using System.Linq;
-using System.Net.NetworkInformation;
+using salian_api.Response;
 
 
 namespace salian_api.Services
@@ -12,8 +13,7 @@ namespace salian_api.Services
     {
         public async Task<UserResponse> Create(UserCreateDto dto)
         {
- 
-
+            // first create user then asign whitelists
             var user = new UserEntity
             {
                 Username = dto.Username,
@@ -29,17 +29,21 @@ namespace salian_api.Services
             var newUser = dbContext.Users.Add(user).Entity;
             await dbContext.SaveChangesAsync();
 
-            var Ips = dto.IpWhiteLists.Select(item => new IpWhiteListEntity
-            {
-                Ip = item,
-                UserId = user.Id
-            }).ToList();
+            // user send ips with , and can send Ips with range so first parse ips then create
+            var paresedIps = ParseIp(dto.IpWhiteLists,user.Id);
 
-            dbContext.IpWhiteLists.AddRangeAsync(Ips);
+            dbContext.IpWhiteLists.AddRangeAsync(paresedIps);
             await dbContext.SaveChangesAsync();
 
-            
-            UserResponse response = new()
+            // return response
+            List<IpWhiteListResponse> whiteLists = newUser.IpWhiteLists.Select(x => new IpWhiteListResponse
+            {
+                Id = x.Id,
+                Ip = x.Ip,
+                IpRange = x.IpRange,
+            }).ToList();
+
+           UserResponse response = new()
             {
                 Id = newUser.Id,
                 Username = newUser.Username,
@@ -49,10 +53,12 @@ namespace salian_api.Services
                 IsCheckIp = (bool)newUser.IsCheckIp,
                 LoginType = (Dtos.User.LoginTypes)newUser.LoginType,
                 Status = newUser.Status,
-            };
+                IpWhiteLists = whiteLists
+           };
 
             return response;
         }
+
 
         public async Task Delete(long userID)
         {
@@ -123,32 +129,31 @@ namespace salian_api.Services
             if (dto.LoginType != null) user.LoginType = (Entities.LoginTypes)dto.LoginType;
             if (dto.Status != null) user.Status = (StatusLists)dto.Status;
 
-            dbContext.Users.Update(user);
+            var newUser = dbContext.Users.Update(user);
             await dbContext.SaveChangesAsync();
 
-            // Update IpWhitList
-            var ExistingIps = dbContext.IpWhiteLists.Where(x => x.UserId == dto.Id).Select(x=>x.Ip).ToList();
+            // Update IpWhitList , check any of Ips change delete and if has new Ips add
+            var parsedIps = ParseIp(dto.IpWhiteLists, dto.Id);
+            var existeIps = await dbContext.IpWhiteLists.Where(x => x.UserId == dto.Id).ToListAsync();
+            var removeIps = existeIps.Where(db => !parsedIps.Any(x => x.Ip == db.Ip && x.IpRange == db.IpRange))
+                .ToList();
+  
+            var newIps = parsedIps.Where(db => !existeIps.Any(x => x.Ip == db.Ip && x.IpRange == db.IpRange))
+                .ToList();
 
-           /* Console.WriteLine(Existin)*/
-            /*var RemovedIps = dto.IpWhiteLists.Where(x => dto.IpWhiteLists.Contains(ExistingIps));
+            if (removeIps.Any()) dbContext.IpWhiteLists.RemoveRange(removeIps);
+            if (newIps.Any())  dbContext.IpWhiteLists.AddRange(newIps);
 
-            if (ExistingIps != null)
-            {
-                dbContext.IpWhiteLists.RemoveRange(ExistingIps);
-                await dbContext.SaveChangesAsync();
-            }*/
-
-            var newIps = dto.IpWhiteLists.Select(item => new IpWhiteListEntity
-            {
-                Ip = item,
-                UserId = dto.Id,
-            }).ToList();
-
-            dbContext.IpWhiteLists.AddRange(newIps);
             await dbContext.SaveChangesAsync();
-
 
             // response
+            List<IpWhiteListResponse> whiteLists = user.IpWhiteLists.Select(x => new IpWhiteListResponse
+            {
+                Id = x.Id,
+                Ip = x.Ip,
+                IpRange = x.IpRange,
+            }).ToList();
+
             return new UserResponse()
             {
                 Id = user.Id,
@@ -158,8 +163,48 @@ namespace salian_api.Services
                 IsCheckIp = (bool)user.IsCheckIp,
                 LoginType = (Dtos.User.LoginTypes)user.LoginType,
                 Status = user.Status,
-                RoleId = user.RoleId
+                RoleId = user.RoleId,
+                IpWhiteLists = whiteLists,
             };
+        }
+
+
+        private static List<IpWhiteListEntity> ParseIp(string ipWhiteLists,long userID)
+        {
+            var result = new List<IpWhiteListEntity>();
+
+            if (ipWhiteLists.IsNullOrEmpty()) return result;
+
+            var IpLists = ipWhiteLists.Split(",",StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var ip in IpLists)
+            {
+                var item = ip.Trim();
+                if(item.Contains(":") )
+                {
+                    var explodedIp = item.Split(':');
+                    if(explodedIp.Length == 2 )
+                    {
+                        result.Add(new IpWhiteListEntity
+                        {
+                            Ip = explodedIp[0],
+                            IpRange = explodedIp[1],
+                            UserId = userID
+                        });
+                    }
+              
+                }
+                else
+                {
+                    result.Add(new IpWhiteListEntity
+                    {
+                        Ip = item,
+                        UserId = userID
+                    });
+                }
+            }
+
+            return result;
         }
     }
 }

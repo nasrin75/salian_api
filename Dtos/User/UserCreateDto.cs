@@ -20,6 +20,6 @@ namespace salian_api.Dtos.User
         public LoginTypes? LoginType { get; set; }
         public StatusLists? Status { get; set; }
 
-        public List<string>? IpWhiteLists { get; set; }
+        public string? IpWhiteLists { get; set; }
     }
 }
