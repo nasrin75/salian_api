@@ -11,7 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 /* Init Databse */
-builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ApplicationDbContext>(
+    o => o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 /* For customize error message */
 builder.Services.AddLogging();

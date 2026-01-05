@@ -2,6 +2,8 @@
 using salian_api.Dtos.User;
 using salian_api.Entities;
 using salian_api.Interface;
+using System.Linq;
+using System.Net.NetworkInformation;
 
 
 namespace salian_api.Services
@@ -10,7 +12,9 @@ namespace salian_api.Services
     {
         public async Task<UserResponse> Create(UserCreateDto dto)
         {
-            var user = new UserEntity()
+ 
+
+            var user = new UserEntity
             {
                 Username = dto.Username,
                 Password = dto.Password,
@@ -19,12 +23,22 @@ namespace salian_api.Services
                 RoleId = dto.RoleId,
                 IsCheckIp = (bool)dto.IsCheckIp,
                 LoginType = (Entities.LoginTypes)dto.LoginType,
-                Status = (StatusLists)dto.Status,
+                Status = (StatusLists)dto.Status
             };
 
             var newUser = dbContext.Users.Add(user).Entity;
             await dbContext.SaveChangesAsync();
 
+            var Ips = dto.IpWhiteLists.Select(item => new IpWhiteListEntity
+            {
+                Ip = item,
+                UserId = user.Id
+            }).ToList();
+
+            dbContext.IpWhiteLists.AddRangeAsync(Ips);
+            await dbContext.SaveChangesAsync();
+
+            
             UserResponse response = new()
             {
                 Id = newUser.Id,
@@ -58,6 +72,7 @@ namespace salian_api.Services
                {
                    Id = u.Id,
                    Email = u.Email,
+                   Username = u.Username,
                    Mobile = u.Mobile,
                    IsCheckIp = (bool)u.IsCheckIp,
                    LoginType = (Dtos.User.LoginTypes)u.LoginType,
@@ -96,6 +111,7 @@ namespace salian_api.Services
 
         public async Task<UserResponse?> Update(UserUpdateDto dto)
         {
+            // Update User
            UserEntity? user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == dto.Id);
             if (user == null) return null;
 
@@ -110,6 +126,29 @@ namespace salian_api.Services
             dbContext.Users.Update(user);
             await dbContext.SaveChangesAsync();
 
+            // Update IpWhitList
+            var ExistingIps = dbContext.IpWhiteLists.Where(x => x.UserId == dto.Id).Select(x=>x.Ip).ToList();
+
+           /* Console.WriteLine(Existin)*/
+            /*var RemovedIps = dto.IpWhiteLists.Where(x => dto.IpWhiteLists.Contains(ExistingIps));
+
+            if (ExistingIps != null)
+            {
+                dbContext.IpWhiteLists.RemoveRange(ExistingIps);
+                await dbContext.SaveChangesAsync();
+            }*/
+
+            var newIps = dto.IpWhiteLists.Select(item => new IpWhiteListEntity
+            {
+                Ip = item,
+                UserId = dto.Id,
+            }).ToList();
+
+            dbContext.IpWhiteLists.AddRange(newIps);
+            await dbContext.SaveChangesAsync();
+
+
+            // response
             return new UserResponse()
             {
                 Id = user.Id,
@@ -119,7 +158,7 @@ namespace salian_api.Services
                 IsCheckIp = (bool)user.IsCheckIp,
                 LoginType = (Dtos.User.LoginTypes)user.LoginType,
                 Status = user.Status,
-                RoleId = user.RoleId,
+                RoleId = user.RoleId
             };
         }
     }

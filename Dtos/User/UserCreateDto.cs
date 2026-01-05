@@ -1,5 +1,6 @@
 ﻿using salian_api.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace salian_api.Dtos.User
 {
@@ -18,5 +19,7 @@ namespace salian_api.Dtos.User
         public long RoleId { get; set; }
         public LoginTypes? LoginType { get; set; }
         public StatusLists? Status { get; set; }
+
+        public List<string>? IpWhiteLists { get; set; }
     }
 }

@@ -45,9 +45,9 @@ namespace salian_api.Mapping
             builder.HasQueryFilter(u => !u.IsDeleted);
 
             // define relation
-            builder.HasMany(e => e.IpWhiteLists)
+            /*builder.HasMany(e => e.IpWhiteLists)
                 .WithOne(e => e.User)
-                .HasForeignKey(e => e.Id);
+                .HasForeignKey(e => e.Id);*/
 
             builder.HasOne(r => r.Role)
                 .WithMany(u => u.Users)

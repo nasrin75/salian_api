@@ -5,7 +5,7 @@ namespace salian_api.Entities
 {
     public class ApplicationDbContext : DbContext
     {
-       
+
         public DbSet<RoleEntity> Roles { get; set; }
         public DbSet<PermissionEntity> Permissions { get; set; }
         public DbSet<UserEntity> Users { get; set; }
@@ -13,6 +13,10 @@ namespace salian_api.Entities
         public DbSet<EmployeeEntity> Employees { get; set; }
         public DbSet<EquipmentEntity> Equipments { get; set; }
         public DbSet<ActionTypeEntity> ActionTypes { get; set; }
+        public DbSet<IpWhiteListEntity> IpWhiteLists { get; set; }
+        public DbSet<InventoryEntity> Inventories { get; set; }
+        public DbSet<InventoryFeatureEntity> InventoryFeatures { get; set; }
+        public DbSet<EquipmentFeatureEntity> EquipmentFeatures { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

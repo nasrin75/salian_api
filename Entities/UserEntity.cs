@@ -23,7 +23,7 @@ namespace salian_api.Entities
         public LoginTypes LoginType { get; set; }
         public StatusLists Status { get; set; }
 
-        public List<IpWhiteListEntity>? IpWhiteLists { get; set; }
+        public ICollection<IpWhiteListEntity>? IpWhiteLists { get; set; }
 
         public long RoleId { get; set; }
         public RoleEntity Role { get; set; }
