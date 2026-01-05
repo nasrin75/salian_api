@@ -12,21 +12,11 @@ namespace salian_api.Dtos.User
         public string Mobile { get; set; }
         public bool IsCheckIp { get; set; }
 
-        public LoginTypes LoginType { get; set; }
+        public List<string> LoginTypes { get; set; }
         public StatusLists? Status { get; set; }
 
         public long RoleId { get; set; }
 
         public List<IpWhiteListResponse>? IpWhiteLists { get; set; }
     }
-    public enum LoginTypes
-    {
-        [Display(Name = "کلمه عبور")]
-        password = 1,
-
-        [Display(Name = "رمز یکبار مصرف")]
-        otp = 2,
-    };
-
-
 }

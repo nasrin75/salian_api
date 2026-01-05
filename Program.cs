@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using salian_api.Entities;
 using salian_api.Interface;
@@ -24,8 +26,11 @@ builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = null;
-
+        // with this code (case-insensitive)json object in enum
+        // options.JsonSerializerOptions.Converters.Add(
+        //     new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
     });
+
 
 builder.Services.AddScoped<IUserService,UserService>();
 builder.Services.AddScoped<IRoleService,RoleService>();

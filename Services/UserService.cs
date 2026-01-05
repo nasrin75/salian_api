@@ -13,7 +13,12 @@ namespace salian_api.Services
     {
         public async Task<UserResponse> Create(UserCreateDto dto)
         {
-            // first create user then asign whitelists
+            // convert dto.loginType to LoginTypes's enum, if this string dosen't exist in this enum get exception 
+           var LoginTypes = dto.LoginTypes
+                .Select(x => Enum.Parse<LoginTypes>(x))
+                .ToList();
+
+           // first create user then asign whitelists
             var user = new UserEntity
             {
                 Username = dto.Username,
@@ -22,7 +27,7 @@ namespace salian_api.Services
                 Mobile = dto.Mobile,
                 RoleId = dto.RoleId,
                 IsCheckIp = (bool)dto.IsCheckIp,
-                LoginType = (Entities.LoginTypes)dto.LoginType,
+                LoginTypes = LoginTypes,
                 Status = (StatusLists)dto.Status
             };
 
@@ -51,7 +56,7 @@ namespace salian_api.Services
                 Mobile = newUser.Mobile,
                 RoleId = newUser.RoleId,
                 IsCheckIp = (bool)newUser.IsCheckIp,
-                LoginType = (Dtos.User.LoginTypes)newUser.LoginType,
+                LoginTypes = LoginTypes.Select(x=>x.ToString()).ToList(),
                 Status = newUser.Status,
                 IpWhiteLists = whiteLists
            };
@@ -73,19 +78,22 @@ namespace salian_api.Services
 
         public async Task<List<UserResponse>> GetAllUsers()
         {
-             List <UserResponse> userList = await dbContext.Users
-               .Select(u => new UserResponse
-               {
-                   Id = u.Id,
-                   Email = u.Email,
-                   Username = u.Username,
-                   Mobile = u.Mobile,
-                   IsCheckIp = (bool)u.IsCheckIp,
-                   LoginType = (Dtos.User.LoginTypes)u.LoginType,
-                   Status = u.Status,
-                   RoleId = u.RoleId,
-               })
+            var users = await dbContext.Users
+                .AsNoTracking() 
                 .ToListAsync();
+
+            var userList = users
+                .Select(u => new UserResponse
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    Username = u.Username,
+                    Mobile = u.Mobile,
+                    IsCheckIp = (bool)u.IsCheckIp,
+                    LoginTypes = u.LoginTypes.Select(x => x.ToString()).ToList(),
+                    Status = u.Status,
+                    RoleId = u.RoleId,
+                });
 
             return new List<UserResponse>(userList);
         }
@@ -106,7 +114,7 @@ namespace salian_api.Services
                 Email = user.Email,
                 Mobile = user.Mobile,
                 IsCheckIp = (bool)user.IsCheckIp,
-                LoginType = (Dtos.User.LoginTypes)user.LoginType,
+                LoginTypes = user.LoginTypes.Select(x=>x.ToString()).ToList(),
                 Status = user.Status,
                 RoleId = user.RoleId,
             };
@@ -126,7 +134,9 @@ namespace salian_api.Services
             if (dto.Password != null) user.Password = dto.Password;
             if (dto.Username != null) user.Username = dto.Username;
             if (dto.IsCheckIp != null) user.IsCheckIp = dto.IsCheckIp.Value;
-            if (dto.LoginType != null) user.LoginType = (Entities.LoginTypes)dto.LoginType;
+            if (dto.LoginTypes != null) user.LoginTypes =  dto.LoginTypes
+                .Select(x => Enum.Parse<LoginTypes>(x)) // true برای case-insensitive
+                .ToList();;
             if (dto.Status != null) user.Status = (StatusLists)dto.Status;
 
             var newUser = dbContext.Users.Update(user);
@@ -161,7 +171,7 @@ namespace salian_api.Services
                 Email = user.Email,
                 Mobile = user.Mobile,
                 IsCheckIp = (bool)user.IsCheckIp,
-                LoginType = (Dtos.User.LoginTypes)user.LoginType,
+                LoginTypes = user.LoginTypes.Select(x=>x.ToString()).ToList(),
                 Status = user.Status,
                 RoleId = user.RoleId,
                 IpWhiteLists = whiteLists,

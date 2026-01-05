@@ -20,7 +20,7 @@ namespace salian_api.Entities
         public bool IsCheckIp { get; set; }
         public bool IsDeleted { get; set; }
 
-        public LoginTypes LoginType { get; set; }
+        public List<LoginTypes> LoginTypes { get; set; } = new List<LoginTypes>();
         public StatusLists Status { get; set; }
 
         public ICollection<IpWhiteListEntity>? IpWhiteLists { get; set; }
@@ -29,12 +29,15 @@ namespace salian_api.Entities
         public RoleEntity Role { get; set; }
     }
 
+    public class LoginTypeJson
+    {
+        public string Name { get; set; }
+    }
     public enum LoginTypes {
-        [Display(Name = "کلمه عبور")]
-        password = 1,
-
-        [Display(Name = "رمز یکبار مصرف")]
-        otp = 2,
+        password,
+        otp ,
+        push,
+        email
     };
 
     public enum StatusLists

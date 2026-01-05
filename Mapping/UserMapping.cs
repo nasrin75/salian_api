@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using salian_api.Entities;
 
@@ -33,9 +34,24 @@ namespace salian_api.Mapping
             builder.Property("IsCheckIp")
                    .HasDefaultValue(false);
 
-            builder.Property("LoginType")
-                   .HasDefaultValue(LoginTypes.password);
+            // builder.Property("LoginType")
+            //        .HasDefaultValue(LoginTypes.password);
 
+            builder.Property(x => x.LoginTypes)
+                .HasConversion(
+                    v => JsonSerializer.Serialize(
+                        v.Select(x => x.ToString()),
+                        (JsonSerializerOptions)null),
+
+                    v => JsonSerializer.Deserialize<List<string>>(
+                            v,
+                            (JsonSerializerOptions)null)!
+                        .Select(Enum.Parse<LoginTypes>)
+                        .ToList()
+                );
+
+
+            
             builder.Property("Status")
                   .HasDefaultValue(StatusLists.deactive);
 
