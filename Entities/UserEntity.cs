@@ -16,7 +16,6 @@ namespace salian_api.Entities
         public string Email { get; set; }
 
         public string Mobile { get; set; }
-        /*public bool IsAdmin { get; set; } // TODO:: save in another table*/
         public bool IsCheckIp { get; set; }
         public bool IsDeleted { get; set; }
 

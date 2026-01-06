@@ -11,7 +11,7 @@ namespace salian_api.Services
 {
     public class UserService(ApplicationDbContext dbContext) : IUserService
     {
-        public async Task<UserResponse> Create(UserCreateDto dto)
+        public async Task<BaseResponse<UserResponse>> Create(UserCreateDto dto)
         {
             // convert dto.loginType to LoginTypes's enum, if this string dosen't exist in this enum get exception 
            var LoginTypes = dto.LoginTypes
@@ -61,28 +61,28 @@ namespace salian_api.Services
                 IpWhiteLists = whiteLists
            };
 
-            return response;
+            return new BaseResponse<UserResponse>(response);
         }
 
 
-        public async Task Delete(long userID)
+        public async Task<BaseResponse> Delete(long userID)
         {
             UserEntity? user =  await dbContext.Users.FindAsync(userID);
-            if (user == null) return;
+            if (user == null) return new BaseResponse<UserResponse?>(null, 400, "User not found"); ;
 
             user.IsDeleted = true;
             dbContext.Users.Update(user);
             await dbContext.SaveChangesAsync();
-            return;
+            return new BaseResponse();
         }
 
-        public async Task<List<UserResponse>> GetAllUsers()
+        public async Task<BaseResponse<List<UserResponse>>> GetAllUsers()
         {
             var users = await dbContext.Users
                 .AsNoTracking() 
                 .ToListAsync();
 
-            var userList = users
+             var userList = users
                 .Select(u => new UserResponse
                 {
                     Id = u.Id,
@@ -95,17 +95,15 @@ namespace salian_api.Services
                     RoleId = u.RoleId,
                 });
 
-            return new List<UserResponse>(userList);
+            
+            return new BaseResponse<List<UserResponse>>(new List<UserResponse>(userList));
         }
 
-        public async Task<UserResponse?> GetUserByID(long userID)
+        public async Task<BaseResponse<UserResponse?>> GetUserByID(long userID)
         {
             UserEntity? user = await dbContext.Users.FindAsync(userID);
 
-            if (user == null)
-            {
-                return null;
-            }
+            if (user == null) return new BaseResponse<UserResponse?>(null, 400, "User not found");
 
             UserResponse response = new()
             {
@@ -119,15 +117,15 @@ namespace salian_api.Services
                 RoleId = user.RoleId,
             };
 
-            return response;
+            return new BaseResponse<UserResponse?>(response);
         }
 
 
-        public async Task<UserResponse?> Update(UserUpdateDto dto)
+        public async Task<BaseResponse<UserResponse?>> Update(UserUpdateDto dto)
         {
             // Update User
            UserEntity? user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == dto.Id);
-            if (user == null) return null;
+            if (user == null) return new BaseResponse<UserResponse?>(null,400,"User not found");
 
             if (dto.Email != null) user.Email = dto.Email;
             if (dto.Mobile != null) user.Mobile = dto.Mobile;
@@ -164,7 +162,7 @@ namespace salian_api.Services
                 IpRange = x.IpRange,
             }).ToList();
 
-            return new UserResponse()
+            var response = new UserResponse()
             {
                 Id = user.Id,
                 Username = user.Username,
@@ -176,10 +174,12 @@ namespace salian_api.Services
                 RoleId = user.RoleId,
                 IpWhiteLists = whiteLists,
             };
+
+            return new BaseResponse<UserResponse>(response);
         }
 
 
-        private static List<IpWhiteListEntity> ParseIp(string ipWhiteLists,long userID)
+        private static List<IpWhiteListEntity> ParseIp(string ipWhiteLists, long userID)
         {
             var result = new List<IpWhiteListEntity>();
 
