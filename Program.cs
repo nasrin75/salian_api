@@ -34,6 +34,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddScoped<IUserService,UserService>();
 builder.Services.AddScoped<IRoleService,RoleService>();
+builder.Services.AddScoped<ILocationService,LocationService>();
 
 
 
@@ -54,5 +55,6 @@ app.UseAuthorization();
 // add routes
 app.MapUserRoutes("User");
 app.MapRoleRoutes("Role");
+app.MapLocationRoutes("Location");
 
 app.Run();

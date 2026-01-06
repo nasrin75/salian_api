@@ -2,7 +2,7 @@
 
 namespace salian_api.Dtos.Role
 {
-    public class UpdateDto
+    public class RoleUpdateDto
     {
         [Required]
         public required long Id { get; set; }

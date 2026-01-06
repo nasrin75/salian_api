@@ -78,7 +78,7 @@ namespace salian_api.Migrations
                     ItParentNumber = table.Column<long>(type: "bigint", nullable: false),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
                     EmployeeId = table.Column<long>(type: "bigint", nullable: false),
-                    LocationID = table.Column<int>(type: "int", nullable: false),
+                    LocationID = table.Column<long>(type: "bigint", nullable: false),
                     EquipmentId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     PropertyNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -124,7 +124,7 @@ namespace salian_api.Migrations
                 name: "Locations",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Abbreviation = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -167,11 +167,11 @@ namespace salian_api.Migrations
                 name: "Employees",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    LocationID = table.Column<int>(type: "int", nullable: false)
+                    LocationID = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {

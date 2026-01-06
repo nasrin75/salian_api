@@ -22,9 +22,12 @@ namespace salian_api.Mapping
             builder.Property("IsShow")
                .HasDefaultValue(true);
 
-            builder.HasOne(x => x.Employee)
-                .WithOne(x => x.Location)
-                .HasForeignKey<EmployeeEntity>(x=>x.LocationID);
+            builder.Property("IsDeleted")
+              .HasDefaultValue(false);
+
+            /* builder.HasOne(x => x.Employee)
+                 .WithOne(x => x.Location)
+                 .HasForeignKey<EmployeeEntity>(x=>x.LocationID);*/
 
         }
     }

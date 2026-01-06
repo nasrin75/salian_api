@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace salian_api.Dtos.Location
 {
-    public class UpdateDto
+    public class LocationUpdateDto
     {
         [Required]
         public long Id { get; set; }

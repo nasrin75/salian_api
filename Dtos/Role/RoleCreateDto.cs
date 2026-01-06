@@ -2,7 +2,7 @@
 
 namespace salian_api.Dtos.Role
 {
-    public class CreateDto
+    public class RoleCreateDto
     {
         [Required]
         public required string FaName { get; set; }

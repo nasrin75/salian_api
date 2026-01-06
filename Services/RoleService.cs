@@ -1,17 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using salian_api.Dtos.Role;
-using salian_api.Dtos.User;
 using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
-using salian_api.Routes;
 using System.Data;
 
 namespace salian_api.Services
 {
     public class RoleService(ApplicationDbContext dbContext) : IRoleService
     {
-        public async Task<BaseResponse<RoleResponse>> Create(Dtos.Role.CreateDto dto)
+        public async Task<BaseResponse<RoleResponse>> Create(Dtos.Role.RoleCreateDto dto)
         {
             var role = new RoleEntity()
             {
@@ -35,7 +32,7 @@ namespace salian_api.Services
         public async Task<BaseResponse> Delete(long id)
         {
             RoleEntity? role = await dbContext.Roles.FindAsync(id);
-            if (role == null) return new BaseResponse<RoleResponse?>(null, 400, "Role not found");
+            if (role == null) return new BaseResponse<RoleResponse?>(null, 400, "Role Not Found");
 
             role.IsDeleted = true;
             dbContext.Roles.Update(role);
@@ -60,7 +57,7 @@ namespace salian_api.Services
         public async Task<BaseResponse<RoleResponse?>> GetRoleByID(long RoleID)
         {
             var role = await dbContext.Roles.FirstOrDefaultAsync(r => r.Id == RoleID);
-            if (role == null) return new BaseResponse<RoleResponse?>(null, 400, "Role not found"); ;
+            if (role == null) return new BaseResponse<RoleResponse?>(null, 400, "Role Not Found"); ;
 
             RoleResponse response = new RoleResponse()
             {
@@ -72,11 +69,11 @@ namespace salian_api.Services
             return new BaseResponse<RoleResponse>(response);
         }
 
-        public async Task<BaseResponse<RoleResponse?>> Update(Dtos.Role.UpdateDto dto)
+        public async Task<BaseResponse<RoleResponse?>> Update(Dtos.Role.RoleUpdateDto dto)
         {
             RoleEntity role = await dbContext.Roles.FirstOrDefaultAsync(r => r.Id == dto.Id);
 
-            if (role == null) return new BaseResponse<RoleResponse?>(null, 400, "Role not found");
+            if (role == null) return new BaseResponse<RoleResponse?>(null, 400, "Role Not Found");
             if (dto.FaName != null) { role.FaName = dto.FaName; }
             if(dto.EnName != null) { role.EnName = dto.EnName; }
 

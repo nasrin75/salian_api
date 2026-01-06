@@ -4,7 +4,7 @@ using System.Net;
 
 namespace salian_api.Dtos.User
 {
-    public class CreateDto
+    public class UserCreateDto
     {
         [Required]
         public required string Username { get; set; }

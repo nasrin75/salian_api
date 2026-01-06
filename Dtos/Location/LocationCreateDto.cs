@@ -2,7 +2,7 @@
 
 namespace salian_api.Dtos.Location
 {
-    public class CreateDto
+    public class LocationCreateDto
     {
         public string Title { get; set; }
         public string Abbreviation { get; set; }

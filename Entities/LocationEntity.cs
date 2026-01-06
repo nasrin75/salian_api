@@ -5,10 +5,12 @@ namespace salian_api.Entities
     [Table("Locations")]
     public class LocationEntity
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Title { get; set; }
         public string Abbreviation { get; set; }
         public bool IsShow { get; set; }
-        public EmployeeEntity Employee { get; set; }
+
+        public bool IsDeleted { get; set; }
+       // public EmployeeEntity Employee { get; set; }
     }
 }

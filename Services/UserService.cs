@@ -1,18 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using salian_api.Dtos.User;
 using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
-using System.Collections.Generic;
 
 
 namespace salian_api.Services
 {
     public class UserService(ApplicationDbContext dbContext) : IUserService
     {
-        public async Task<BaseResponse<UserResponse>> Create(LocationCreateDto dto)
+        public async Task<BaseResponse<UserResponse>> Create(UserCreateDto dto)
         {
             // convert dto.loginType to LoginTypes's enum, if this string dosen't exist in this enum get exception 
            var LoginTypes = dto.LoginTypes
@@ -69,7 +67,7 @@ namespace salian_api.Services
         public async Task<BaseResponse> Delete(long userID)
         {
             UserEntity? user =  await dbContext.Users.FindAsync(userID);
-            if (user == null) return new BaseResponse<UserResponse?>(null, 400, "User not found");
+            if (user == null) return new BaseResponse<UserResponse?>(null, 400, "User Not Found");
 
             user.IsDeleted = true;
             dbContext.Users.Update(user);
@@ -103,7 +101,7 @@ namespace salian_api.Services
         {
             UserEntity? user = await dbContext.Users.FindAsync(userID);
 
-            if (user == null) return new BaseResponse<UserResponse?>(null, 400, "User not found");
+            if (user == null) return new BaseResponse<UserResponse?>(null, 400, "User Not Found");
 
             UserResponse response = new()
             {
@@ -121,11 +119,11 @@ namespace salian_api.Services
         }
 
 
-        public async Task<BaseResponse<UserResponse?>> Update(UpdateDto dto)
+        public async Task<BaseResponse<UserResponse?>> Update(UserUpdateDto dto)
         {
             // Update User
            UserEntity? user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == dto.Id);
-            if (user == null) return new BaseResponse<UserResponse?>(null,400,"User not found");
+            if (user == null) return new BaseResponse<UserResponse?>(null,400, "User Not Found");
 
             if (dto.Email != null) user.Email = dto.Email;
             if (dto.Mobile != null) user.Mobile = dto.Mobile;

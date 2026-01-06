@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using salian_api.Entities;
 
@@ -11,9 +12,11 @@ using salian_api.Entities;
 namespace salian_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260106120841_AddIsDeletedInLocation")]
+    partial class AddIsDeletedInLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,18 +54,18 @@ namespace salian_api.Migrations
 
             modelBuilder.Entity("salian_api.Entities.EmployeeEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Email")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("LocationID")
-                        .HasColumnType("int");
+                    b.Property<long>("LocationID")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -71,8 +74,7 @@ namespace salian_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LocationID")
-                        .IsUnique();
+                    b.HasIndex("LocationID");
 
                     b.ToTable("Employees", (string)null);
                 });
@@ -292,16 +294,21 @@ namespace salian_api.Migrations
 
             modelBuilder.Entity("salian_api.Entities.LocationEntity", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Abbreviation")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsShow")
                         .ValueGeneratedOnAdd()
@@ -420,8 +427,8 @@ namespace salian_api.Migrations
             modelBuilder.Entity("salian_api.Entities.EmployeeEntity", b =>
                 {
                     b.HasOne("salian_api.Entities.LocationEntity", "Location")
-                        .WithOne("Employee")
-                        .HasForeignKey("salian_api.Entities.EmployeeEntity", "LocationID")
+                        .WithMany()
+                        .HasForeignKey("LocationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -448,12 +455,6 @@ namespace salian_api.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("salian_api.Entities.LocationEntity", b =>
-                {
-                    b.Navigation("Employee")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("salian_api.Entities.RoleEntity", b =>
