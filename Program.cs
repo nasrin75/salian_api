@@ -32,9 +32,10 @@ builder.Services.AddControllers()
     });
 
 
-builder.Services.AddScoped<IUserService,UserService>();
-builder.Services.AddScoped<IRoleService,RoleService>();
-builder.Services.AddScoped<ILocationService,LocationService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 
 
@@ -56,5 +57,6 @@ app.UseAuthorization();
 app.MapUserRoutes("User");
 app.MapRoleRoutes("Role");
 app.MapLocationRoutes("Location");
+app.MapEmployeeRoutes("Employee");
 
 app.Run();

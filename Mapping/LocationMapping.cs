@@ -25,6 +25,8 @@ namespace salian_api.Mapping
             builder.Property("IsDeleted")
               .HasDefaultValue(false);
 
+            builder.HasQueryFilter(r => !r.IsDeleted);
+
             /* builder.HasOne(x => x.Employee)
                  .WithOne(x => x.Location)
                  .HasForeignKey<EmployeeEntity>(x=>x.LocationID);*/

@@ -22,13 +22,13 @@ namespace salian_api.Routes
                 return result.ToResult();
             }).WithTags(tag);
 
-            route.MapPost("/Create", async (ILocationService service, LocationCreateDto dto) =>
+            route.MapPost("/create", async (ILocationService service, LocationCreateDto dto) =>
             {
                 BaseResponse<LocationResponse> result = await service.Create(dto);
                 return result.ToResult();
             }).WithTags(tag);
 
-            route.MapPost("/Search", async (ILocationService service, SearchLocationDto dto) =>
+            route.MapPost("/search", async (ILocationService service, SearchLocationDto dto) =>
             {
                 BaseResponse<List<LocationResponse>> result = await service.Search(dto);
                 return result.ToResult();

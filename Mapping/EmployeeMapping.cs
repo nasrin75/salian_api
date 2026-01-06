@@ -18,6 +18,7 @@ namespace salian_api.Mapping
             builder.Property("Email")
                    .HasMaxLength(255)
                    .IsRequired(false);
+
         }
     }
 }

@@ -22,7 +22,7 @@ namespace salian_api.Routes
                 return role.ToResult();
             }).WithTags(tag);
 
-            route.MapPost("/Create", async (IRoleService service, RoleCreateDto dto) => {
+            route.MapPost("/create", async (IRoleService service, RoleCreateDto dto) => {
                 BaseResponse<RoleResponse> role = await service.Create(dto);
                 return role.ToResult();
             }).WithTags(tag);
