@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using salian_api.Dtos.Role;
+using salian_api.Dtos.User;
 using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
@@ -10,7 +11,7 @@ namespace salian_api.Services
 {
     public class RoleService(ApplicationDbContext dbContext) : IRoleService
     {
-        public async Task<RoleResponse> Create(RoleCreateDto dto)
+        public async Task<BaseResponse<RoleResponse>> Create(RoleCreateDto dto)
         {
             var role = new RoleEntity()
             {
@@ -21,26 +22,28 @@ namespace salian_api.Services
             var newRole = dbContext.Roles.Add(role).Entity;
             await dbContext.SaveChangesAsync();
 
-            return new RoleResponse
+            RoleResponse response = new RoleResponse
             {
                 Id = newRole.Id,
                 FaName = dto.FaName,
                 EnName = dto.EnName,
             };
+
+            return new BaseResponse<RoleResponse>(response);
         }
 
-        public async Task Delete(long id)
+        public async Task<BaseResponse> Delete(long id)
         {
             RoleEntity? role = await dbContext.Roles.FindAsync(id);
-            if (role == null) return;
+            if (role == null) return new BaseResponse<RoleResponse?>(null, 400, "Role not found");
 
             role.IsDeleted = true;
             dbContext.Roles.Update(role);
             await dbContext.SaveChangesAsync();
-            return;
+            return new BaseResponse();
         }
 
-        public async Task<List<RoleResponse>> GetAllRoles()
+        public async Task<BaseResponse<List<RoleResponse>>> GetAllRoles()
         {
            List<RoleResponse> roles = await dbContext.Roles
                 .Select(r => new RoleResponse
@@ -50,40 +53,44 @@ namespace salian_api.Services
                     EnName = r.EnName
                 }).ToListAsync();
 
-            return new List<RoleResponse>(roles);
+            return new BaseResponse<List<RoleResponse>>(roles);
             
         }
 
-        public async Task<RoleResponse?> GetRoleByID(long RoleID)
+        public async Task<BaseResponse<RoleResponse?>> GetRoleByID(long RoleID)
         {
             var role = await dbContext.Roles.FirstOrDefaultAsync(r => r.Id == RoleID);
-            if (role == null) return null;
+            if (role == null) return new BaseResponse<RoleResponse?>(null, 400, "Role not found"); ;
 
-           return new RoleResponse()
+            RoleResponse response = new RoleResponse()
             {
                 Id = role.Id,
                 FaName = role.FaName,
                 EnName = role.EnName
             };
+
+            return new BaseResponse<RoleResponse>(response);
         }
 
-        public async Task<RoleResponse?> Update(RoleUpdateDto dto)
+        public async Task<BaseResponse<RoleResponse?>> Update(RoleUpdateDto dto)
         {
             RoleEntity role = await dbContext.Roles.FirstOrDefaultAsync(r => r.Id == dto.Id);
 
-            if (role == null) return null;
-            if(dto.FaName != null) { role.FaName = dto.FaName; }
+            if (role == null) return new BaseResponse<RoleResponse?>(null, 400, "Role not found");
+            if (dto.FaName != null) { role.FaName = dto.FaName; }
             if(dto.EnName != null) { role.EnName = dto.EnName; }
 
             dbContext.Roles.Update(role);
             await dbContext.SaveChangesAsync();
 
-            return new RoleResponse()
+            RoleResponse response = new RoleResponse()
             {
                 Id = role.Id,
                 FaName = role.FaName,
                 EnName = role.EnName,
             };
+
+            return new BaseResponse<RoleResponse>(response);
         }
     }
 }

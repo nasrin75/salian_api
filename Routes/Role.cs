@@ -1,5 +1,7 @@
 ﻿using salian_api.Dtos.Role;
+using salian_api.Dtos.User;
 using salian_api.Interface;
+using salian_api.Response;
 
 namespace salian_api.Routes
 {
@@ -10,34 +12,33 @@ namespace salian_api.Routes
             var route = app.MapGroup("api/role");
 
             route.MapPost("/Create", async(IRoleService service, RoleCreateDto dto) => {
-                var role = await service.Create(dto);
-                return Results.Ok(role);
+                BaseResponse<RoleResponse> role = await service.Create(dto);
+                return role.ToResult();
             }).WithTags(tag);
 
             route.MapGet("/{id:long}", async (IRoleService service, long id) =>
             {
-                var role = await service.GetRoleByID(id);
-                Console.WriteLine(role);
-                return  role != null ? Results.Ok(role) : Results.NotFound();
+                BaseResponse<RoleResponse> role = await service.GetRoleByID(id);
+                return  role.ToResult();
             }).WithTags(tag);
 
             route.MapGet("/", async (IRoleService service) =>
             {
                 var role = await service.GetAllRoles();
-                return role != null ? Results.Ok(role) : Results.NotFound();
+                return role.ToResult();
             }).WithTags(tag);
 
 
             route.MapPut("/edit", async (IRoleService service,RoleUpdateDto dto) =>
             {
-                var role = await service.Update(dto);
-                return role != null ? Results.Ok(role) : Results.NotFound();
+                BaseResponse<RoleResponse> role = await service.Update(dto);
+                return role.ToResult();
             }).WithTags(tag);
 
             route.MapDelete("/delete",async (IRoleService service,long id) =>
             {
-                await service.Delete(id);
-                return Results.Ok();
+               BaseResponse result = await service.Delete(id);
+                return result.ToResult();
 
             }).WithTags(tag);
 

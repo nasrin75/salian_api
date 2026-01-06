@@ -5,6 +5,7 @@ using salian_api.Dtos.User;
 using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
+using System.Collections.Generic;
 
 
 namespace salian_api.Services
@@ -68,7 +69,7 @@ namespace salian_api.Services
         public async Task<BaseResponse> Delete(long userID)
         {
             UserEntity? user =  await dbContext.Users.FindAsync(userID);
-            if (user == null) return new BaseResponse<UserResponse?>(null, 400, "User not found"); ;
+            if (user == null) return new BaseResponse<UserResponse?>(null, 400, "User not found");
 
             user.IsDeleted = true;
             dbContext.Users.Update(user);
@@ -95,7 +96,6 @@ namespace salian_api.Services
                     RoleId = u.RoleId,
                 });
 
-            
             return new BaseResponse<List<UserResponse>>(new List<UserResponse>(userList));
         }
 

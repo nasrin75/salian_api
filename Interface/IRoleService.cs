@@ -1,15 +1,14 @@
 ﻿using salian_api.Dtos.Role;
-using salian_api.Dtos.User;
 using salian_api.Response;
 
 namespace salian_api.Interface
 {
     public interface IRoleService
     {
-        Task<List<RoleResponse>> GetAllRoles();
-        Task<RoleResponse?> GetRoleByID(long RoleID);
-        Task<RoleResponse> Create(RoleCreateDto dto);
-        Task<RoleResponse?> Update(RoleUpdateDto dto);
-        Task Delete(long id);
+        Task<BaseResponse<RoleResponse>> Create(RoleCreateDto user);
+        Task<BaseResponse<RoleResponse?>> Update(RoleUpdateDto user);
+        Task<BaseResponse<RoleResponse?>> GetRoleByID(long userID);
+        Task<BaseResponse<List<RoleResponse>>> GetAllRoles();
+        Task<BaseResponse> Delete(long id);
     }
 }
