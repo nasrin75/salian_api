@@ -12,7 +12,7 @@ namespace salian_api.Services
 {
     public class UserService(ApplicationDbContext dbContext) : IUserService
     {
-        public async Task<BaseResponse<UserResponse>> Create(UserCreateDto dto)
+        public async Task<BaseResponse<UserResponse>> Create(LocationCreateDto dto)
         {
             // convert dto.loginType to LoginTypes's enum, if this string dosen't exist in this enum get exception 
            var LoginTypes = dto.LoginTypes
@@ -121,7 +121,7 @@ namespace salian_api.Services
         }
 
 
-        public async Task<BaseResponse<UserResponse?>> Update(UserUpdateDto dto)
+        public async Task<BaseResponse<UserResponse?>> Update(UpdateDto dto)
         {
             // Update User
            UserEntity? user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == dto.Id);

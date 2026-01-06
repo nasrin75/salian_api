@@ -22,13 +22,13 @@ namespace salian_api.Routes
                 return result.ToResult();
             }).WithTags(tag);
 
-            route.MapPost("/create", async (IUserService service, UserCreateDto dto) =>
+            route.MapPost("/create", async (IUserService service, LocationCreateDto dto) =>
             {
                 BaseResponse<UserResponse> user = await service.Create(dto);
                 return user.ToResult();
             }).WithTags(tag);
 
-            route.MapPut("/edit", async (IUserService service, UserUpdateDto dto) =>
+            route.MapPut("/edit", async (IUserService service, UpdateDto dto) =>
             {
                 BaseResponse<UserResponse?> user = await service.Update(dto);
                 return user.ToResult();

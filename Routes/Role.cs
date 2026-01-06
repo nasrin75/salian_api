@@ -11,7 +11,7 @@ namespace salian_api.Routes
         {
             var route = app.MapGroup("api/role");
 
-            route.MapPost("/Create", async(IRoleService service, RoleCreateDto dto) => {
+            route.MapPost("/Create", async(IRoleService service, CreateDto dto) => {
                 BaseResponse<RoleResponse> role = await service.Create(dto);
                 return role.ToResult();
             }).WithTags(tag);
@@ -29,7 +29,7 @@ namespace salian_api.Routes
             }).WithTags(tag);
 
 
-            route.MapPut("/edit", async (IRoleService service,RoleUpdateDto dto) =>
+            route.MapPut("/edit", async (IRoleService service,UpdateDto dto) =>
             {
                 BaseResponse<RoleResponse> role = await service.Update(dto);
                 return role.ToResult();

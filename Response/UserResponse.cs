@@ -1,13 +1,11 @@
 ﻿using salian_api.Entities;
-using salian_api.Response;
-using System.ComponentModel.DataAnnotations;
 
-namespace salian_api.Dtos.User
+namespace salian_api.Response
 {
     public class UserResponse
     {
-        public  long Id { get; set; }
-        public  string Username { get; set; }
+        public long Id { get; set; }
+        public string Username { get; set; }
         public string Email { get; set; }
         public string Mobile { get; set; }
         public bool IsCheckIp { get; set; }

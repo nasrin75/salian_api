@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace salian_api.Dtos.User
 {
-    public class UserUpdateDto
+    public class UpdateDto
     {
         [Required]
         public required long Id { get; set; }

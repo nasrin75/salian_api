@@ -11,7 +11,7 @@ namespace salian_api.Services
 {
     public class RoleService(ApplicationDbContext dbContext) : IRoleService
     {
-        public async Task<BaseResponse<RoleResponse>> Create(RoleCreateDto dto)
+        public async Task<BaseResponse<RoleResponse>> Create(Dtos.Role.CreateDto dto)
         {
             var role = new RoleEntity()
             {
@@ -72,7 +72,7 @@ namespace salian_api.Services
             return new BaseResponse<RoleResponse>(response);
         }
 
-        public async Task<BaseResponse<RoleResponse?>> Update(RoleUpdateDto dto)
+        public async Task<BaseResponse<RoleResponse?>> Update(Dtos.Role.UpdateDto dto)
         {
             RoleEntity role = await dbContext.Roles.FirstOrDefaultAsync(r => r.Id == dto.Id);
 
