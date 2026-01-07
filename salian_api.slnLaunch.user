@@ -1,0 +1,16 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Name": "salian_api.csproj",
+        "Action": "Start",
+        "DebugTarget": ""
+      },
+      {
+        "Name": "..\\salian_front\\salian_front.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
