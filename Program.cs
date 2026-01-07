@@ -33,6 +33,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IEquipmentService, EquipmentService>();
+builder.Services.AddScoped<IActionTypeService, ActionTypeService>();
 
 
 
@@ -56,5 +57,6 @@ app.MapRoleRoutes("Role");
 app.MapLocationRoutes("Location");
 app.MapEmployeeRoutes("Employee");
 app.MapEquipmentRoutes("Equipment");
+app.MapActionTypeRoutes("ActionType");
 
 app.Run();
