@@ -19,10 +19,10 @@ namespace salian_api.Mapping
                 .HasMaxLength(100)
                 .IsRequired(false);
 
-            builder.Property("IsDeleted")
-               .HasDefaultValue(false);
+            builder.Property("DeletedAt")
+               .IsRequired(false);
 
-            builder.HasQueryFilter(r => !r.IsDeleted);
+            builder.HasQueryFilter(r => r.DeletedAt == null);
 
             // define relation
             builder.HasMany(u => u.Users)

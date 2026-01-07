@@ -17,7 +17,7 @@ namespace salian_api.Entities
 
         public string Mobile { get; set; }
         public bool IsCheckIp { get; set; }
-        public bool IsDeleted { get; set; }
+        public DateTime? DeletedAt { get; set; }
 
         public List<LoginTypes> LoginTypes { get; set; } = new List<LoginTypes>();
         public StatusLists Status { get; set; }

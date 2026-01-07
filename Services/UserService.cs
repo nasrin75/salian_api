@@ -69,7 +69,7 @@ namespace salian_api.Services
             UserEntity? user =  await dbContext.Users.FindAsync(userID);
             if (user == null) return new BaseResponse<UserResponse?>(null, 400, "User Not Found");
 
-            user.IsDeleted = true;
+            user.DeletedAt = DateTime.UtcNow;
             dbContext.Users.Update(user);
             await dbContext.SaveChangesAsync();
             return new BaseResponse();

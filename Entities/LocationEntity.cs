@@ -10,7 +10,8 @@ namespace salian_api.Entities
         public string Abbreviation { get; set; }
         public bool IsShow { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public DateTime? DeletedAt { get; set; }
        // public EmployeeEntity Employee { get; set; }
     }
+
 }

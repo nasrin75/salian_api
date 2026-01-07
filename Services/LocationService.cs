@@ -37,7 +37,7 @@ namespace salian_api.Services
                 .FirstOrDefaultAsync(l => l.Id == id);
             if (location == null) return new BaseResponse<LocationResponse?>(null, 400, "Location Not Found");
 
-            location.IsDeleted = true;
+            location.DeletedAt = DateTime.UtcNow;
 
             _dbContex.Locations.Update(location);
             await _dbContex.SaveChangesAsync();

@@ -22,10 +22,10 @@ namespace salian_api.Mapping
             builder.Property("IsShow")
                .HasDefaultValue(true);
 
-            builder.Property("IsDeleted")
-              .HasDefaultValue(false);
+            builder.Property("DeletedAt")
+              .IsRequired(false);
 
-            builder.HasQueryFilter(r => !r.IsDeleted);
+            builder.HasQueryFilter(r => r.DeletedAt == null);
 
             /* builder.HasOne(x => x.Employee)
                  .WithOne(x => x.Location)

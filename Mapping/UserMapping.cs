@@ -55,10 +55,10 @@ namespace salian_api.Mapping
             builder.Property("Status")
                   .HasDefaultValue(StatusLists.deactive);
 
-            builder.Property("IsDeleted")
-                .HasDefaultValue(false);
+            builder.Property("DeletedAt")
+                .IsRequired(false);
 
-            builder.HasQueryFilter(u => !u.IsDeleted);
+            builder.HasQueryFilter(u => u.DeletedAt == null);
 
             // define relation
             /*builder.HasMany(e => e.IpWhiteLists)

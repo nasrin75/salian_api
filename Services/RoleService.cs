@@ -34,7 +34,7 @@ namespace salian_api.Services
             RoleEntity? role = await dbContext.Roles.FindAsync(id);
             if (role == null) return new BaseResponse<RoleResponse?>(null, 400, "Role Not Found");
 
-            role.IsDeleted = true;
+            role.DeletedAt = DateTime.UtcNow;
             dbContext.Roles.Update(role);
             await dbContext.SaveChangesAsync();
             return new BaseResponse();
