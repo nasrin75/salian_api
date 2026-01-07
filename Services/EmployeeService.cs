@@ -1,6 +1,4 @@
-﻿using Azure;
-using Humanizer;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using salian_api.Dtos.Employee;
 using salian_api.Entities;
 using salian_api.Interface;
@@ -96,7 +94,7 @@ namespace salian_api.Services
             if (!string.IsNullOrWhiteSpace(param.Email)) query = query.Where(x => x.Email.Contains(param.Email));
             if (param.LocationID != null) query = query.Where(l => l.LocationID == param.LocationID);
 
-            List<EmployeeResponse> locations = await query.Select(l => new EmployeeResponse
+            List<EmployeeResponse> employees = await query.Select(l => new EmployeeResponse
             {
                 Id = l.Id,
                 Name = l.Name,
@@ -105,7 +103,7 @@ namespace salian_api.Services
                 Location = l.Location.Abbreviation
             }).ToListAsync();
 
-            return new BaseResponse<List<EmployeeResponse>>(locations);
+            return new BaseResponse<List<EmployeeResponse>>(employees);
         }
 
         public async Task<BaseResponse<EmployeeResponse?>> Update(EmployeeUpdateDto param)
