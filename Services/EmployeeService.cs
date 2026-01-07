@@ -21,15 +21,15 @@ namespace salian_api.Services
                     LocationID = param.LocationID,
                 };
 
-                var newEmployee = _dbContex.Employees.Add(employee);
+                var newEmployee = _dbContex.Employees.Add(employee).Entity;
                 await _dbContex.SaveChangesAsync();
 
                 EmployeeResponse response = new EmployeeResponse
                 {
-                    Id = newEmployee.Entity.Id,
-                    Name = newEmployee.Entity.Name,
-                    Email = newEmployee.Entity.Email,
-                    /*Location = newEmployee.Entity.Location.Abbreviation*/ //TODO
+                    Id = newEmployee.Id,
+                    Name = newEmployee.Name,
+                    Email = newEmployee.Email,
+                    Location = newEmployee.Location.Abbreviation
                 };
 
                 return new BaseResponse<EmployeeResponse>(response);
@@ -42,7 +42,16 @@ namespace salian_api.Services
 
         public async Task<BaseResponse> Delete(long id)
         {
-            throw new NotImplementedException();
+            var employee = await _dbContex.Employees
+                .FirstOrDefaultAsync(l => l.Id == id);
+            if (employee == null) return new BaseResponse<EmployeeResponse?>(null, 400, "Employee Not Found");
+
+            employee.DeletedAt = DateTime.UtcNow;
+
+            _dbContex.Employees.Update(employee);
+            await _dbContex.SaveChangesAsync();
+
+            return new BaseResponse<EmployeeResponse?>(null, 200, "Employee Successfully Is Deleted");
         }
 
         public async Task<BaseResponse<List<EmployeeResponse>>> GetAll()
@@ -54,7 +63,8 @@ namespace salian_api.Services
                     Id = l.Id,
                     Name = l.Name,
                     Email = l.Email,
-                    /*Location = _dbContex.Locations.Where(x => x.Id == l.LocationID).Select(x "Abbreviation").Firs*/ //TODO
+                    LocationID = l.LocationID,
+                    Location = l.Location.Abbreviation
                 })
                 .ToListAsync();
 
@@ -63,28 +73,45 @@ namespace salian_api.Services
 
         public async Task<BaseResponse<EmployeeResponse?>> GetByID(long EmployeeID)
         {
-            var employee = await _dbContex.Employees.FirstOrDefaultAsync(l => l.Id == EmployeeID);
+            var employee = await _dbContex.Employees.AsNoTracking()
+                .Select(item => new EmployeeResponse
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Email = item.Email,
+                    LocationID = item.LocationID,
+                    Location = item.Location.Abbreviation
+                })
+                .FirstOrDefaultAsync(l => l.Id == EmployeeID);
+
             if (employee == null) return new BaseResponse<EmployeeResponse?>(null, 400, "Employee Not Found");
-
-            var response = new EmployeeResponse
-            {
-                Id = employee.Id,
-                Name = employee.Name,
-                Email = employee.Email,
-               /* Location = employee.IsShow,*/ //TODO
-            };
-
-            return new BaseResponse<EmployeeResponse>(response);
+            
+            return new BaseResponse<EmployeeResponse>(employee);
         }
 
         public async Task<BaseResponse<List<EmployeeResponse>>> Search(SearchEmployeeDto param)
         {
-            throw new NotImplementedException();
+            var query = _dbContex.Employees.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(param.Name)) query = query.Where(x => x.Name.Contains(param.Name));
+            if (!string.IsNullOrWhiteSpace(param.Email)) query = query.Where(x => x.Email.Contains(param.Email));
+            if (param.LocationID != null) query = query.Where(l => l.LocationID == param.LocationID);
+
+            List<EmployeeResponse> locations = await query.Select(l => new EmployeeResponse
+            {
+                Id = l.Id,
+                Name = l.Name,
+                Email = l.Email,
+                LocationID = l.LocationID,
+                Location = l.Location.Abbreviation
+            }).ToListAsync();
+
+            return new BaseResponse<List<EmployeeResponse>>(locations);
         }
 
         public async Task<BaseResponse<EmployeeResponse?>> Update(EmployeeUpdateDto param)
         {
             var employee = await _dbContex.Employees
+                .Include(e => e.Location)
                 .FirstOrDefaultAsync(l => l.Id == param.Id);
 
             if (employee == null) return new BaseResponse<EmployeeResponse?>(null, 400, "Employee Not Found");
@@ -93,15 +120,16 @@ namespace salian_api.Services
             if (param.Email != null && param.Email != employee.Email) employee.Email = param.Email;
             if (param.LocationID != null && param.LocationID != employee.LocationID) employee.LocationID = param.LocationID.Value;
 
-            _dbContex.Employees.Update(employee);
+            _dbContex.Update(employee);
             await _dbContex.SaveChangesAsync();
 
-            EmployeeResponse response = new EmployeeResponse
+            var response = new EmployeeResponse
             {
                 Id = employee.Id,
                 Name = employee.Name,
                 Email = employee.Email,
-               // Location = employee.Location
+                LocationID = employee.LocationID,
+                Location = employee.Location.Abbreviation
             };
 
             return new BaseResponse<EmployeeResponse?>(response);

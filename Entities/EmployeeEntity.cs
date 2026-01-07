@@ -8,7 +8,8 @@ namespace salian_api.Entities
         public long Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
+        public DateTime? DeletedAt { get; set; }
         public long LocationID { get; set; }
-        public LocationEntity Location { get; set; } // one to one relation
+        public LocationEntity Location { get; set; } 
     }
 }
