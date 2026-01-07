@@ -11,8 +11,6 @@ namespace salian_api.Mapping
             builder.ToTable("EquipmentFeatures");
             builder.HasKey(e => e.Id);
 
-            builder.Property("IsShow")
-                .HasDefaultValue(true);
         }
     }
 }

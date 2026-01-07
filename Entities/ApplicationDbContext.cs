@@ -17,6 +17,7 @@ namespace salian_api.Entities
         public DbSet<InventoryEntity> Inventories { get; set; }
         public DbSet<InventoryFeatureEntity> InventoryFeatures { get; set; }
         public DbSet<EquipmentFeatureEntity> EquipmentFeatures { get; set; }
+        public DbSet<FeatureEntity> Features { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -14,6 +14,12 @@ namespace salian_api.Mapping
             builder.Property("Name")
                 .HasMaxLength(100)
                 .IsRequired();
+
+            builder.Property("DeletedAt")
+               .IsRequired(false);
+
+            builder.HasQueryFilter(f => f.DeletedAt == null);
+
         }
     }
 }
