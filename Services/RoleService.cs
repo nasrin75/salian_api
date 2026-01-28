@@ -69,6 +69,7 @@ namespace salian_api.Services
             return new BaseResponse<RoleResponse>(response);
         }
 
+
         public async Task<BaseResponse<RoleResponse?>> Update(Dtos.Role.RoleUpdateDto dto)
         {
             RoleEntity role = await dbContext.Roles.FirstOrDefaultAsync(r => r.Id == dto.Id);

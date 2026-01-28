@@ -10,5 +10,6 @@ namespace salian_api.Entities
         public long Id { get; set; }
         public string Name { get; set; }
         public DateTime? DeletedAt { get; set; }
+        public List<EquipmentEntity> Equipments { get; set; }
     }
 }

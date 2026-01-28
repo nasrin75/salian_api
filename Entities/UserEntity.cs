@@ -41,10 +41,7 @@ namespace salian_api.Entities
 
     public enum StatusLists
     {
-        [Display(Name = "فعال")]
         deactive = 0,
-
-        [Display(Name = "غیرفعال")]
         active = 1,
     };
 

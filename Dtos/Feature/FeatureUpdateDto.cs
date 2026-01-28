@@ -7,5 +7,6 @@ namespace salian_api.Dtos.Feature
         [Key]
         public required long Id { get; set; }
         public string? Name { get; set; }
+        public List<long> EquipmentIds { get; set; }
     }
 }

@@ -1,6 +1,11 @@
-﻿using salian_api.Dtos.User;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
+using salian_api.Dtos.Equipment;
+using salian_api.Dtos.User;
+using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
+using salian_api.Response.User;
 
 namespace salian_api.Routes
 {
@@ -12,7 +17,7 @@ namespace salian_api.Routes
 
             route.MapGet("/", async (IUserService service) =>
             {
-               BaseResponse<List<UserResponse>> user = await service.GetAllUsers();
+               BaseResponse<List<UserListResponse>> user = await service.GetAllUsers();
                 return user.ToResult();
             }).WithTags(tag);
 
@@ -35,9 +40,16 @@ namespace salian_api.Routes
                 
             }).WithTags(tag);
 
-            route.MapDelete("/delete", async (IUserService service, long userID) =>
+            route.MapDelete("/delete", async (IUserService service, long id) =>
             {
-               BaseResponse result = await service.Delete(userID);
+               BaseResponse result = await service.Delete(id);
+                return result.ToResult();
+            }).WithTags(tag);
+
+
+            route.MapPost("/search", async (IUserService service, UserSearchDto dto) =>
+            {
+                BaseResponse<List<UserListResponse>> result = await service.Search(dto);
                 return result.ToResult();
             }).WithTags(tag);
 

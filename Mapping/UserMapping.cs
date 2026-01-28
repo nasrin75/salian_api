@@ -65,9 +65,9 @@ namespace salian_api.Mapping
                 .WithOne(e => e.User)
                 .HasForeignKey(e => e.Id);*/
 
-            builder.HasOne(r => r.Role)
+           /* builder.HasOne(r => r.Role)
                 .WithMany(u => u.Users)
-                .HasForeignKey(u => u.RoleId);
+                .HasForeignKey(u => u.RoleId);*/
 
         }
     }

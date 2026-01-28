@@ -16,7 +16,6 @@ namespace salian_api.Entities
         public DbSet<IpWhiteListEntity> IpWhiteLists { get; set; }
         public DbSet<InventoryEntity> Inventories { get; set; }
         public DbSet<InventoryFeatureEntity> InventoryFeatures { get; set; }
-        public DbSet<EquipmentFeatureEntity> EquipmentFeatures { get; set; }
         public DbSet<FeatureEntity> Features { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -30,7 +29,7 @@ namespace salian_api.Entities
             modelBuilder.ApplyConfiguration(new UserMapping());
             modelBuilder.ApplyConfiguration(new EquipmentMapping());
             modelBuilder.ApplyConfiguration(new FeatureMapping());
-            modelBuilder.ApplyConfiguration(new EquipmentFeatureMapping());
+            modelBuilder.ApplyConfiguration(new InventoryMapping());
             modelBuilder.ApplyConfiguration(new InventoryFeatureMapping());
 
             base.OnModelCreating(modelBuilder);

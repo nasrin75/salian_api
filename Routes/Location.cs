@@ -8,7 +8,7 @@ namespace salian_api.Routes
     {
         public static void MapLocationRoutes(this IEndpointRouteBuilder app,string tag)
         {
-            var route = app.MapGroup("/api/Location");
+            var route = app.MapGroup("/api/location");
 
             route.MapGet("/", async (ILocationService service) =>
             {

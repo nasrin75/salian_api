@@ -5,6 +5,7 @@ using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Routes;
 
+
 namespace salian_api.Services
 {
     public class EquipmentService(ApplicationDbContext _dbContex) : IEquipmentService
@@ -82,6 +83,21 @@ namespace salian_api.Services
             return new BaseResponse<EquipmentResponse>(Equipment);
         }
 
+        public async Task<BaseResponse<List<FeatureResponse>>> GetFeaturesByEquipmentID(long id)
+        {
+            var equipment = await _dbContex.Equipments.Include("Features").FirstOrDefaultAsync(x => x.Id == id);
+            if (equipment == null) return new BaseResponse<List<FeatureResponse>>(null, 400, "Equipment Not Found");
+
+           var response = equipment.Features.Select(f => new FeatureResponse
+            {
+                Id = f.Id,
+                Name = f.Name,
+
+            }).ToList();
+
+            return new BaseResponse<List<FeatureResponse>>(response);
+        }
+
         public async Task<BaseResponse<List<EquipmentResponse>>> Search(SearchEquipmentDto param)
         {
             var query = _dbContex.Equipments.AsQueryable();
@@ -120,5 +136,7 @@ namespace salian_api.Services
 
             return new BaseResponse<EquipmentResponse?>(response);
         }
+
+        
     }
 }

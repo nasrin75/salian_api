@@ -1,14 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using salian_api.Dtos.Equipment;
 using salian_api.Dtos.User;
 using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
+using salian_api.Response.User;
 
 
 namespace salian_api.Services
 {
-    public class UserService(ApplicationDbContext dbContext) : IUserService
+    public class UserService(ApplicationDbContext _dbContext) : IUserService
     {
         public async Task<BaseResponse<UserResponse>> Create(UserCreateDto dto)
         {
@@ -30,22 +32,30 @@ namespace salian_api.Services
                 Status = (StatusLists)dto.Status
             };
 
-            var newUser = dbContext.Users.Add(user).Entity;
-            await dbContext.SaveChangesAsync();
+            var newUser = _dbContext.Users.Add(user).Entity;
+            await _dbContext.SaveChangesAsync();
 
             // user send ips with , and can send Ips with range so first parse ips then create
-            var paresedIps = ParseIp(dto.IpWhiteLists,user.Id);
-
-            dbContext.IpWhiteLists.AddRangeAsync(paresedIps);
-            await dbContext.SaveChangesAsync();
-
-            // return response
-            List<IpWhiteListResponse> whiteLists = newUser.IpWhiteLists.Select(x => new IpWhiteListResponse
+            List<IpWhiteListResponse> whiteLists = [];
+            if (!string.IsNullOrEmpty(dto.IpWhiteLists))
             {
-                Id = x.Id,
-                Ip = x.Ip,
-                IpRange = x.IpRange,
-            }).ToList();
+                Console.WriteLine("data",dto.IpWhiteLists);
+                var paresedIps = ParseIp(dto.IpWhiteLists, user.Id);
+
+                _dbContext.IpWhiteLists.AddRangeAsync(paresedIps);
+
+                await _dbContext.SaveChangesAsync();
+                // return response
+                 whiteLists = newUser.IpWhiteLists.Select(x => new IpWhiteListResponse
+                {
+                    Id = x.Id,
+                    Ip = x.Ip,
+                    IpRange = x.IpRange,
+                }).ToList();
+            }
+
+
+           
 
            UserResponse response = new()
             {
@@ -64,55 +74,81 @@ namespace salian_api.Services
         }
 
 
-        public async Task<BaseResponse> Delete(long userID)
+        public async Task<BaseResponse> Delete(long id)
         {
-            UserEntity? user =  await dbContext.Users.FindAsync(userID);
+            UserEntity? user =  await _dbContext.Users.FindAsync(id);
             if (user == null) return new BaseResponse<UserResponse?>(null, 400, "User Not Found");
 
             user.DeletedAt = DateTime.UtcNow;
-            dbContext.Users.Update(user);
-            await dbContext.SaveChangesAsync();
+            _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
             return new BaseResponse();
         }
 
-        public async Task<BaseResponse<List<UserResponse>>> GetAllUsers()
+        public async Task<BaseResponse<List<UserListResponse>>> GetAllUsers()
         {
-            var users = await dbContext.Users
-                .AsNoTracking() 
+            List<UserEntity> users = await _dbContext.Users
+                 .Select(u => new UserEntity
+                 {
+                     Id = u.Id,
+                     Email = u.Email,
+                     Username = u.Username,
+                     Mobile = u.Mobile,
+                     Status = u.Status,
+                     Role = u.Role
+                 })
                 .ToListAsync();
 
              var userList = users
-                .Select(u => new UserResponse
+                .Select(u => new UserListResponse
                 {
                     Id = u.Id,
                     Email = u.Email,
                     Username = u.Username,
                     Mobile = u.Mobile,
-                    IsCheckIp = (bool)u.IsCheckIp,
-                    LoginTypes = u.LoginTypes.Select(x => x.ToString()).ToList(),
-                    Status = u.Status,
-                    RoleId = u.RoleId,
+                    Status = (int) u.Status == 1 ? "Active" : "Deactive",
+                    Role = u.Role.FaName != null ? u.Role.FaName : u.Role.EnName
                 });
+        
 
-            return new BaseResponse<List<UserResponse>>(new List<UserResponse>(userList));
+            return new BaseResponse<List<UserListResponse>>(new List<UserListResponse>(userList));
         }
 
         public async Task<BaseResponse<UserResponse?>> GetUserByID(long userID)
         {
-            UserEntity? user = await dbContext.Users.FindAsync(userID);
+            UserEntity? user = await _dbContext.Users
+                .Include(x =>x.IpWhiteLists)
+                .FirstOrDefaultAsync(x => x.Id ==userID);
 
             if (user == null) return new BaseResponse<UserResponse?>(null, 400, "User Not Found");
 
+            List<IpWhiteListResponse> ips = [];
+            if (user.IpWhiteLists != null)
+            {
+                ips = user.IpWhiteLists.Select(x => new IpWhiteListResponse
+                {
+                    Id = x.Id,
+                    Ip = x.Ip,
+                    IpRange = x.IpRange,
+                }).ToList();
+            }
             UserResponse response = new()
             {
                 Id = user.Id,
                 Username = user.Username,
+                Password = user.Password,
                 Email = user.Email,
                 Mobile = user.Mobile,
                 IsCheckIp = (bool)user.IsCheckIp,
                 LoginTypes = user.LoginTypes.Select(x=>x.ToString()).ToList(),
                 Status = user.Status,
                 RoleId = user.RoleId,
+                IpWhiteLists = user.IpWhiteLists.Select(x => new IpWhiteListResponse
+                {
+                    Id = x.Id,
+                    Ip = x.Ip,
+                    IpRange = x.IpRange,
+                }).ToList(),
             };
 
             return new BaseResponse<UserResponse?>(response);
@@ -122,7 +158,7 @@ namespace salian_api.Services
         public async Task<BaseResponse<UserResponse?>> Update(UserUpdateDto dto)
         {
             // Update User
-           UserEntity? user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == dto.Id);
+           UserEntity? user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == dto.Id);
             if (user == null) return new BaseResponse<UserResponse?>(null,400, "User Not Found");
 
             if (dto.Email != null) user.Email = dto.Email;
@@ -135,22 +171,22 @@ namespace salian_api.Services
                 .ToList();;
             if (dto.Status != null) user.Status = (StatusLists)dto.Status;
 
-            var newUser = dbContext.Users.Update(user);
-            await dbContext.SaveChangesAsync();
+            var newUser = _dbContext.Users.Update(user);
+            await _dbContext.SaveChangesAsync();
 
             // Update IpWhitList , check any of Ips change delete and if has new Ips add
             var parsedIps = ParseIp(dto.IpWhiteLists, dto.Id);
-            var existeIps = await dbContext.IpWhiteLists.Where(x => x.UserId == dto.Id).ToListAsync();
+            var existeIps = await _dbContext.IpWhiteLists.Where(x => x.UserId == dto.Id).ToListAsync();
             var removeIps = existeIps.Where(db => !parsedIps.Any(x => x.Ip == db.Ip && x.IpRange == db.IpRange))
                 .ToList();
   
             var newIps = parsedIps.Where(db => !existeIps.Any(x => x.Ip == db.Ip && x.IpRange == db.IpRange))
                 .ToList();
 
-            if (removeIps.Any()) dbContext.IpWhiteLists.RemoveRange(removeIps);
-            if (newIps.Any())  dbContext.IpWhiteLists.AddRange(newIps);
+            if (removeIps.Any()) _dbContext.IpWhiteLists.RemoveRange(removeIps);
+            if (newIps.Any()) _dbContext.IpWhiteLists.AddRange(newIps);
 
-            await dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
 
             // response
             List<IpWhiteListResponse> whiteLists = user.IpWhiteLists.Select(x => new IpWhiteListResponse
@@ -176,6 +212,25 @@ namespace salian_api.Services
             return new BaseResponse<UserResponse>(response);
         }
 
+        public async Task<BaseResponse<List<UserListResponse>>> Search(UserSearchDto param)
+        {
+            var query = _dbContext.Users.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(param.Username)) query = query.Where(x => x.Username.Contains(param.Username));
+            if (!string.IsNullOrWhiteSpace(param.Email)) query = query.Where(x => x.Email.Contains(param.Email));
+            if (!string.IsNullOrWhiteSpace(param.Mobile)) query = query.Where(x => x.Mobile.Contains(param.Mobile));
+
+            List<UserListResponse> users = await query.Select(u => new UserListResponse
+            {
+                Id = u.Id,
+                Email = u.Email,
+                Username = u.Username,
+                Mobile = u.Mobile,
+                Status = (int)u.Status == 1 ? "Active" : "Deactive",
+                Role = u.Role.FaName != null ? u.Role.FaName : u.Role.EnName
+            }).ToListAsync();
+
+            return new BaseResponse<List<UserListResponse>>(users);
+        }
 
         private static List<IpWhiteListEntity> ParseIp(string ipWhiteLists, long userID)
         {

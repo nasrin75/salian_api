@@ -5,9 +5,9 @@ namespace salian_api.Interface
 {
     public interface IRoleService
     {
-        Task<BaseResponse<RoleResponse>> Create(RoleCreateDto user);
-        Task<BaseResponse<RoleResponse?>> Update(RoleUpdateDto user);
-        Task<BaseResponse<RoleResponse?>> GetRoleByID(long userID);
+        Task<BaseResponse<RoleResponse>> Create(RoleCreateDto role);
+        Task<BaseResponse<RoleResponse?>> Update(RoleUpdateDto role);
+        Task<BaseResponse<RoleResponse?>> GetRoleByID(long roleID);
         Task<BaseResponse<List<RoleResponse>>> GetAllRoles();
         Task<BaseResponse> Delete(long id);
     }

@@ -35,8 +35,14 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 builder.Services.AddScoped<IActionTypeService, ActionTypeService>();
 builder.Services.AddScoped<IFeatureService, FeatureService>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
 
-
+//Add CORS
+builder.Services.AddCors(
+    options => options.AddPolicy("MyLocalhost", builder =>
+    builder.AllowAnyHeader()
+    .AllowAnyMethod()
+    .WithOrigins("http://localhost:3000", "http://localhost:5005")));
 
 var app = builder.Build();
 
@@ -60,5 +66,8 @@ app.MapEmployeeRoutes("Employee");
 app.MapEquipmentRoutes("Equipment");
 app.MapActionTypeRoutes("ActionType");
 app.MapFeatureRoutes("Feature");
+app.MapInventoryRoutes("Inventory");
+
+app.UseCors("MyLocalhost");
 
 app.Run();

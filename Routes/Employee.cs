@@ -8,7 +8,7 @@ namespace salian_api.Routes
     {
         public static void MapEmployeeRoutes(this IEndpointRouteBuilder app,string tag)
         {
-            var route = app.MapGroup("/api/Employee");
+            var route = app.MapGroup("/api/employee");
 
             route.MapGet("/", async (IEmployeeService service) =>
             {

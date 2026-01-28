@@ -8,7 +8,7 @@ namespace salian_api.Routes
     {
         public static void MapEquipmentRoutes(this IEndpointRouteBuilder app,string tag)
         {
-           var route = app.MapGroup("/api/Equipment");
+           var route = app.MapGroup("/api/equipment");
 
             route.MapGet("/", async (IEquipmentService service) =>
             {
@@ -45,6 +45,12 @@ namespace salian_api.Routes
                 BaseResponse result = await service.Delete(id);
                 return result.ToResult();
 
+            }).WithTags(tag);
+
+            route.MapGet("/features/{Id:long}", async (IEquipmentService service,long id) =>
+            {
+                var result = await service.GetFeaturesByEquipmentID(id);
+                return result.ToResult();
             }).WithTags(tag);
         }
     }

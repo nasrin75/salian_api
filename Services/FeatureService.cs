@@ -12,10 +12,19 @@ namespace salian_api.Services
         {
             try
             {
+                List<EquipmentEntity> equipmentList = [];
+                foreach (long equipmentID in param.EquipmentIds)
+                {
+                    EquipmentEntity? equipment = await _dbContex.Equipments.FindAsync(equipmentID);
+                    equipmentList.Add(equipment);
+                }
+
                 FeatureEntity feature = new FeatureEntity
                 {
                     Name = param.Name,
+                    Equipments = equipmentList
                 };
+
 
                 var newFeature = _dbContex.Features.Add(feature).Entity;
                 await _dbContex.SaveChangesAsync();
@@ -24,6 +33,13 @@ namespace salian_api.Services
                 {
                     Id = newFeature.Id,
                     Name = newFeature.Name,
+                    Equipments = newFeature.Equipments.Select(x => new EquipmentResponse
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Type = x.Type,
+
+                    }).ToList()
                 };
 
                 return new BaseResponse<FeatureResponse>(response);
@@ -56,6 +72,13 @@ namespace salian_api.Services
                 {
                     Id = l.Id,
                     Name = l.Name,
+                    Equipments = l.Equipments.Select(x => new EquipmentResponse
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Type = x.Type,
+
+                    }).ToList()
                 })
                 .ToListAsync();
 
@@ -69,6 +92,13 @@ namespace salian_api.Services
                 {
                     Id = item.Id,
                     Name = item.Name,
+                    Equipments = item.Equipments.Select(x => new EquipmentResponse
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Type = x.Type,
+
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync(l => l.Id == Id);
 
@@ -86,6 +116,13 @@ namespace salian_api.Services
             {
                 Id = l.Id,
                 Name = l.Name,
+                Equipments = l.Equipments.Select(x => new EquipmentResponse
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Type = x.Type,
+
+                }).ToList()
             }).ToListAsync();
 
             return new BaseResponse<List<FeatureResponse>>(features);
@@ -93,12 +130,15 @@ namespace salian_api.Services
 
         public async Task<BaseResponse<FeatureResponse?>> Update(FeatureUpdateDto param)
         {
+           
             var feature = await _dbContex.Features
                 .FirstOrDefaultAsync(l => l.Id == param.Id);
 
             if (feature == null) return new BaseResponse<FeatureResponse?>(null, 400, "Feature Not Found");
 
             if (param.Name != null && param.Name != feature.Name) feature.Name = param.Name;
+
+            //TODO:: update Equipmentfeature
 
             _dbContex.Update(feature);
             await _dbContex.SaveChangesAsync();
@@ -107,6 +147,13 @@ namespace salian_api.Services
             {
                 Id = feature.Id,
                 Name = feature.Name,
+                Equipments = feature.Equipments.Select(x => new EquipmentResponse
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Type = x.Type,
+
+                }).ToList()
 
             };
 

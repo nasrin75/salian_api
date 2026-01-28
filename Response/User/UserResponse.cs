@@ -1,11 +1,12 @@
 ﻿using salian_api.Entities;
 
-namespace salian_api.Response
+namespace salian_api.Response.User
 {
     public class UserResponse
     {
         public long Id { get; set; }
         public string Username { get; set; }
+        public string Password { get; set; }
         public string Email { get; set; }
         public string Mobile { get; set; }
         public bool IsCheckIp { get; set; }
@@ -14,7 +15,10 @@ namespace salian_api.Response
         public StatusLists? Status { get; set; }
 
         public long RoleId { get; set; }
+        public string? Role { get; set; }
 
         public List<IpWhiteListResponse>? IpWhiteLists { get; set; }
+
+
     }
 }

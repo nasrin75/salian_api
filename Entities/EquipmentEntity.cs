@@ -13,6 +13,7 @@ namespace salian_api.Entities
         public TypeMap Type { get; set; }
 
         public DateTime? DeletedAt { get; set; }
+        public List<FeatureEntity> Features { get; set; }
     }
 
     public enum TypeMap
