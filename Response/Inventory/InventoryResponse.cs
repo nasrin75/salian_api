@@ -9,7 +9,7 @@ namespace salian_api.Response.Inventory
         public long ItParentNumber { get; set; }
         public long UserId { get; set; }
         public long EmployeeId { get; set; }
-        public long LocationID { get; set; }
+        public long LocationId { get; set; }
         public long EquipmentId { get; set; }
         public StatusMap Status { get; set; }
         public string? PropertyNumber { get; set; }

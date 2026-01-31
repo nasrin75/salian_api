@@ -18,7 +18,7 @@ namespace salian_api.Entities
         public EmployeeEntity Employee { get; set; }
 
 
-        public long LocationID { get; set; }
+        public long LocationId { get; set; }
         public LocationEntity Location { get; set; }
 
         public EquipmentEntity Equipment { get; set; }

@@ -16,19 +16,21 @@ namespace salian_api.Services
                 {
                     Name = param.Name,
                     Email = param.Email,
-                    LocationID = param.LocationID,
+                    LocationId = param.LocationId,
                 };
 
                 var newEmployee = _dbContex.Employees.Add(employee).Entity;
                 await _dbContex.SaveChangesAsync();
 
-                EmployeeResponse response = new EmployeeResponse
-                {
-                    Id = newEmployee.Id,
-                    Name = newEmployee.Name,
-                    Email = newEmployee.Email,
-                    Location = newEmployee.Location.Abbreviation
-                };
+                var response = await _dbContex.Employees
+                    .Where(x=>x.Id == newEmployee.Id)
+                    .Select(u=> new EmployeeResponse
+                    {
+                        Id = u.Id,
+                        Name = u.Name,
+                        Email = u.Email,
+                        Location = u.Location.Abbreviation
+                    }).FirstOrDefaultAsync();
 
                 return new BaseResponse<EmployeeResponse>(response);
             }catch (Exception ex)
@@ -61,7 +63,7 @@ namespace salian_api.Services
                     Id = l.Id,
                     Name = l.Name,
                     Email = l.Email,
-                    LocationID = l.LocationID,
+                    LocationId = l.LocationId,
                     Location = l.Location.Abbreviation
                 })
                 .ToListAsync();
@@ -77,7 +79,7 @@ namespace salian_api.Services
                     Id = item.Id,
                     Name = item.Name,
                     Email = item.Email,
-                    LocationID = item.LocationID,
+                    LocationId = item.LocationId,
                     Location = item.Location.Abbreviation
                 })
                 .FirstOrDefaultAsync(l => l.Id == EmployeeID);
@@ -92,14 +94,14 @@ namespace salian_api.Services
             var query = _dbContex.Employees.AsQueryable();
             if (!string.IsNullOrWhiteSpace(param.Name)) query = query.Where(x => x.Name.Contains(param.Name));
             if (!string.IsNullOrWhiteSpace(param.Email)) query = query.Where(x => x.Email.Contains(param.Email));
-            if (param.LocationID != null) query = query.Where(l => l.LocationID == param.LocationID);
+            if (param.LocationId != null) query = query.Where(l => l.LocationId == param.LocationId);
 
             List<EmployeeResponse> employees = await query.Select(l => new EmployeeResponse
             {
                 Id = l.Id,
                 Name = l.Name,
                 Email = l.Email,
-                LocationID = l.LocationID,
+                LocationId = l.LocationId,
                 Location = l.Location.Abbreviation
             }).ToListAsync();
 
@@ -116,19 +118,21 @@ namespace salian_api.Services
 
             if (param.Name != null && param.Name != employee.Name) employee.Name = param.Name;
             if (param.Email != null && param.Email != employee.Email) employee.Email = param.Email;
-            if (param.LocationID != null && param.LocationID != employee.LocationID) employee.LocationID = param.LocationID.Value;
+            if (param.LocationId != null && param.LocationId != employee.LocationId) employee.LocationId = param.LocationId.Value;
 
             _dbContex.Update(employee);
             await _dbContex.SaveChangesAsync();
 
-            var response = new EmployeeResponse
-            {
-                Id = employee.Id,
-                Name = employee.Name,
-                Email = employee.Email,
-                LocationID = employee.LocationID,
-                Location = employee.Location.Abbreviation
-            };
+            var response = await _dbContex.Employees
+                    .Where(x => x.Id == param.Id)
+                    .Select(u => new EmployeeResponse
+                    {
+                        Id = u.Id,
+                        Name = u.Name,
+                        Email = u.Email,
+                        Location = u.Location.Abbreviation
+                    }).FirstOrDefaultAsync();
+
 
             return new BaseResponse<EmployeeResponse?>(response);
         }

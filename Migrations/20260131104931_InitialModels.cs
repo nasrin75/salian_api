@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace salian_api.Migrations
 {
     /// <inheritdoc />
-    public partial class Initialtables : Migration
+    public partial class InitialModels : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,26 +19,12 @@ namespace salian_api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FaName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     EnName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    IsShow = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+                    IsShow = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ActionTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EquipmentFeatures",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FeatureId = table.Column<long>(type: "bigint", nullable: false),
-                    EquipmentId = table.Column<long>(type: "bigint", nullable: false),
-                    IsShow = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EquipmentFeatures", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,7 +34,8 @@ namespace salian_api.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false)
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -61,48 +48,12 @@ namespace salian_api.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Features", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Inventories",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ItNumber = table.Column<long>(type: "bigint", nullable: false),
-                    ItParentNumber = table.Column<long>(type: "bigint", nullable: false),
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    EmployeeId = table.Column<long>(type: "bigint", nullable: false),
-                    LocationID = table.Column<int>(type: "int", nullable: false),
-                    EquipmentId = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    PropertyNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SerialNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    InvoiceNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    InvoiceImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Details = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BrandName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ModelName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RamType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Capacity = table.Column<int>(type: "int", nullable: false),
-                    Size = table.Column<int>(type: "int", nullable: false),
-                    Bus = table.Column<int>(type: "int", nullable: false),
-                    Clock = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Core = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ExpireWarrantyDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    DeliveryDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Inventories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -165,6 +116,30 @@ namespace salian_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EquipmentEntityFeatureEntity",
+                columns: table => new
+                {
+                    EquipmentsId = table.Column<long>(type: "bigint", nullable: false),
+                    FeaturesId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EquipmentEntityFeatureEntity", x => new { x.EquipmentsId, x.FeaturesId });
+                    table.ForeignKey(
+                        name: "FK_EquipmentEntityFeatureEntity_Equipments_EquipmentsId",
+                        column: x => x.EquipmentsId,
+                        principalTable: "Equipments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EquipmentEntityFeatureEntity_Features_FeaturesId",
+                        column: x => x.FeaturesId,
+                        principalTable: "Features",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
@@ -172,15 +147,15 @@ namespace salian_api.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    LocationID = table.Column<long>(type: "bigint", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LocationId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employees", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Employees_Locations_LocationID",
-                        column: x => x.LocationID,
+                        name: "FK_Employees_Locations_LocationId",
+                        column: x => x.LocationId,
                         principalTable: "Locations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -214,6 +189,63 @@ namespace salian_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Inventories",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ItNumber = table.Column<long>(type: "bigint", nullable: false),
+                    ItParentNumber = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    EmployeeId = table.Column<long>(type: "bigint", nullable: false),
+                    LocationId = table.Column<long>(type: "bigint", nullable: false),
+                    EquipmentId = table.Column<long>(type: "bigint", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    PropertyNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    SerialNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    InvoiceNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    InvoiceImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    BrandName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    ModelName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Capacity = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Size = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExpireWarrantyDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    DeliveryDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inventories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Inventories_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Inventories_Equipments_EquipmentId",
+                        column: x => x.EquipmentId,
+                        principalTable: "Equipments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Inventories_Locations_LocationId",
+                        column: x => x.LocationId,
+                        principalTable: "Locations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Inventories_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "IpWhiteLists",
                 columns: table => new
                 {
@@ -235,9 +267,34 @@ namespace salian_api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Employees_LocationID",
+                name: "IX_Employees_LocationId",
                 table: "Employees",
-                column: "LocationID");
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EquipmentEntityFeatureEntity_FeaturesId",
+                table: "EquipmentEntityFeatureEntity",
+                column: "FeaturesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventories_EmployeeId",
+                table: "Inventories",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventories_EquipmentId",
+                table: "Inventories",
+                column: "EquipmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventories_LocationId",
+                table: "Inventories",
+                column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inventories_UserId",
+                table: "Inventories",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_IpWhiteLists_UserId",
@@ -257,16 +314,7 @@ namespace salian_api.Migrations
                 name: "ActionTypes");
 
             migrationBuilder.DropTable(
-                name: "Employees");
-
-            migrationBuilder.DropTable(
-                name: "EquipmentFeatures");
-
-            migrationBuilder.DropTable(
-                name: "Equipments");
-
-            migrationBuilder.DropTable(
-                name: "Features");
+                name: "EquipmentEntityFeatureEntity");
 
             migrationBuilder.DropTable(
                 name: "Inventories");
@@ -281,10 +329,19 @@ namespace salian_api.Migrations
                 name: "Permissions");
 
             migrationBuilder.DropTable(
-                name: "Locations");
+                name: "Features");
+
+            migrationBuilder.DropTable(
+                name: "Employees");
+
+            migrationBuilder.DropTable(
+                name: "Equipments");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Locations");
 
             migrationBuilder.DropTable(
                 name: "Roles");

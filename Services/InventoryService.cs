@@ -18,7 +18,7 @@ namespace salian_api.Services
                 UserId = param.UserId, // TODO:get login user
                 EmployeeId = param.EmployeeId,
                 EquipmentId = param.EquipmentId,
-                LocationID = param.LocationID,
+               LocationId = param.LocationId,
                 Status = param.Status,
                 PropertyNumber = param.PropertyNumber,
                 SerialNumber = param.SerialNumber,
@@ -44,7 +44,7 @@ namespace salian_api.Services
                 UserId = inventory.UserId, // TODO:get login user
                 EmployeeId = inventory.EmployeeId,
                 EquipmentId = inventory.EquipmentId,
-                LocationID = inventory.LocationID,
+                LocationId = inventory.LocationId,
                 Status = inventory.Status,
                 PropertyNumber = inventory.PropertyNumber,
                 SerialNumber = inventory.SerialNumber,
@@ -119,7 +119,7 @@ namespace salian_api.Services
                 UserId = inventory.UserId,
                 EmployeeId = inventory.EmployeeId,
                 EquipmentId = inventory.EquipmentId,
-                LocationID = inventory.LocationID,
+                LocationId = inventory.LocationId,
                 Status = inventory.Status,
                 PropertyNumber = inventory.PropertyNumber,
                 SerialNumber = inventory.SerialNumber,
@@ -198,7 +198,7 @@ namespace salian_api.Services
             if (param.UserId != null && param.UserId != inventory.UserId) inventory.UserId = param.UserId.Value;
             if (param.EmployeeId != null && param.EmployeeId != inventory.EmployeeId) inventory.EmployeeId = param.EmployeeId.Value;
             if (param.EquipmentId != null && param.EquipmentId != inventory.EquipmentId) inventory.EquipmentId = param.EquipmentId.Value;
-            if (param.LocationID != null && param.LocationID != inventory.LocationID) inventory.LocationID = param.LocationID.Value;
+            if (param.LocationId != null && param.LocationId != inventory.LocationId) inventory.LocationId = param.LocationId.Value;
 
             if (param.ItNumber != null && param.ItNumber != inventory.ItNumber) inventory.ItNumber = param.ItNumber;
             if (param.ItParentNumber != null && param.ItParentNumber != inventory.ItParentNumber) inventory.ItParentNumber = param.ItParentNumber.Value;
@@ -227,7 +227,7 @@ namespace salian_api.Services
                 UserId = inventory.UserId,
                 EmployeeId = inventory.EmployeeId,
                 EquipmentId = inventory.EquipmentId,
-                LocationID = inventory.LocationID,
+                LocationId = inventory.LocationId,
                 Status = inventory.Status,
                 PropertyNumber = inventory.PropertyNumber,
                 SerialNumber = inventory.SerialNumber,

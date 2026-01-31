@@ -82,7 +82,7 @@ namespace salian_api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<long>("LocationID")
+                    b.Property<long>("LocationId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Name")
@@ -92,7 +92,7 @@ namespace salian_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LocationID");
+                    b.HasIndex("LocationId");
 
                     b.ToTable("Employees", (string)null);
                 });
@@ -193,7 +193,7 @@ namespace salian_api.Migrations
                     b.Property<long>("ItParentNumber")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("LocationID")
+                    b.Property<long>("LocationId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("ModelName")
@@ -221,6 +221,14 @@ namespace salian_api.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("EquipmentId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Inventories", (string)null);
                 });
@@ -421,11 +429,46 @@ namespace salian_api.Migrations
                 {
                     b.HasOne("salian_api.Entities.LocationEntity", "Location")
                         .WithMany()
-                        .HasForeignKey("LocationID")
+                        .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("salian_api.Entities.InventoryEntity", b =>
+                {
+                    b.HasOne("salian_api.Entities.EmployeeEntity", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("salian_api.Entities.EquipmentEntity", "Equipment")
+                        .WithMany()
+                        .HasForeignKey("EquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("salian_api.Entities.LocationEntity", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("salian_api.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Equipment");
+
+                    b.Navigation("Location");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("salian_api.Entities.IpWhiteListEntity", b =>

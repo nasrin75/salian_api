@@ -20,7 +20,7 @@ namespace salian_api.Mapping
             builder.Property("EquipmentId")
                     .IsRequired();
 
-            builder.Property("LocationID")
+            builder.Property("LocationId")
                     .IsRequired();
 
             builder.Property("ItNumber")

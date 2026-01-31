@@ -8,6 +8,6 @@ namespace salian_api.Dtos.Employee
 
         [EmailAddress]
         public string? Email { get; set; }
-        public long? LocationID { get; set; }
+        public long? LocationId { get; set; }
     }
 }

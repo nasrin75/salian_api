@@ -7,7 +7,7 @@ namespace salian_api.Response
         public long Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public long LocationID { get; set; }
+        public long LocationId { get; set; }
         public string? Location {get; set;}
     }
 }

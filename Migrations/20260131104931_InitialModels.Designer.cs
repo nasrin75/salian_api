@@ -12,8 +12,8 @@ using salian_api.Entities;
 namespace salian_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260107102215_AddDeletedAtInActionType")]
-    partial class AddDeletedAtInActionType
+    [Migration("20260131104931_InitialModels")]
+    partial class InitialModels
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace salian_api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("EquipmentEntityFeatureEntity", b =>
+                {
+                    b.Property<long>("EquipmentsId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("FeaturesId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("EquipmentsId", "FeaturesId");
+
+                    b.HasIndex("FeaturesId");
+
+                    b.ToTable("EquipmentEntityFeatureEntity");
+                });
 
             modelBuilder.Entity("salian_api.Entities.ActionTypeEntity", b =>
                 {
@@ -70,7 +85,7 @@ namespace salian_api.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<long>("LocationID")
+                    b.Property<long>("LocationId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Name")
@@ -80,7 +95,7 @@ namespace salian_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LocationID");
+                    b.HasIndex("LocationId");
 
                     b.ToTable("Employees", (string)null);
                 });
@@ -109,30 +124,6 @@ namespace salian_api.Migrations
                     b.ToTable("Equipments", (string)null);
                 });
 
-            modelBuilder.Entity("salian_api.Entities.EquipmentFeatureEntity", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("EquipmentId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("FeatureId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsShow")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EquipmentFeatures", (string)null);
-                });
-
             modelBuilder.Entity("salian_api.Entities.FeatureEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -140,6 +131,9 @@ namespace salian_api.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -160,53 +154,41 @@ namespace salian_api.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("BrandName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Bus")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Capacity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Clock")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Core")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Capacity")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateOnly>("DeliveryDate")
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly?>("DeliveryDate")
                         .HasColumnType("date");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Details")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<long>("EmployeeId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("EquipmentId")
-                        .HasColumnType("int");
+                    b.Property<long>("EquipmentId")
+                        .HasColumnType("bigint");
 
-                    b.Property<DateOnly>("ExpireWarrantyDate")
+                    b.Property<DateOnly?>("ExpireWarrantyDate")
                         .HasColumnType("date");
 
                     b.Property<string>("InvoiceImage")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("InvoiceNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<long>("ItNumber")
                         .HasColumnType("bigint");
@@ -214,27 +196,23 @@ namespace salian_api.Migrations
                     b.Property<long>("ItParentNumber")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("LocationID")
-                        .HasColumnType("int");
+                    b.Property<long>("LocationId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("ModelName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("PropertyNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RamType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("SerialNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Size")
-                        .HasColumnType("int");
+                    b.Property<string>("Size")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -247,7 +225,15 @@ namespace salian_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Inventories");
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("EquipmentId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Inventories", (string)null);
                 });
 
             modelBuilder.Entity("salian_api.Entities.InventoryFeatureEntity", b =>
@@ -427,15 +413,65 @@ namespace salian_api.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("EquipmentEntityFeatureEntity", b =>
+                {
+                    b.HasOne("salian_api.Entities.EquipmentEntity", null)
+                        .WithMany()
+                        .HasForeignKey("EquipmentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("salian_api.Entities.FeatureEntity", null)
+                        .WithMany()
+                        .HasForeignKey("FeaturesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("salian_api.Entities.EmployeeEntity", b =>
                 {
                     b.HasOne("salian_api.Entities.LocationEntity", "Location")
                         .WithMany()
-                        .HasForeignKey("LocationID")
+                        .HasForeignKey("LocationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("salian_api.Entities.InventoryEntity", b =>
+                {
+                    b.HasOne("salian_api.Entities.EmployeeEntity", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("salian_api.Entities.EquipmentEntity", "Equipment")
+                        .WithMany()
+                        .HasForeignKey("EquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("salian_api.Entities.LocationEntity", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("salian_api.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Equipment");
+
+                    b.Navigation("Location");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("salian_api.Entities.IpWhiteListEntity", b =>

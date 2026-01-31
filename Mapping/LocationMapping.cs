@@ -29,7 +29,7 @@ namespace salian_api.Mapping
 
             /* builder.HasOne(x => x.Employee)
                  .WithOne(x => x.Location)
-                 .HasForeignKey<EmployeeEntity>(x=>x.LocationID);*/
+                 .HasForeignKey<EmployeeEntity>(x=>x.LocationId);*/
 
         }
     }
