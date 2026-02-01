@@ -4,6 +4,8 @@ using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Routes;
 using salian_api.Services;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,12 +23,19 @@ builder.Services.AddProblemDetails();
 
 
 // For convert send and recive request as Json format
-builder.Services.AddControllers()
+/*builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.PropertyNamingPolicy = null;
-    });
+        //options.JsonSerializerOptions.PropertyNamingPolicy = null;
+        options.JsonSerializerOptions.Converters.Add(
+            new JsonStringEnumConverter());
+            //new System.Text.Json.Serialization.JsonStringEnumConverter());
+    });*/
 
+builder.Services.ConfigureHttpJsonOptions(option =>
+{
+    option.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+});
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -55,7 +64,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 
 
 // add routes
