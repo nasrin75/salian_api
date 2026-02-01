@@ -3,6 +3,7 @@ using salian_api.Dtos.Feature;
 using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
+using salian_api.Response.Equipment;
 
 namespace salian_api.Services
 {

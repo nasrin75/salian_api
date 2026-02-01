@@ -3,6 +3,7 @@ using salian_api.Dtos.Equipment;
 using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
+using salian_api.Response.Equipment;
 using salian_api.Routes;
 
 
@@ -52,19 +53,19 @@ namespace salian_api.Services
             return new BaseResponse<EquipmentResponse?>(null, 200, "Equipment Successfully Is Deleted");
         }
 
-        public async Task<BaseResponse<List<EquipmentResponse>>> GetAll()
+        public async Task<BaseResponse<List<EquipmentListResponse>>> GetAll()
         {
-            List<EquipmentResponse> Equipments = await _dbContex.Equipments
+            List<EquipmentListResponse> Equipments = await _dbContex.Equipments
                 .AsNoTracking()
-                .Select(e => new EquipmentResponse
+                .Select(e => new EquipmentListResponse
                 {
                     Id = e.Id,
                     Name = e.Name,
-                    Type = e.Type,
+                    Type = e.Type
                 })
                 .ToListAsync();
 
-            return new BaseResponse<List<EquipmentResponse>>(Equipments);
+            return new BaseResponse<List<EquipmentListResponse>>(Equipments);
         }
 
         public async Task<BaseResponse<EquipmentResponse?>> GetByID(long EquipmentID)

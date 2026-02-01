@@ -1,6 +1,7 @@
 ﻿using salian_api.Dtos.Equipment;
 using salian_api.Interface;
 using salian_api.Response;
+using salian_api.Response.Equipment;
 
 namespace salian_api.Routes
 {
@@ -12,7 +13,7 @@ namespace salian_api.Routes
 
             route.MapGet("/", async (IEquipmentService service) =>
             {
-                BaseResponse<List<EquipmentResponse>> result = await service.GetAll();
+                BaseResponse<List<EquipmentListResponse>> result = await service.GetAll();
                 return result.ToResult();
             }).WithTags(tag);
 

@@ -1,5 +1,6 @@
 ﻿using salian_api.Dtos.Equipment;
 using salian_api.Response;
+using salian_api.Response.Equipment;
 
 namespace salian_api.Interface
 {
@@ -8,7 +9,7 @@ namespace salian_api.Interface
         Task<BaseResponse<EquipmentResponse>> Create(EquipmentCreateDto param);
         Task<BaseResponse<EquipmentResponse?>> Update(EquipmentUpdateDto param);
         Task<BaseResponse<EquipmentResponse?>> GetByID(long EquipmentID);
-        Task<BaseResponse<List<EquipmentResponse>>> GetAll();
+        Task<BaseResponse<List<EquipmentListResponse>>> GetAll();
         Task<BaseResponse<List<EquipmentResponse>>> Search(SearchEquipmentDto param);
         Task<BaseResponse<List<FeatureResponse>>> GetFeaturesByEquipmentID(long id);
 
