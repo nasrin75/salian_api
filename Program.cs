@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using salian_api.Entities;
 using salian_api.Interface;
+using salian_api.Response;
 using salian_api.Routes;
 using salian_api.Services;
 using System.Text.Json;
@@ -45,6 +46,8 @@ builder.Services.AddScoped<IEquipmentService, EquipmentService>();
 builder.Services.AddScoped<IActionTypeService, ActionTypeService>();
 builder.Services.AddScoped<IFeatureService, FeatureService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 //Add CORS
 builder.Services.AddCors(
@@ -74,8 +77,10 @@ app.MapLocationRoutes("Location");
 app.MapEmployeeRoutes("Employee");
 app.MapEquipmentRoutes("Equipment");
 app.MapActionTypeRoutes("ActionType");
+app.MapPermissionRoutes("Permission");
 app.MapFeatureRoutes("Feature");
 app.MapInventoryRoutes("Inventory");
+app.MapProfileRoutes("Profile");
 
 app.UseCors("MyLocalhost");
 
