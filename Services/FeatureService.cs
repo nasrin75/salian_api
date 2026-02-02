@@ -4,6 +4,7 @@ using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Response.Equipment;
+using salian_api.Response.Feature;
 
 namespace salian_api.Services
 {
@@ -65,25 +66,28 @@ namespace salian_api.Services
             return new BaseResponse<FeatureResponse?>(null, 200, "Feature Successfully Is Deleted");
         }
 
-        public async Task<BaseResponse<List<FeatureResponse>>> GetAll()
+        public async Task<BaseResponse<List<FeatureListResponse>>> GetAll()
         {
-            List<FeatureResponse> features = await _dbContex.Features
+           List<FeatureListResponse> features = await _dbContex.Features
                 .AsNoTracking()
-                .Select(l => new FeatureResponse
+                .OrderByDescending(x => x.Id)
+                .Select(l => new FeatureListResponse
                 {
                     Id = l.Id,
                     Name = l.Name,
-                    Equipments = l.Equipments.Select(x => new EquipmentResponse
+                    Equipments = string.Join(" - ", l.Equipments.Select(x => x.Name)),
+                   /* Equipments = l.Equipments.Select(x => new EquipmentResponse
                     {
                         Id = x.Id,
                         Name = x.Name,
                         Type = x.Type,
 
-                    }).ToList()
+                    })
+                    .ToList()*/
                 })
                 .ToListAsync();
 
-            return new BaseResponse<List<FeatureResponse>>(features);
+            return new BaseResponse<List<FeatureListResponse>>(features);
         }
 
         public async Task<BaseResponse<FeatureResponse?>> GetByID(long Id)

@@ -1,6 +1,7 @@
 ﻿using salian_api.Dtos.Feature;
 using salian_api.Interface;
 using salian_api.Response;
+using salian_api.Response.Feature;
 
 namespace salian_api.Routes
 {
@@ -12,7 +13,7 @@ namespace salian_api.Routes
 
             route.MapGet("/", async (IFeatureService service) =>
             {
-                BaseResponse<List<FeatureResponse>> result = await service.GetAll();
+                BaseResponse<List<FeatureListResponse>> result = await service.GetAll();
                 return result.ToResult();
             }).WithTags(tag);
 

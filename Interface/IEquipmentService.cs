@@ -1,6 +1,7 @@
 ﻿using salian_api.Dtos.Equipment;
 using salian_api.Response;
 using salian_api.Response.Equipment;
+using salian_api.Response.Feature;
 
 namespace salian_api.Interface
 {
