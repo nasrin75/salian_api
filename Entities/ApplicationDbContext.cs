@@ -31,6 +31,7 @@ namespace salian_api.Entities
             modelBuilder.ApplyConfiguration(new FeatureMapping());
             modelBuilder.ApplyConfiguration(new InventoryMapping());
             modelBuilder.ApplyConfiguration(new InventoryFeatureMapping());
+            modelBuilder.ApplyConfiguration(new PermissionMapping());
 
             base.OnModelCreating(modelBuilder);
         }
