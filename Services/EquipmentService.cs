@@ -4,6 +4,7 @@ using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Response.Equipment;
+using salian_api.Response.Feature;
 using salian_api.Routes;
 
 
@@ -57,6 +58,7 @@ namespace salian_api.Services
         {
             List<EquipmentListResponse> Equipments = await _dbContex.Equipments
                 .AsNoTracking()
+                .OrderByDescending(x => x.Id)
                 .Select(e => new EquipmentListResponse
                 {
                     Id = e.Id,

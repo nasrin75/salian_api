@@ -58,6 +58,7 @@ namespace salian_api.Services
         {
             List<EmployeeResponse> employees = await _dbContex.Employees
                 .AsNoTracking()
+                .OrderByDescending(x => x.Id)
                 .Select(l => new EmployeeResponse
                 {
                     Id = l.Id,

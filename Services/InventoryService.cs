@@ -79,6 +79,8 @@ namespace salian_api.Services
         public async Task<BaseResponse<List<InventoryListResponse>>> GetAll()
         {
             List<InventoryListResponse> inventories = await _dbContex.Inventories
+                .AsNoTracking()
+                .OrderByDescending(x => x.Id)
                 .Select(param => new InventoryListResponse
                 {
                     Id = param.Id,

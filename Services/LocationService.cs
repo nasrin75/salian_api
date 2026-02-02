@@ -3,6 +3,7 @@ using salian_api.Dtos.Location;
 using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace salian_api.Services
 {
@@ -45,19 +46,38 @@ namespace salian_api.Services
             return new BaseResponse<LocationResponse?>(null, 200, "Location Successfully Is Deleted");
         }
 
-        public async Task<BaseResponse<List<LocationResponse>>> GetAll()
+        public async Task<BaseResponse<List<LocationResponse>>> GetAll(string status)
         {
-           List<LocationResponse> locations = await _dbContex.Locations
-                .AsNoTracking()
-                .Select(l => new LocationResponse
-                {
-                    Id = l.Id,
-                    Title = l.Title,
-                    Abbreviation= l.Abbreviation,
-                    IsShow = l.IsShow,
-                })
-                .ToListAsync();
+            var query = _dbContex.Locations
+                .AsQueryable();
 
+            Console.WriteLine("upppp ::: "+ status);
+            if (!string.IsNullOrEmpty(status) && status != "ALL")
+            {
+                Console.WriteLine("inside ::: " + status);
+                query.Where(x => x.IsShow != true);
+            }
+
+            /*       List<LocationResponse> locations = await _dbContex.Locations
+                       .Where(x => x.IsShow == isShow)
+                        .OrderByDescending(x => x.Id)
+                       .Select(l => new LocationResponse
+                   {
+                       Id = l.Id,
+                       Title = l.Title,
+                       Abbreviation = l.Abbreviation,
+                       IsShow = l.IsShow,
+                   })
+                       .ToListAsync();*/
+
+            List<LocationResponse> locations = await _dbContex.Locations.Select(l => new LocationResponse
+            {
+                Id = l.Id,
+                Title = l.Title,
+                Abbreviation = l.Abbreviation,
+                IsShow = l.IsShow,
+            })
+                .ToListAsync();
             return new BaseResponse<List<LocationResponse>>(locations);
         }
 

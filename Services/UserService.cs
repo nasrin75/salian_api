@@ -87,29 +87,19 @@ namespace salian_api.Services
 
         public async Task<BaseResponse<List<UserListResponse>>> GetAllUsers()
         {
-            List<UserEntity> users = await _dbContext.Users
-                 .Select(u => new UserEntity
+            List<UserListResponse> userList = await _dbContext.Users
+                .AsNoTracking()
+                .OrderByDescending(x => x.Id)
+                 .Select(u => new UserListResponse
                  {
                      Id = u.Id,
                      Email = u.Email,
                      Username = u.Username,
                      Mobile = u.Mobile,
-                     Status = u.Status,
-                     Role = u.Role
+                     Status = (int)u.Status == 1 ? "Active" : "Deactive",
+                     Role = u.Role.FaName != null ? u.Role.FaName : u.Role.EnName
                  })
                 .ToListAsync();
-
-             var userList = users
-                .Select(u => new UserListResponse
-                {
-                    Id = u.Id,
-                    Email = u.Email,
-                    Username = u.Username,
-                    Mobile = u.Mobile,
-                    Status = (int) u.Status == 1 ? "Active" : "Deactive",
-                    Role = u.Role.FaName != null ? u.Role.FaName : u.Role.EnName
-                });
-        
 
             return new BaseResponse<List<UserListResponse>>(new List<UserListResponse>(userList));
         }

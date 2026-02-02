@@ -43,6 +43,8 @@ namespace salian_api.Services
         public async Task<BaseResponse<List<RoleResponse>>> GetAllRoles()
         {
            List<RoleResponse> roles = await dbContext.Roles
+                .AsNoTracking()
+                .OrderByDescending(x => x.Id)
                 .Select(r => new RoleResponse
                 {
                     Id = r.Id,
