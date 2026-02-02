@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace salian_api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialModels : Migration
+    public partial class InitialTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -93,7 +93,8 @@ namespace salian_api.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -232,12 +233,6 @@ namespace salian_api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Inventories_Locations_LocationId",
-                        column: x => x.LocationId,
-                        principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_Inventories_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
@@ -285,11 +280,6 @@ namespace salian_api.Migrations
                 name: "IX_Inventories_EquipmentId",
                 table: "Inventories",
                 column: "EquipmentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Inventories_LocationId",
-                table: "Inventories",
-                column: "LocationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Inventories_UserId",

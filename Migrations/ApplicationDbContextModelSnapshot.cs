@@ -226,8 +226,6 @@ namespace salian_api.Migrations
 
                     b.HasIndex("EquipmentId");
 
-                    b.HasIndex("LocationId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Inventories", (string)null);
@@ -323,13 +321,17 @@ namespace salian_api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissions");
+                    b.ToTable("Permissions", (string)null);
                 });
 
             modelBuilder.Entity("salian_api.Entities.RoleEntity", b =>
@@ -450,12 +452,6 @@ namespace salian_api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("salian_api.Entities.LocationEntity", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("salian_api.Entities.UserEntity", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -465,8 +461,6 @@ namespace salian_api.Migrations
                     b.Navigation("Employee");
 
                     b.Navigation("Equipment");
-
-                    b.Navigation("Location");
 
                     b.Navigation("User");
                 });
