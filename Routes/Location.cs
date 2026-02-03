@@ -10,9 +10,9 @@ namespace salian_api.Routes
         {
             var route = app.MapGroup("/api/location");
 
-            route.MapGet("/", async (ILocationService service) =>
+            route.MapGet("/{status?}", async (ILocationService service,string? status = "ALL") =>
             {
-                BaseResponse<List<LocationResponse>> result = await service.GetAll();
+                BaseResponse<List<LocationResponse>> result = await service.GetAll(status);
                 return result.ToResult();
             }).WithTags(tag);
 
