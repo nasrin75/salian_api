@@ -10,7 +10,7 @@ using salian_api.Routes;
 
 namespace salian_api.Services
 {
-    public class EquipmentService(ApplicationDbContext _dbContex) : IEquipmentService
+    public class EquipmentService(ApplicationDbContext _dbContex) : IEquipmentService 
     {
         public async Task<BaseResponse<EquipmentResponse>> Create(EquipmentCreateDto param)
         {
@@ -20,6 +20,7 @@ namespace salian_api.Services
                 {
                     Name = param.Name,
                     Type = param.Type,
+                    IsShowInMenu = param.IsShowInMenu,
                 };
 
                 var newEquipment = _dbContex.Equipments.Add(equipment).Entity;
@@ -30,6 +31,7 @@ namespace salian_api.Services
                     Id = newEquipment.Id,
                     Name = newEquipment.Name,
                     Type = newEquipment.Type,
+                    IsShowInMenu = newEquipment.IsShowInMenu,
                 };
 
                 return new BaseResponse<EquipmentResponse>(response);
@@ -78,6 +80,7 @@ namespace salian_api.Services
                     Id = item.Id,
                     Name = item.Name,
                     Type = item.Type,
+                    IsShowInMenu = item.IsShowInMenu
                 })
                 .FirstOrDefaultAsync(e => e.Id == EquipmentID);
 
@@ -112,6 +115,7 @@ namespace salian_api.Services
                 Id = l.Id,
                 Name = l.Name,
                 Type = l.Type,
+                IsShowInMenu = l.IsShowInMenu,
             }).ToListAsync();
 
             return new BaseResponse<List<EquipmentResponse>>(equipments);
@@ -126,6 +130,7 @@ namespace salian_api.Services
 
             if (param.Name != null && param.Name != equipment.Name) equipment.Name = param.Name;
             if (param.Type != null && param.Type != equipment.Type) equipment.Type = param.Type;
+            if (param.IsShowInMenu != null && param.IsShowInMenu != equipment.IsShowInMenu) equipment.IsShowInMenu = param.IsShowInMenu;
 
             _dbContex.Update(equipment);
             await _dbContex.SaveChangesAsync();
@@ -135,11 +140,21 @@ namespace salian_api.Services
                 Id = equipment.Id,
                 Name = equipment.Name,
                 Type = equipment.Type,
+                IsShowInMenu = equipment.IsShowInMenu,
             };
 
             return new BaseResponse<EquipmentResponse?>(response);
         }
 
-        
+
+        public async Task<BaseResponse<List<string>>> GetInventorySubMenu()
+        {
+           var subMenus = await _dbContex.Equipments
+                .Where(x => x.IsShowInMenu == true)
+                .Select(x => x.Name)
+                .ToListAsync();
+
+            return new BaseResponse<List<string>>(subMenus);
+        }
     }
 }

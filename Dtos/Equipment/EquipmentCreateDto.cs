@@ -8,5 +8,6 @@ namespace salian_api.Dtos.Equipment
     {
         public string Name { get; set; }
         public TypeMap Type { get; set; }
+        public bool IsShowInMenu { get; set; }
     }
 }

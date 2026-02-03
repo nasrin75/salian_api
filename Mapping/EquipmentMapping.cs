@@ -18,6 +18,9 @@ namespace salian_api.Mapping
             builder.Property("Type")
                 .IsRequired();
 
+            builder.Property("IsShowInMenu")
+               .HasDefaultValue(false);
+
             builder.Property("DeletedAt")
                 .IsRequired(false);
 

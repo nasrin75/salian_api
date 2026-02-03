@@ -11,7 +11,7 @@ namespace salian_api.Entities
         public long Id { get; set; }
         public string Name { get; set; }
         public TypeMap Type { get; set; }
-
+        public bool IsShowInMenu { get; set; } = false;
         public DateTime? DeletedAt { get; set; }
         public List<FeatureEntity> Features { get; set; }
     }
