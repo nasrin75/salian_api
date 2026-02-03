@@ -13,7 +13,7 @@ namespace salian_api.Interface
         Task<BaseResponse<List<EquipmentListResponse>>> GetAll();
         Task<BaseResponse<List<EquipmentResponse>>> Search(SearchEquipmentDto param);
         Task<BaseResponse<List<FeatureResponse>>> GetFeaturesByEquipmentID(long id);
-
+        Task<BaseResponse<List<string>>> GetInventorySubMenu();
         Task<BaseResponse> Delete(long id);
     }
 }

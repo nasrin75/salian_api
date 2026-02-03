@@ -53,6 +53,12 @@ namespace salian_api.Routes
                 var result = await service.GetFeaturesByEquipmentID(id);
                 return result.ToResult();
             }).WithTags(tag);
+
+            route.MapGet("/inventory/subMenu", async (IEquipmentService service) =>
+            {
+                var result = await service.GetInventorySubMenu();
+                return result.ToResult();
+            }).WithTags(tag);
         }
     }
 }
