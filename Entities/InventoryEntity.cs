@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
 namespace salian_api.Entities
 {
     [Table("Inventories")]
@@ -57,30 +58,6 @@ namespace salian_api.Entities
         Inuse = 1,// استفاده شده
         SendToCharge = 2, // ارسال جهت شارژ
         BackFromCharge = 3, // بازگشت از شارژ
+        Repair = 4, // تعمیر
     }
-
-    /*public  string function GetStatusWithID(int id)
-    {
-        var status = "Unuse";
-        switch (id)
-        {
-            case -1:
-                status = "Useless";
-                break;
-            case 0:
-                status = "Unuse";
-                break;
-            case 1:
-                status = "Inuse";
-                break;
-            case 2:
-                status = "SendToCharge";
-                break;
-            case 3:
-                status = "BackFromCharge";
-                break;
-        }
-
-        return status;
-    }*/
 }
