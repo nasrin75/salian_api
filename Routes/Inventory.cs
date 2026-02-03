@@ -1,4 +1,4 @@
-﻿using salian_api.Dtos.ActionType;
+﻿
 using salian_api.Dtos.Inventory;
 using salian_api.Interface;
 using salian_api.Response;
@@ -13,9 +13,9 @@ namespace salian_api.Routes
            var route = app.MapGroup("/api/inventory");
 
             
-            route.MapGet("/", async (IInventoryService service) =>
+            route.MapGet("/", async (IInventoryService service,string equipment= "ALL") =>
             {
-                BaseResponse<List<InventoryListResponse>> result = await service.GetAll();
+                BaseResponse<List<InventoryListResponse>> result = await service.GetAll(equipment);
                 return result.ToResult();
             }).WithTags(tag);
 

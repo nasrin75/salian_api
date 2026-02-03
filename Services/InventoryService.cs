@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using salian_api.Dtos.Inventory;
 using salian_api.Entities;
 using salian_api.Interface;
@@ -76,9 +77,22 @@ namespace salian_api.Services
             return new BaseResponse<InventoryResponse>(null, 200, "Inventory Successfully Is Deleted");
         }
 
-        public async Task<BaseResponse<List<InventoryListResponse>>> GetAll()
+        public async Task<BaseResponse<List<InventoryListResponse>>> GetAll(string? equipment)
         {
-            List<InventoryListResponse> inventories = await _dbContex.Inventories
+            //Console.WriteLine("equipment"+equipment);
+            var query =  _dbContex.Inventories.AsQueryable();
+
+            if (equipment != null && equipment != "ALL")
+            {
+                var equipmentID=_dbContex.Equipments
+                    .Where(x=>x.Name.ToLower() == equipment.ToLower())
+                    .Select(x=>x.Id)
+                    .FirstOrDefault();
+
+                Console.WriteLine("inside" + equipmentID);
+                query.Where(x => (x.EquipmentId == equipmentID));
+            }
+            List<InventoryListResponse> inventories = await query
                 .AsNoTracking()
                 .OrderByDescending(x => x.Id)
                 .Select(param => new InventoryListResponse
