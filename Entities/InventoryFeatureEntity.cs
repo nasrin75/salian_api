@@ -7,7 +7,11 @@ namespace salian_api.Entities
     {
         public long Id { get; set; }
         public long InventoryId { get; set; }
+        public InventoryEntity Inventory { get; set; }
+
         public long FeatureId { get; set; }
+        public FeatureEntity Feature { get; set; }
+
         public string Value { get; set; }
     }
 }

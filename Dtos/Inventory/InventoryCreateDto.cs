@@ -1,5 +1,6 @@
 ﻿using salian_api.Entities;
 using System.Runtime.CompilerServices;
+using salian_api.Dtos.Equipment;
 
 namespace salian_api.Dtos.Inventory
 {
@@ -12,17 +13,18 @@ namespace salian_api.Dtos.Inventory
         public long LocationId { get; set; }
         public long EquipmentId { get; set; }
         public StatusMap Status { get; set; }
-        public string PropertyNumber { get; set; }
-        public string SerialNumber { get; set; }
+        public string? PropertyNumber { get; set; }
+        public string? SerialNumber { get; set; }
         public string? InvoiceNumber { get; set; }
         public string? InvoiceImage { get; set; }
         public string? Description { get; set; }
-        public string BrandName { get; set; }
-        public string ModelName { get; set; }
+        public string? BrandName { get; set; }
+        public string? ModelName { get; set; }
         public string? Capacity { get; set; }
         public string? Size { get; set; }
         
         public DateOnly? ExpireWarrantyDate { get; set; }
         public DateOnly? DeliveryDate { get; set; }
+        public List<EquipmentFeatureDto>? Features { get; set; }
     }
 }

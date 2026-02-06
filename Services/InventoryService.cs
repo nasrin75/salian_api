@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using salian_api.Dtos.Inventory;
 using salian_api.Entities;
 using salian_api.Interface;
@@ -16,7 +15,7 @@ namespace salian_api.Services
             {
                 ItNumber = param.ItNumber,
                 ItParentNumber = param.ItParentNumber,
-                UserId = param.UserId, // TODO:get login user
+                UserId = 1,//param.UserId, // TODO:get login user
                 EmployeeId = param.EmployeeId,
                 EquipmentId = param.EquipmentId,
                LocationId = param.LocationId,
@@ -36,7 +35,19 @@ namespace salian_api.Services
 
             var inventory = _dbContex.Inventories.Add(data).Entity;
             await  _dbContex.SaveChangesAsync();
+            // Add Features
+            if (param.Features != null && param.Features.Any())
+            {
+                var features = param.Features.Select(f => new InventoryFeatureEntity
+                {
+                    InventoryId = inventory.Id,
+                    FeatureId = f.FeatureId,
+                    Value = f.Value
+                }).ToList();
 
+                _dbContex.InventoryFeatures.AddRange(features);
+                await _dbContex.SaveChangesAsync();
+            }
             InventoryResponse response = new InventoryResponse
             {
                 Id = inventory.Id,
