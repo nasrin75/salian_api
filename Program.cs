@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using salian_api.Entities;
 using salian_api.Interface;
@@ -7,6 +8,7 @@ using salian_api.Routes;
 using salian_api.Services;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,11 +67,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 //app.UseAuthorization();
 
-
+// Upload files 
+app.UseStaticFiles();
 // add routes
 app.MapUserRoutes("User");
 app.MapRoleRoutes("Role");
@@ -81,6 +84,7 @@ app.MapPermissionRoutes("Permission");
 app.MapFeatureRoutes("Feature");
 app.MapInventoryRoutes("Inventory");
 app.MapProfileRoutes("Profile");
+app.MapApiRoutes();
 
 app.UseCors("MyLocalhost");
 
