@@ -6,7 +6,7 @@ namespace salian_api.Response.Inventory
     {
         public long Id { get; set; }
         public long ItNumber { get; set; }
-        public long ItParentNumber { get; set; }
+        public long? ItParentNumber { get; set; }
         public long UserId { get; set; }
         public long EmployeeId { get; set; }
         public long LocationId { get; set; }
@@ -16,9 +16,9 @@ namespace salian_api.Response.Inventory
         public string? SerialNumber { get; set; }
         public string? InvoiceNumber { get; set; }
         public string? InvoiceImage { get; set; }
-        public string Description { get; set; }
-        public string BrandName { get; set; }
-        public string ModelName { get; set; }
+        public string? Description { get; set; }
+        public string? BrandName { get; set; }
+        public string? ModelName { get; set; }
         public string? Capacity { get; set; }
         public string? Size { get; set; }
         public DateOnly? ExpireWarrantyDate { get; set; }

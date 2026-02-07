@@ -6,7 +6,7 @@ namespace salian_api.Response.Inventory
     {
         public long Id { get; set; }
         public long ItNumber { get; set; }
-        public long ItParentNumber { get; set; }
+        public long? ItParentNumber { get; set; }
         public string User { get; set; }
         public string? Employee { get; set; }
         public string? Location { get; set; }
@@ -25,5 +25,6 @@ namespace salian_api.Response.Inventory
         public DateOnly? DeliveryDate { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public List<InventoryFeatureEntity> Features { get; set; }
     }
 }
