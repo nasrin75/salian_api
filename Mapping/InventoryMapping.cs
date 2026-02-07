@@ -26,8 +26,7 @@ namespace salian_api.Mapping
                         builder.Property("ItNumber")
                                 .IsRequired();
 
-                        builder.Property("ItParentNumber")
-                                .IsRequired();
+                        builder.Property("ItParentNumber");
 
                         builder.Property("Status")
                                 .IsRequired();

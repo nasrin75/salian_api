@@ -197,7 +197,7 @@ namespace salian_api.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ItNumber = table.Column<long>(type: "bigint", nullable: false),
-                    ItParentNumber = table.Column<long>(type: "bigint", nullable: false),
+                    ItParentNumber = table.Column<long>(type: "bigint", nullable: true),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
                     EmployeeId = table.Column<long>(type: "bigint", nullable: false),
                     LocationId = table.Column<long>(type: "bigint", nullable: false),
