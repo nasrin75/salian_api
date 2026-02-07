@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using salian_api.Dtos.Inventory;
 using salian_api.Entities;
 using salian_api.Interface;
@@ -9,7 +10,7 @@ namespace salian_api.Services
 {
     public class InventoryService(ApplicationDbContext _dbContex) : IInventoryService
     {
-        public async Task<BaseResponse<InventoryResponse>> Create(InventoryCreateDto param)
+        public async Task<BaseResponse<InventoryResponse>> Create([FromBody] InventoryCreateDto param)
         {
            InventoryEntity data = new InventoryEntity
             {
@@ -18,7 +19,7 @@ namespace salian_api.Services
                 UserId = 1,//param.UserId, // TODO:get login user
                 EmployeeId = param.EmployeeId,
                 EquipmentId = param.EquipmentId,
-               LocationId = param.LocationId,
+                LocationId = param.LocationId,
                 Status = param.Status,
                 PropertyNumber = param.PropertyNumber,
                 SerialNumber = param.SerialNumber,
@@ -90,20 +91,22 @@ namespace salian_api.Services
 
         public async Task<BaseResponse<List<InventoryListResponse>>> GetAll(string? equipment)
         {
-            //Console.WriteLine("equipment"+equipment);
-            var query =  _dbContex.Inventories.AsQueryable();
+            //Console.WriteLine("equipment ::: "+equipment);
+            var query =  _dbContex.Inventories.Include(x => x.Equipment).AsQueryable();
 
-            if (equipment != null && equipment != "ALL")
+            if (!string.IsNullOrWhiteSpace(equipment) && equipment.Trim() != "ALL")//TODO:DONT WORK Filter
             {
-                var equipmentID=_dbContex.Equipments
-                    .Where(x=>x.Name.ToLower() == equipment.ToLower())
-                    .Select(x=>x.Id)
+                var equipmentID = _dbContex.Equipments
+                    .Where(x => x.Name.ToLower().Trim() == equipment.ToLower().Trim())
+                    .Select(x => x.Id)
                     .FirstOrDefault();
 
-                Console.WriteLine("inside" + equipmentID);
+                Console.WriteLine("inside::" + equipmentID);
                 query.Where(x => (x.EquipmentId == equipmentID));
+                //query.Where(x => x.Equipment.Name.Contains(equipment.Trim()));
             }
             List<InventoryListResponse> inventories = await query
+                .Include(x=>x.Features)
                 .AsNoTracking()
                 .OrderByDescending(x => x.Id)
                 .Select(param => new InventoryListResponse
@@ -127,6 +130,8 @@ namespace salian_api.Services
                     DeliveryDate = param.DeliveryDate,
                     Description = param.Description,
                     ExpireWarrantyDate = param.ExpireWarrantyDate,
+                    CreatedAt = param.CreatedAt,
+                    Features = param.Features
                 }).ToListAsync();
 
             return new BaseResponse<List<InventoryListResponse>>(inventories);
