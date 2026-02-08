@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using salian_api.Response.Inventory;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 
@@ -10,7 +11,7 @@ namespace salian_api.Entities
         [Key]
         public long Id { get; set; }
         public long ItNumber { get; set; }
-        public long ItParentNumber { get; set; }
+        public long? ItParentNumber { get; set; }
 
         public long UserId { get; set; }
         public UserEntity User { get; set; }
@@ -40,21 +41,22 @@ namespace salian_api.Entities
         public DateTime? DeletedAt { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public List<InventoryFeatureEntity> Features { get; set; }
 
 
         // feature -> Clock , Core, Bus, RamType
 
         public InventoryEntity()
         {
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
+            CreatedAt = DateTime.Now;
+            UpdatedAt = DateTime.Now;
         }
     }
 
     public enum StatusMap
     {
         Useless = -1, // اسقاطی
-        Unuse = 0, // استفاده نشده
+        Unuse = -2, // استفاده نشده
         Inuse = 1,// استفاده شده
         SendToCharge = 2, // ارسال جهت شارژ
         BackFromCharge = 3, // بازگشت از شارژ

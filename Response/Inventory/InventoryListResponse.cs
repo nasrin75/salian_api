@@ -23,7 +23,6 @@ namespace salian_api.Response.Inventory
         public string? Size { get; set; }
         public DateOnly? ExpireWarrantyDate { get; set; }
         public DateOnly? DeliveryDate { get; set; }
-        public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public List<InventoryFeatureEntity> Features { get; set; }
     }

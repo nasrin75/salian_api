@@ -1,14 +1,12 @@
 ﻿using salian_api.Entities;
-using System.Runtime.CompilerServices;
-using salian_api.Dtos.Equipment;
 
 namespace salian_api.Dtos.Inventory
 {
     public class InventoryCreateDto
     {
         public long ItNumber { get; set; }
-        public long ItParentNumber { get; set; }
-        public long UserId { get; set; }
+        public long? ItParentNumber { get; set; }
+        //public long UserId { get; set; }
         public long EmployeeId { get; set; }
         public long LocationId { get; set; }
         public long EquipmentId { get; set; }
@@ -25,6 +23,6 @@ namespace salian_api.Dtos.Inventory
         
         public DateOnly? ExpireWarrantyDate { get; set; }
         public DateOnly? DeliveryDate { get; set; }
-        public List<EquipmentFeatureDto>? Features { get; set; }
+        public List<InventoryFeatureDto>? Features { get; set; }
     }
 }
