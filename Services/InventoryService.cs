@@ -81,7 +81,8 @@ namespace salian_api.Services
                 .FirstOrDefaultAsync(l => l.Id == id);
             if (inventory == null) return new BaseResponse<InventoryResponse?>(null, 400, "Inventory Not Found");
 
-            inventory.DeletedAt = DateTime.UtcNow;
+            inventory.DeletedAt = DateTime.Now;
+            inventory.UpdatedAt = DateTime.Now;
 
             _dbContex.Update(inventory);
             await _dbContex.SaveChangesAsync();
@@ -89,25 +90,16 @@ namespace salian_api.Services
             return new BaseResponse<InventoryResponse>(null, 200, "Inventory Successfully Is Deleted");
         }
 
-        public async Task<BaseResponse<List<InventoryListResponse>>> GetAll(string? equipment)
+        public async Task<BaseResponse<List<InventoryListResponse>>> GetAll(string equipment)
         {
-            //Console.WriteLine("equipment ::: "+equipment);
             var query =  _dbContex.Inventories.Include(x => x.Equipment).AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(equipment) && equipment.Trim() != "ALL")//TODO:DONT WORK Filter
+            if (!string.IsNullOrEmpty(equipment) && equipment.Trim() != "ALL")
             {
-                var equipmentID = _dbContex.Equipments
-                    .Where(x => x.Name.ToLower().Trim() == equipment.ToLower().Trim())
-                    .Select(x => x.Id)
-                    .FirstOrDefault();
-
-                Console.WriteLine("inside::" + equipmentID);
-                query.Where(x => (x.EquipmentId == equipmentID));
-                //query.Where(x => x.Equipment.Name.Contains(equipment.Trim()));
+                query = query.Where(x => x.Equipment.Name.ToLower().Trim() == equipment.ToLower().Trim());
             }
-            List<InventoryListResponse> inventories = await query
-                .Include(x=>x.Features)
-                .AsNoTracking()
+
+            List<InventoryListResponse> inventories =await query.AsNoTracking()
                 .OrderByDescending(x => x.Id)
                 .Select(param => new InventoryListResponse
                 {
@@ -130,10 +122,11 @@ namespace salian_api.Services
                     DeliveryDate = param.DeliveryDate,
                     Description = param.Description,
                     ExpireWarrantyDate = param.ExpireWarrantyDate,
-                    CreatedAt = param.CreatedAt,
+                    UpdatedAt = param.UpdatedAt,
                     Features = param.Features
                 }).ToListAsync();
 
+            
             return new BaseResponse<List<InventoryListResponse>>(inventories);
         }
 
@@ -248,6 +241,7 @@ namespace salian_api.Services
             if (param.DeliveryDate != null && param.DeliveryDate != inventory.DeliveryDate) inventory.DeliveryDate = param.DeliveryDate;
             if (param.ExpireWarrantyDate != null && param.ExpireWarrantyDate != inventory.ExpireWarrantyDate) inventory.ExpireWarrantyDate = param.ExpireWarrantyDate;
 
+            inventory.UpdatedAt = DateTime.Now;
             _dbContex.Update(inventory);
             await _dbContex.SaveChangesAsync();
 
