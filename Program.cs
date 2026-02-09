@@ -9,12 +9,15 @@ using salian_api.Services;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
+using System.Configuration;
+using salian_api.Config.Extentions;
+using salian_api.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOurSwagger();
 
 /* Init Databse */
 builder.Services.AddDbContext<ApplicationDbContext>(
@@ -50,6 +53,7 @@ builder.Services.AddScoped<IFeatureService, FeatureService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 //Add CORS
 builder.Services.AddCors(
@@ -57,6 +61,14 @@ builder.Services.AddCors(
     builder.AllowAnyHeader()
     .AllowAnyMethod()
     .WithOrigins("http://localhost:3000", "http://localhost:5005")));
+
+// Add new configuration
+var authConfiguration = builder.Configuration.GetSection("AuthSettings");
+builder.Services.Configure<AuthSettings>(authConfiguration);
+
+// scafold Jwt Authorization
+var authSettings = authConfiguration.Get<AuthSettings>();
+builder.Services.AddOurAuthentication(authSettings);
 
 var app = builder.Build();
 
@@ -84,8 +96,14 @@ app.MapPermissionRoutes("Permission");
 app.MapFeatureRoutes("Feature");
 app.MapInventoryRoutes("Inventory");
 app.MapProfileRoutes("Profile");
+app.MapAuthRoutes("Authentication");
 app.MapApiRoutes();
 
 app.UseCors("MyLocalhost");
+
+//Add Authorization
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.Run();

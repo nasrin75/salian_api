@@ -14,7 +14,7 @@ namespace salian_api.Routes
             {
                 BaseResponse<List<EmployeeResponse>> result = await service.GetAll();
                 return result.ToResult();
-            }).WithTags(tag);
+            }).WithTags(tag).RequireAuthorization();
 
             route.MapGet("/{Id:long}", async (IEmployeeService service, long Id) =>
             {
