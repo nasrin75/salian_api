@@ -1,4 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using salian_api.Dtos.Otp;
+using salian_api.Interface;
+using salian_api.Response;
+using salian_api.Response.Otp;
 
 namespace salian_api.Routes;
 
@@ -27,5 +31,11 @@ public static class ApiRoute
             })
             .WithTags("Upload")
             .DisableAntiforgery();
+
+        app.MapPost("/sendOtp", async (IAuthService service, SendOtpDto request) =>
+        {
+            BaseResponse<OtpResponse> result = await service.SendOtp(request);
+            return result.ToResult();
+        }).WithTags("Otp");
     }
 }
