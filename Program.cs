@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Configuration;
 using salian_api.Config.Extentions;
 using salian_api.Config;
+using Microsoft.AspNetCore.Authorization;
+using salian_api.Config.Permissions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +56,9 @@ builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+// overwrite permissions
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
 
 //Add CORS
 builder.Services.AddCors(

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using salian_api.Dtos.Equipment;
 using salian_api.Dtos.User;
@@ -39,22 +40,19 @@ namespace salian_api.Services
             List<IpWhiteListResponse> whiteLists = [];
             if (!string.IsNullOrEmpty(dto.IpWhiteLists))
             {
-                Console.WriteLine("data",dto.IpWhiteLists);
                 var paresedIps = ParseIp(dto.IpWhiteLists, user.Id);
 
                 _dbContext.IpWhiteLists.AddRangeAsync(paresedIps);
 
                 await _dbContext.SaveChangesAsync();
                 // return response
-                 whiteLists = newUser.IpWhiteLists.Select(x => new IpWhiteListResponse
+                whiteLists = newUser.IpWhiteLists.Select(x => new IpWhiteListResponse
                 {
                     Id = x.Id,
                     Ip = x.Ip,
                     IpRange = x.IpRange,
                 }).ToList();
             }
-
-
            
 
            UserResponse response = new()
@@ -228,15 +226,15 @@ namespace salian_api.Services
 
             if (ipWhiteLists.IsNullOrEmpty()) return result;
 
-            var IpLists = ipWhiteLists.Split(",",StringSplitOptions.RemoveEmptyEntries);
+            var IpLists = ipWhiteLists.Split(",", StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var ip in IpLists)
             {
                 var item = ip.Trim();
-                if(item.Contains(":") )
+                if (item.Contains(":"))
                 {
                     var explodedIp = item.Split(':');
-                    if(explodedIp.Length == 2 )
+                    if (explodedIp.Length == 2)
                     {
                         result.Add(new IpWhiteListEntity
                         {
@@ -245,7 +243,7 @@ namespace salian_api.Services
                             UserId = userID
                         });
                     }
-              
+
                 }
                 else
                 {
@@ -259,5 +257,28 @@ namespace salian_api.Services
 
             return result;
         }
+
+
+        // public async Task<List<string>> GetUserPermissions(long userId)
+        // {
+        //     var user = await _dbContext.Users
+        //         .Include(u => u.Role)
+        //             .ThenInclude(r => r.RolePermissions)
+        //                 .ThenInclude(rp => rp.Permission)
+        //         .Include(u => u.UserPermissions)
+        //             .ThenInclude(up => up.Permission)
+        //         .FirstOrDefaultAsync(u => u.Id == userId);
+
+        //     var rolePermissions = user.Role.RolePermissions
+        //         .Select(rp => rp.Permission.Name);
+
+        //     var userPermissions = user.UserPermissions
+        //         .Select(up => up.Permission.Name);
+
+        //     return rolePermissions
+        //         .Union(userPermissions)
+        //         .Distinct()
+        //         .ToList();
+        // }
     }
 }

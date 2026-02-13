@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using salian_api.Dtos.Employee;
 using salian_api.Entities;
 using salian_api.Interface;
@@ -54,6 +55,7 @@ namespace salian_api.Services
             return new BaseResponse<EmployeeResponse?>(null, 200, "Employee Successfully Is Deleted");
         }
 
+        [Authorize(Roles ="User")]
         public async Task<BaseResponse<List<EmployeeResponse>>> GetAll()
         {
             List<EmployeeResponse> employees = await _dbContex.Employees

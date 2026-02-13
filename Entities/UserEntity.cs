@@ -26,6 +26,8 @@ namespace salian_api.Entities
 
         public long RoleId { get; set; }
         public RoleEntity Role { get; set; }
+        public ICollection<UserPermissionEntity> UserPermissions { get; set; }
+
     }
 
     public class LoginTypeJson
