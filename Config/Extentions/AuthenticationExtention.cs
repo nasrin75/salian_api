@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Configuration;
+using System.Security.Claims;
 using System.Text;
 
 namespace salian_api.Config.Extentions
@@ -13,11 +15,6 @@ namespace salian_api.Config.Extentions
         public static IServiceCollection AddOurAuthentication(this IServiceCollection services,AuthSettings authSetting)
         {
             // Authorization service
-            /* services.AddAuthorization(options =>
-             {
-                 options.AddPolicy("GetAllUser",
-                     policy => policy.RequireClaim("AccessAllUser", "True"));
-             });*/
 
             services.AddAuthorization();
 
@@ -40,7 +37,8 @@ namespace salian_api.Config.Extentions
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(key),
                         ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateAudience = false,
+                        RoleClaimType = ClaimTypes.Role
                     };
                 });
             return services;
