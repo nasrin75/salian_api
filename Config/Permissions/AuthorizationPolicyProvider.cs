@@ -13,6 +13,7 @@ namespace salian_api.Config.Permissions
 
         public override Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
         {
+            // check that policies are't in our policy that we created( for permission ) use base asp.net policy
             if (!policyName.StartsWith(PermissionAuthorizeAttribute.PolicyPrefix, StringComparison.OrdinalIgnoreCase))
             {
                 return base.GetPolicyAsync(policyName);

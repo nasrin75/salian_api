@@ -73,8 +73,9 @@ builder.Services.AddScoped<ISeeder,UserSeeder>();
 builder.Services.AddScoped<ISeeder,PermissionSeeder>();
 builder.Services.AddScoped<SeederProvider>();
 
-//Overwrite Permission handler
-builder.Services.AddSingleton(IAuthorizationPolicyProvider, AuthorizationPolicyProvider);
+// overwrite and create custome permissions
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
+
 var app = builder.Build();
 
 // Add seeder part2
