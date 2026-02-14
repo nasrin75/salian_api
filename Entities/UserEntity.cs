@@ -26,7 +26,9 @@ namespace salian_api.Entities
 
         public long RoleId { get; set; }
         public RoleEntity Role { get; set; }
-        public ICollection<UserPermissionEntity> UserPermissions { get; set; }
+
+        //Many to Many relation
+        public List<PermissionEntity> Permissions { get; set; } = [];
 
     }
 

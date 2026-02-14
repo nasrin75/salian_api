@@ -17,7 +17,9 @@ namespace salian_api.Entities
         public DateTime? DeletedAt { get; set; }
 
         public List<UserEntity> Users { get; set; }
-        public ICollection<RolePermissionEntity> RolePermissions { get; set; }
+
+        //Many to Many relation
+        public List<PermissionEntity> Permissions { get; set; } = [];
 
     }
 }
