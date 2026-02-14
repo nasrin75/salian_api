@@ -14,6 +14,11 @@ using salian_api.Config.Extentions;
 using salian_api.Config;
 using Microsoft.AspNetCore.Authorization;
 using salian_api.Config.Permissions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using salian_api.Seeder;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,17 +33,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 /* For customize error message */
 builder.Services.AddLogging();
 builder.Services.AddProblemDetails();
-
-
-// For convert send and recive request as Json format
-/*builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        //options.JsonSerializerOptions.PropertyNamingPolicy = null;
-        options.JsonSerializerOptions.Converters.Add(
-            new JsonStringEnumConverter());
-            //new System.Text.Json.Serialization.JsonStringEnumConverter());
-    });*/
 
 builder.Services.ConfigureHttpJsonOptions(option =>
 {
@@ -57,8 +51,6 @@ builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// overwrite permissions
-builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
 
 //Add CORS
 builder.Services.AddCors(
@@ -75,7 +67,26 @@ builder.Services.Configure<AuthSettings>(authConfiguration);
 var authSettings = authConfiguration.Get<AuthSettings>();
 builder.Services.AddOurAuthentication(authSettings);
 
+// Add seeder part1
+builder.Services.AddScoped<ISeeder,RoleSeeder>();
+builder.Services.AddScoped<ISeeder,UserSeeder>();
+builder.Services.AddScoped<ISeeder,PermissionSeeder>();
+builder.Services.AddScoped<SeederProvider>();
+
+//Overwrite Permission handler
+builder.Services.AddSingleton(IAuthorizationPolicyProvider, AuthorizationPolicyProvider);
 var app = builder.Build();
+
+// Add seeder part2
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+
+    var seeder = scope.ServiceProvider.GetRequiredService<SeederProvider>();
+    await seeder.SeedAllAsync(db, scope.ServiceProvider);
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
