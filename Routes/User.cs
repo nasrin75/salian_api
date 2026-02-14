@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using salian_api.Dtos.Equipment;
 using salian_api.Dtos.User;
@@ -19,7 +20,11 @@ namespace salian_api.Routes
             {
                BaseResponse<List<UserListResponse>> user = await service.GetAllUsers();
                 return user.ToResult();
-            }).WithTags(tag);
+            }).WithTags(tag)
+            .RequireAuthorization(new AuthorizeAttribute
+            {
+                Roles ="User",
+            });
 
             route.MapGet("/{id:long}", async (IUserService service,long id) =>
             {
