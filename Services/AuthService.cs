@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Common;
 using salian_api.Config;
 using salian_api.Dtos.Auth;
 using salian_api.Dtos.Otp;
@@ -9,6 +10,7 @@ using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Response.Auth;
 using salian_api.Response.Otp;
+using salian_api.Routes;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -28,9 +30,7 @@ namespace salian_api.Services
             if (user == null)
                 return new BaseResponse<LoginResponse>(null, 400, "USER_NOT_FOUND");
 
-            // authentication successful so generate jwt token
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_authSetting.Value.Secret);
+            
 
             // var claims = new ClaimsIdentity();
             // foreach (var permission in user.Permissions)
@@ -52,7 +52,7 @@ namespace salian_api.Services
             //     }
             // }
 
-            var permissions = await GetUserPermissions(user.Id);
+/*            var permissions = await GetUserPermissions(user.Id);
 
             var claims = new List<Claim>
             {
@@ -64,7 +64,7 @@ namespace salian_api.Services
             foreach (var permission in permissions)
             {
                 claims.Add(new Claim("Permission", permission));
-            }
+            }*/
             // claims.AddClaims(new[]
             // {
             //        new Claim(JwtRegisteredClaimNames.Sub, user.Username),
@@ -72,22 +72,14 @@ namespace salian_api.Services
             //        new Claim(ClaimTypes.Role,user.Role.EnName)
             //    });
 
-            var expireDate = DateTime.UtcNow.AddMinutes(30);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = claims,
-                Expires = expireDate,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            var token = GenerateJwtToken(user);
 
             var response = new LoginResponse
             {
                 UserId = user.Id,
                 Username = request.Username,
-                Token = tokenHandler.WriteToken(token),
-                ExpireDate = expireDate.ToString(),
+                Token = token,
             };
 
 
@@ -118,7 +110,7 @@ namespace salian_api.Services
             return new BaseResponse<OtpResponse>(null, 200, "SENT_OTP");
         }
 
-        public async Task<List<string>> GetUserPermissions(long userId)
+   /*     public async Task<List<string>> GetUserPermissions(long userId)
         {
             var user = await _dbContext.Users
                 .Include(u => u.Role)
@@ -138,6 +130,40 @@ namespace salian_api.Services
                 .Union(userPermissions)
                 .Distinct()
                 .ToList();
+        }*/
+
+        private string GenerateJwtToken(UserEntity user)
+        {
+            // authentication successful so generate jwt token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_authSetting.Value.Secret);
+            var expireDate = DateTime.UtcNow.AddMinutes(30);
+
+            // add claims
+            Console.WriteLine("rolwee:" + user.Role.EnName);
+            string roleName = user.Role.EnName;
+            var claims = new ClaimsIdentity();
+            claims.AddClaims(new[]
+            {
+                  new Claim(JwtRegisteredClaimNames.Sub, user.Username),
+                  new Claim(JwtRegisteredClaimNames.Jti, user.Id.ToString()),
+                  new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
+                  new Claim(ClaimTypes.Email, user.Email!),
+                  new Claim(ClaimTypes.MobilePhone, user.Mobile!),
+                  new Claim(ClaimTypes.Role,roleName)
+            });
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = claims,
+                Expires = expireDate,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token =  tokenHandler.CreateToken(tokenDescriptor);
+            
+
+            return tokenHandler.WriteToken(token);
         }
     }
 }
