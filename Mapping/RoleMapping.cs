@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Hosting;
 using salian_api.Entities;
+using salian_api.Routes;
 
 namespace salian_api.Mapping
 {
@@ -28,6 +31,11 @@ namespace salian_api.Mapping
             builder.HasMany(u => u.Users)
                 .WithOne(r => r.Role)
                 .HasForeignKey(r => r.RoleId);
+            // Many to Many Relation
+
+
+            builder.HasMany(r => r.Permissions)
+                .WithMany(r => r.Roles);
         }
     }
 }

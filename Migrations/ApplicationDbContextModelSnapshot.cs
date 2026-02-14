@@ -37,6 +37,36 @@ namespace salian_api.Migrations
                     b.ToTable("EquipmentEntityFeatureEntity");
                 });
 
+            modelBuilder.Entity("PermissionEntityRoleEntity", b =>
+                {
+                    b.Property<long>("PermissionsId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("RolesId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("PermissionsId", "RolesId");
+
+                    b.HasIndex("RolesId");
+
+                    b.ToTable("PermissionEntityRoleEntity");
+                });
+
+            modelBuilder.Entity("PermissionEntityUserEntity", b =>
+                {
+                    b.Property<long>("PermissionsId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UsersId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("PermissionsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("PermissionEntityUserEntity");
+                });
+
             modelBuilder.Entity("salian_api.Entities.ActionTypeEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -438,6 +468,36 @@ namespace salian_api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PermissionEntityRoleEntity", b =>
+                {
+                    b.HasOne("salian_api.Entities.PermissionEntity", null)
+                        .WithMany()
+                        .HasForeignKey("PermissionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("salian_api.Entities.RoleEntity", null)
+                        .WithMany()
+                        .HasForeignKey("RolesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PermissionEntityUserEntity", b =>
+                {
+                    b.HasOne("salian_api.Entities.PermissionEntity", null)
+                        .WithMany()
+                        .HasForeignKey("PermissionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("salian_api.Entities.UserEntity", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("salian_api.Entities.EmployeeEntity", b =>
                 {
                     b.HasOne("salian_api.Entities.LocationEntity", "Location")
@@ -493,7 +553,7 @@ namespace salian_api.Migrations
                         .IsRequired();
 
                     b.HasOne("salian_api.Entities.InventoryEntity", "Inventory")
-                        .WithMany()
+                        .WithMany("Features")
                         .HasForeignKey("InventoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -523,6 +583,11 @@ namespace salian_api.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("salian_api.Entities.InventoryEntity", b =>
+                {
+                    b.Navigation("Features");
                 });
 
             modelBuilder.Entity("salian_api.Entities.RoleEntity", b =>

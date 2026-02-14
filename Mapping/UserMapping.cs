@@ -60,14 +60,18 @@ namespace salian_api.Mapping
 
             builder.HasQueryFilter(u => u.DeletedAt == null);
 
+            builder.HasMany(r => r.Permissions)
+                .WithMany(r => r.Users);
+
+             //.HasKey(x => new { x.RoleId, x.PermissionId });
             // define relation
             /*builder.HasMany(e => e.IpWhiteLists)
                 .WithOne(e => e.User)
                 .HasForeignKey(e => e.Id);*/
 
-           /* builder.HasOne(r => r.Role)
-                .WithMany(u => u.Users)
-                .HasForeignKey(u => u.RoleId);*/
+            /* builder.HasOne(r => r.Role)
+                 .WithMany(u => u.Users)
+                 .HasForeignKey(u => u.RoleId);*/
 
         }
     }

@@ -12,15 +12,15 @@ using salian_api.Entities;
 namespace salian_api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260206090331_Initialtable")]
-    partial class Initialtable
+    [Migration("20260214063426_InitTables")]
+    partial class InitTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "8.0.22")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -38,6 +38,36 @@ namespace salian_api.Migrations
                     b.HasIndex("FeaturesId");
 
                     b.ToTable("EquipmentEntityFeatureEntity");
+                });
+
+            modelBuilder.Entity("PermissionEntityRoleEntity", b =>
+                {
+                    b.Property<long>("PermissionsId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("RolesId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("PermissionsId", "RolesId");
+
+                    b.HasIndex("RolesId");
+
+                    b.ToTable("PermissionEntityRoleEntity");
+                });
+
+            modelBuilder.Entity("PermissionEntityUserEntity", b =>
+                {
+                    b.Property<long>("PermissionsId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UsersId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("PermissionsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("PermissionEntityUserEntity");
                 });
 
             modelBuilder.Entity("salian_api.Entities.ActionTypeEntity", b =>
@@ -198,7 +228,7 @@ namespace salian_api.Migrations
                     b.Property<long>("ItNumber")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ItParentNumber")
+                    b.Property<long?>("ItParentNumber")
                         .HasColumnType("bigint");
 
                     b.Property<long>("LocationId")
@@ -261,6 +291,10 @@ namespace salian_api.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FeatureId");
+
+                    b.HasIndex("InventoryId");
 
                     b.ToTable("InventoryFeatures", (string)null);
                 });
@@ -437,6 +471,36 @@ namespace salian_api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PermissionEntityRoleEntity", b =>
+                {
+                    b.HasOne("salian_api.Entities.PermissionEntity", null)
+                        .WithMany()
+                        .HasForeignKey("PermissionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("salian_api.Entities.RoleEntity", null)
+                        .WithMany()
+                        .HasForeignKey("RolesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PermissionEntityUserEntity", b =>
+                {
+                    b.HasOne("salian_api.Entities.PermissionEntity", null)
+                        .WithMany()
+                        .HasForeignKey("PermissionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("salian_api.Entities.UserEntity", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("salian_api.Entities.EmployeeEntity", b =>
                 {
                     b.HasOne("salian_api.Entities.LocationEntity", "Location")
@@ -483,6 +547,25 @@ namespace salian_api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("salian_api.Entities.InventoryFeatureEntity", b =>
+                {
+                    b.HasOne("salian_api.Entities.FeatureEntity", "Feature")
+                        .WithMany()
+                        .HasForeignKey("FeatureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("salian_api.Entities.InventoryEntity", "Inventory")
+                        .WithMany("Features")
+                        .HasForeignKey("InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Feature");
+
+                    b.Navigation("Inventory");
+                });
+
             modelBuilder.Entity("salian_api.Entities.IpWhiteListEntity", b =>
                 {
                     b.HasOne("salian_api.Entities.UserEntity", "User")
@@ -503,6 +586,11 @@ namespace salian_api.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("salian_api.Entities.InventoryEntity", b =>
+                {
+                    b.Navigation("Features");
                 });
 
             modelBuilder.Entity("salian_api.Entities.RoleEntity", b =>
