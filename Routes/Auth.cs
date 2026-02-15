@@ -11,11 +11,16 @@ namespace salian_api.Routes
         {
             var Route = app.MapGroup("/api/auth");
 
-            Route.MapPost("/login",async (IAuthService service,LoginDto request) =>
-            {
-                BaseResponse<LoginResponse> result = await service.Login(request);
-                return result.ToResult();
-            }).WithTags(tag);
+            Route
+                .MapPost(
+                    "/login",
+                    async (IAuthService service, LoginDto request) =>
+                    {
+                        BaseResponse<LoginResponse> result = await service.Login(request);
+                        return result.ToResult();
+                    }
+                )
+                .WithTags(tag);
         }
     }
 }
