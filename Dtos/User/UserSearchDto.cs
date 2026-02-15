@@ -1,5 +1,4 @@
-﻿
-namespace salian_api.Dtos.User
+﻿namespace salian_api.Dtos.User
 {
     public class UserSearchDto
     {

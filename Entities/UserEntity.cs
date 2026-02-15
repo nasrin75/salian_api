@@ -29,18 +29,19 @@ namespace salian_api.Entities
 
         //Many to Many relation
         public List<PermissionEntity> Permissions { get; set; } = [];
-
     }
 
     public class LoginTypeJson
     {
         public string Name { get; set; }
     }
-    public enum LoginTypes {
+
+    public enum LoginTypes
+    {
         password,
-        otp ,
+        otp,
         push,
-        email
+        email,
     };
 
     public enum StatusLists
@@ -48,5 +49,4 @@ namespace salian_api.Entities
         deactive = 0,
         active = 1,
     };
-
 }

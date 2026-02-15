@@ -2,7 +2,7 @@
 
 namespace salian_api.Seeder
 {
-    public class RoleSeeder :ISeeder
+    public class RoleSeeder : ISeeder
     {
         public async Task SeedAsync(ApplicationDbContext _dbContext, IServiceProvider services)
         {
@@ -10,14 +10,8 @@ namespace salian_api.Seeder
             {
                 var roles = new RoleEntity[]
                 {
-                    new RoleEntity(){
-                        EnName = "Admin",
-                        FaName = "ادمین",
-                    },
-                    new RoleEntity(){
-                        EnName = "User",
-                        FaName = "کاربر",
-                    },
+                    new RoleEntity() { EnName = "Admin", FaName = "ادمین" },
+                    new RoleEntity() { EnName = "User", FaName = "کاربر" },
                 };
 
                 _dbContext.Roles.AddRange(roles);

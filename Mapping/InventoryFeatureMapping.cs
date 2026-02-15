@@ -11,9 +11,7 @@ namespace salian_api.Mapping
             builder.ToTable("InventoryFeatures");
             builder.HasKey(e => e.Id);
 
-            builder.Property("Value")
-                .HasMaxLength(255)
-                .IsRequired();
+            builder.Property("Value").HasMaxLength(255).IsRequired();
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using salian_api.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using salian_api.Entities;
 
 namespace salian_api.Dtos.User
 {
@@ -19,6 +19,5 @@ namespace salian_api.Dtos.User
         public List<string>? LoginTypes { get; set; }
         public StatusLists? Status { get; set; }
         public string? IpWhiteLists { get; set; }
-
     }
 }

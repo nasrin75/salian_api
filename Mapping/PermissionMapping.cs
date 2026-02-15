@@ -11,12 +11,9 @@ namespace salian_api.Mapping
             builder.ToTable("Permissions");
             builder.HasKey(x => x.Id);
 
-            builder.Property("Name")
-                .HasMaxLength(100)
-                .IsRequired();
+            builder.Property("Name").HasMaxLength(100).IsRequired();
 
-            builder.Property("DeletedAt")
-               .IsRequired(false);
+            builder.Property("DeletedAt").IsRequired(false);
 
             builder.HasQueryFilter(r => r.DeletedAt == null);
         }

@@ -1,8 +1,4 @@
-﻿
-
-using salian_api.Entities;
-
-namespace salian_api.Dtos.ActionType
+﻿namespace salian_api.Dtos.ActionType
 {
     public class ActionTypeCreateDto
     {

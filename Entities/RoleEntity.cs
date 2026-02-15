@@ -20,6 +20,5 @@ namespace salian_api.Entities
 
         //Many to Many relation
         public List<PermissionEntity> Permissions { get; set; } = [];
-
     }
 }

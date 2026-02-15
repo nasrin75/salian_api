@@ -6,6 +6,7 @@ namespace salian_api.Dtos.Inventory
     {
         public long ItNumber { get; set; }
         public long? ItParentNumber { get; set; }
+
         //public long UserId { get; set; }
         public long EmployeeId { get; set; }
         public long LocationId { get; set; }
@@ -20,7 +21,7 @@ namespace salian_api.Dtos.Inventory
         public string? ModelName { get; set; }
         public string? Capacity { get; set; }
         public string? Size { get; set; }
-        
+
         public DateOnly? ExpireWarrantyDate { get; set; }
         public DateOnly? DeliveryDate { get; set; }
         public List<InventoryFeatureDto>? Features { get; set; }

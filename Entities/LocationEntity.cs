@@ -11,7 +11,6 @@ namespace salian_api.Entities
         public bool IsShow { get; set; }
 
         public DateTime? DeletedAt { get; set; }
-       // public EmployeeEntity Employee { get; set; }
+        // public EmployeeEntity Employee { get; set; }
     }
-
 }

@@ -1,6 +1,4 @@
-﻿
-
-namespace salian_api.Dtos.Location
+﻿namespace salian_api.Dtos.Location
 {
     public class LocationCreateDto
     {
