@@ -22,7 +22,10 @@ namespace salian_api.Config.Permissions
             var permissionNames = policyName.Substring(PermissionAuthorizeAttribute.PolicyPrefix.Length).Split(',');
 
             var policy = new AuthorizationPolicyBuilder()
-                .RequireClaim(Permissions.Permission, permissionNames)
+                .RequireAssertion(contex =>
+                    contex.User.IsInRole("Admin") ||
+                    permissionNames.Any(p =>contex.User.HasClaim(Permissions.Permission,p))
+                    )
                 .Build();
 
             return Task.FromResult(policy);
