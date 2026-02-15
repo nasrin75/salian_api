@@ -10,13 +10,18 @@ namespace salian_api.Services
     {
         public async Task<BaseResponse<ProfileResponse?>> Update(ProfileUpdateDto dto)
         {
-            UserEntity user = await _dbContext.Users.FirstOrDefaultAsync(x=>x.Id == dto.Id);
-            if (user == null) return new BaseResponse<ProfileResponse?>(null,400, "USER_NOT_FOUND");
+            UserEntity user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == dto.Id);
+            if (user == null)
+                return new BaseResponse<ProfileResponse?>(null, 400, "USER_NOT_FOUND");
 
-            if(dto.Username !=null && dto.Username != user.Username) user.Username = dto.Username;
-            if(dto.NewPassword != null && dto.NewPassword != user.Password) user.Password = dto.NewPassword;
-            if(dto.Email !=null && dto.Email != user.Email) user.Email = dto.Email;
-            if(dto.Mobile !=null && dto.Mobile != user.Mobile) user.Mobile = dto.Mobile;
+            if (dto.Username != null && dto.Username != user.Username)
+                user.Username = dto.Username;
+            if (dto.NewPassword != null && dto.NewPassword != user.Password)
+                user.Password = dto.NewPassword;
+            if (dto.Email != null && dto.Email != user.Email)
+                user.Email = dto.Email;
+            if (dto.Mobile != null && dto.Mobile != user.Mobile)
+                user.Mobile = dto.Mobile;
 
             _dbContext.Update(user);
             _dbContext.SaveChanges();
@@ -28,7 +33,6 @@ namespace salian_api.Services
                 Mobile = dto.Mobile,
                 Password = dto.NewPassword,
                 Username = dto.Username,
-
             };
 
             return new BaseResponse<ProfileResponse?>(response);
@@ -37,8 +41,8 @@ namespace salian_api.Services
         public async Task<BaseResponse<ProfileResponse?>> GetByID(long Id)
         {
             UserEntity user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == Id);
-            if (user == null) return new BaseResponse<ProfileResponse?>(null, 400, "USER_NOT_FOUND");
-
+            if (user == null)
+                return new BaseResponse<ProfileResponse?>(null, 400, "USER_NOT_FOUND");
 
             ProfileResponse response = new ProfileResponse
             {

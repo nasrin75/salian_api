@@ -21,10 +21,10 @@ namespace salian_api.Services
     {
         public async Task<BaseResponse<LoginResponse>> Login(LoginDto request)
         {
-            var user = await _dbContext.Users
-                .Include(x => x.Permissions)
+            var user = await _dbContext
+                .Users.Include(x => x.Permissions)
                 .Include(x => x.Role)
-                .ThenInclude(r => r.Permissions)
+                    .ThenInclude(r => r.Permissions)
                 .FirstOrDefaultAsync(x =>
                     x.Username == request.Username && x.Password == request.Password
                 );
@@ -32,7 +32,6 @@ namespace salian_api.Services
             // return null if user not found
             if (user == null)
                 return new BaseResponse<LoginResponse>(null, 400, "USER_NOT_FOUND");
-
 
             var token = GenerateJwtToken(user);
 
@@ -81,21 +80,20 @@ namespace salian_api.Services
 
             var claims = new ClaimsIdentity();
             // add claims
-             claims.AddClaims(
+            claims.AddClaims(
                 new[]
-              {
-                  new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                  new Claim(ClaimTypes.Name, user.Username!),
-                  new Claim(ClaimTypes.Email, user.Email!),
-                  new Claim(ClaimTypes.MobilePhone, user.Mobile!),
-                  new Claim(ClaimTypes.Role, user.Role.EnName.ToString()),
-               }
-             );
-            // assign userPermissions as claims
-            var userPermissions = user.Permissions.Select(p => new PermissionResponse
                 {
-                    Name = p.Name,
-                }).ToList();
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username!),
+                    new Claim(ClaimTypes.Email, user.Email!),
+                    new Claim(ClaimTypes.MobilePhone, user.Mobile!),
+                    new Claim(ClaimTypes.Role, user.Role.EnName.ToString()),
+                }
+            );
+            // assign userPermissions as claims
+            var userPermissions = user
+                .Permissions.Select(p => new PermissionResponse { Name = p.Name })
+                .ToList();
             //Console.WriteLine("user_perm:: " + userPermissions);
             foreach (var permission in userPermissions)
             {
@@ -103,18 +101,15 @@ namespace salian_api.Services
                 claims.AddClaims(new[] { new Claim(Permissions.Permission, permission.Name) });
             }
 
-
             // assign rolePermissions as claims
-            var rolePermissions = user.Role.Permissions.Select(p => new PermissionResponse
-            {
-                Name = p.Name,
-            }).ToList();
+            var rolePermissions = user
+                .Role.Permissions.Select(p => new PermissionResponse { Name = p.Name })
+                .ToList();
             foreach (var rolePermission in rolePermissions)
             {
                 Console.WriteLine("role_perm:: " + rolePermission.Name);
                 claims.AddClaims(new[] { new Claim(Permissions.Permission, rolePermission.Name) });
             }
-
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

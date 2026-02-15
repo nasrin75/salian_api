@@ -24,9 +24,8 @@ namespace salian_api.Services
                 FeatureEntity feature = new FeatureEntity
                 {
                     Name = param.Name,
-                    Equipments = equipmentList
+                    Equipments = equipmentList,
                 };
-
 
                 var newFeature = _dbContex.Features.Add(feature).Entity;
                 await _dbContex.SaveChangesAsync();
@@ -35,28 +34,29 @@ namespace salian_api.Services
                 {
                     Id = newFeature.Id,
                     Name = newFeature.Name,
-                    Equipments = newFeature.Equipments.Select(x => new EquipmentResponse
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Type = x.Type,
-
-                    }).ToList()
+                    Equipments = newFeature
+                        .Equipments.Select(x => new EquipmentResponse
+                        {
+                            Id = x.Id,
+                            Name = x.Name,
+                            Type = x.Type,
+                        })
+                        .ToList(),
                 };
 
                 return new BaseResponse<FeatureResponse>(response);
-            }catch (Exception ex)
-            {
-                return new BaseResponse<FeatureResponse>(null,400,ex.Message);
             }
-
+            catch (Exception ex)
+            {
+                return new BaseResponse<FeatureResponse>(null, 400, ex.Message);
+            }
         }
 
         public async Task<BaseResponse> Delete(long id)
         {
-            var feature = await _dbContex.Features
-                .FirstOrDefaultAsync(l => l.Id == id);
-            if (feature == null) return new BaseResponse<FeatureResponse?>(null, 400, "Feature Not Found");
+            var feature = await _dbContex.Features.FirstOrDefaultAsync(l => l.Id == id);
+            if (feature == null)
+                return new BaseResponse<FeatureResponse?>(null, 400, "FEATURE_NOT_FOUND");
 
             feature.DeletedAt = DateTime.UtcNow;
 
@@ -68,22 +68,22 @@ namespace salian_api.Services
 
         public async Task<BaseResponse<List<FeatureListResponse>>> GetAll()
         {
-           List<FeatureListResponse> features = await _dbContex.Features
-                .AsNoTracking()
+            List<FeatureListResponse> features = await _dbContex
+                .Features.AsNoTracking()
                 .OrderByDescending(x => x.Id)
                 .Select(l => new FeatureListResponse
                 {
                     Id = l.Id,
                     Name = l.Name,
                     Equipments = string.Join(" - ", l.Equipments.Select(x => x.Name)),
-                   /* Equipments = l.Equipments.Select(x => new EquipmentResponse
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Type = x.Type,
-
-                    })
-                    .ToList()*/
+                    /* Equipments = l.Equipments.Select(x => new EquipmentResponse
+                     {
+                         Id = x.Id,
+                         Name = x.Name,
+                         Type = x.Type,
+ 
+                     })
+                     .ToList()*/
                 })
                 .ToListAsync();
 
@@ -92,56 +92,63 @@ namespace salian_api.Services
 
         public async Task<BaseResponse<FeatureResponse?>> GetByID(long Id)
         {
-            var feature = await _dbContex.Features.AsNoTracking()
+            var feature = await _dbContex
+                .Features.AsNoTracking()
                 .Select(item => new FeatureResponse
                 {
                     Id = item.Id,
                     Name = item.Name,
-                    Equipments = item.Equipments.Select(x => new EquipmentResponse
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        Type = x.Type,
-
-                    }).ToList()
+                    Equipments = item
+                        .Equipments.Select(x => new EquipmentResponse
+                        {
+                            Id = x.Id,
+                            Name = x.Name,
+                            Type = x.Type,
+                        })
+                        .ToList(),
                 })
                 .FirstOrDefaultAsync(l => l.Id == Id);
 
-            if (feature == null) return new BaseResponse<FeatureResponse?>(null, 400, "Feature Not Found");
-            
+            if (feature == null)
+                return new BaseResponse<FeatureResponse?>(null, 400, "FEATURE_NOT_FOUND");
+
             return new BaseResponse<FeatureResponse>(feature);
         }
 
         public async Task<BaseResponse<List<FeatureResponse>>> Search(SearchFeatureDto param)
         {
             var query = _dbContex.Features.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(param.Name)) query = query.Where(x => x.Name.Contains(param.Name));
+            if (!string.IsNullOrWhiteSpace(param.Name))
+                query = query.Where(x => x.Name.Contains(param.Name));
 
-            List<FeatureResponse> features = await query.Select(l => new FeatureResponse
-            {
-                Id = l.Id,
-                Name = l.Name,
-                Equipments = l.Equipments.Select(x => new EquipmentResponse
+            List<FeatureResponse> features = await query
+                .Select(l => new FeatureResponse
                 {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Type = x.Type,
-
-                }).ToList()
-            }).ToListAsync();
+                    Id = l.Id,
+                    Name = l.Name,
+                    Equipments = l
+                        .Equipments.Select(x => new EquipmentResponse
+                        {
+                            Id = x.Id,
+                            Name = x.Name,
+                            Type = x.Type,
+                        })
+                        .ToList(),
+                })
+                .ToListAsync();
 
             return new BaseResponse<List<FeatureResponse>>(features);
         }
 
         public async Task<BaseResponse<FeatureResponse?>> Update(FeatureUpdateDto param)
         {
-           
-            var feature = await _dbContex.Features
-                .FirstOrDefaultAsync(l => l.Id == param.Id);
+            var feature = await _dbContex.Features.FirstOrDefaultAsync(l => l.Id == param.Id);
 
-            if (feature == null) return new BaseResponse<FeatureResponse?>(null, 400, "Feature Not Found");
+            if (feature == null)
+                return new BaseResponse<FeatureResponse?>(null, 400, "FEATURE_NOT_FOUND");
 
-            if (param.Name != null && param.Name != feature.Name) feature.Name = param.Name;
+            if (param.Name != null && param.Name != feature.Name)
+                feature.Name = param.Name;
 
             //TODO:: update Equipmentfeature
 
@@ -152,14 +159,14 @@ namespace salian_api.Services
             {
                 Id = feature.Id,
                 Name = feature.Name,
-                Equipments = feature.Equipments.Select(x => new EquipmentResponse
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Type = x.Type,
-
-                }).ToList()
-
+                Equipments = feature
+                    .Equipments.Select(x => new EquipmentResponse
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Type = x.Type,
+                    })
+                    .ToList(),
             };
 
             return new BaseResponse<FeatureResponse?>(response);
