@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using salian_api.Dtos.Equipment;
 using salian_api.Dtos.User;
 using salian_api.Entities;
 using salian_api.Interface;
@@ -11,12 +10,24 @@ using salian_api.Response.User;
 
 namespace salian_api.Services
 {
-    public class UserService(ApplicationDbContext _dbContext) : IUserService
+    public class UserService(ApplicationDbContext _dbContext, IHttpContextAccessor _httpContextAccessor) : IUserService
     {
         public async Task<BaseResponse<UserResponse>> Create(UserCreateDto dto)
         {
+            var existUsername = _dbContext.Users
+                .AsNoTracking()
+                .Where(u => u.Username.ToLower().Trim() == dto.Username.ToLower().Trim())
+                .Count();
+            if (existUsername > 0) return new BaseResponse<UserResponse>(null, 400, "USERNAME_IS_EXIST");
+
+            var existEmail = _dbContext.Users
+                .AsNoTracking()
+                .Where(u => u.Email.ToLower().Trim() == dto.Email.ToLower().Trim())
+                .Count();
+            if (existEmail > 0) return new BaseResponse<UserResponse>(null, 400, "EAMIL_IS_EXIST");
+
             // convert dto.loginType to LoginTypes's enum, if this string dosen't exist in this enum get exception 
-           var LoginTypes = dto.LoginTypes
+            var LoginTypes = dto.LoginTypes
                 .Select(x => Enum.Parse<LoginTypes>(x))
                 .ToList();
 
@@ -258,27 +269,23 @@ namespace salian_api.Services
             return result;
         }
 
+        public async Task<BaseResponse<List<PermissionResponse>>> UserPermissions()
+        {
 
-        // public async Task<List<string>> GetUserPermissions(long userId)
-        // {
-        //     var user = await _dbContext.Users
-        //         .Include(u => u.Role)
-        //             .ThenInclude(r => r.RolePermissions)
-        //                 .ThenInclude(rp => rp.Permission)
-        //         .Include(u => u.UserPermissions)
-        //             .ThenInclude(up => up.Permission)
-        //         .FirstOrDefaultAsync(u => u.Id == userId);
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userID == null) return new BaseResponse<List<PermissionResponse>>(null, 400, "ACCESS_DENY");
 
-        //     var rolePermissions = user.Role.RolePermissions
-        //         .Select(rp => rp.Permission.Name);
+            UserEntity user = await _dbContext.Users
+                .Include("Permissions")
+                .FirstOrDefaultAsync(x => x.Id.ToString() == userID);
+            if (user == null) return new BaseResponse<List<PermissionResponse>>(null, 400, "USER_NOT_FOUND");
 
-        //     var userPermissions = user.UserPermissions
-        //         .Select(up => up.Permission.Name);
-
-        //     return rolePermissions
-        //         .Union(userPermissions)
-        //         .Distinct()
-        //         .ToList();
-        // }
+            var permissions = user.Permissions.Select(p => new PermissionResponse
+            {
+                Id = p.Id,
+                Name = p.Name,
+            }).ToList();
+            return new BaseResponse<List<PermissionResponse>>(permissions);
+        }
     }
 }
