@@ -67,6 +67,9 @@ builder.Services.Configure<AuthSettings>(authConfiguration);
 var authSettings = authConfiguration.Get<AuthSettings>();
 builder.Services.AddOurAuthentication(authSettings);
 
+// Can access to loginUser
+builder.Services.AddHttpContextAccessor();
+
 // Add seeder part1
 builder.Services.AddScoped<ISeeder,RoleSeeder>();
 builder.Services.AddScoped<ISeeder,UserSeeder>();
