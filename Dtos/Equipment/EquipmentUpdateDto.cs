@@ -1,5 +1,5 @@
-﻿using salian_api.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using salian_api.Entities;
 
 namespace salian_api.Dtos.Equipment
 {
@@ -11,6 +11,5 @@ namespace salian_api.Dtos.Equipment
         public string? Name { get; set; }
         public TypeMap Type { get; set; }
         public bool IsShowInMenu { get; set; }
-
     }
 }

@@ -1,5 +1,4 @@
-﻿
-namespace salian_api.Dtos.Profile
+﻿namespace salian_api.Dtos.Profile
 {
     public class ProfileUpdateDto
     {

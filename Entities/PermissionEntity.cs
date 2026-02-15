@@ -6,8 +6,9 @@ namespace salian_api.Entities
     public class PermissionEntity
     {
         public long Id { get; set; }
-        public required string Name { get; set; }
+        public string Name { get; set; }
         public DateTime? DeletedAt { get; set; }
-
+        public List<RoleEntity?> Roles { get; set; }
+        public List<UserEntity?> Users { get; set; }
     }
 }

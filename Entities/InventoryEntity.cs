@@ -1,7 +1,5 @@
-﻿using salian_api.Response.Inventory;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
 
 namespace salian_api.Entities
 {
@@ -18,7 +16,6 @@ namespace salian_api.Entities
 
         public long EmployeeId { get; set; }
         public EmployeeEntity Employee { get; set; }
-
 
         public long LocationId { get; set; }
         public LocationEntity Location { get; set; }
@@ -43,7 +40,6 @@ namespace salian_api.Entities
         public DateTime UpdatedAt { get; set; }
         public List<InventoryFeatureEntity> Features { get; set; }
 
-
         // feature -> Clock , Core, Bus, RamType
 
         public InventoryEntity()
@@ -57,7 +53,7 @@ namespace salian_api.Entities
     {
         Useless = -1, // اسقاطی
         Unuse = -2, // استفاده نشده
-        Inuse = 1,// استفاده شده
+        Inuse = 1, // استفاده شده
         SendToCharge = 2, // ارسال جهت شارژ
         BackFromCharge = 3, // بازگشت از شارژ
         Repair = 4, // تعمیر

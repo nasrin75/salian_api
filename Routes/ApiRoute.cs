@@ -1,4 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using salian_api.Dtos.Otp;
+using salian_api.Interface;
+using salian_api.Response;
+using salian_api.Response.Otp;
 
 namespace salian_api.Routes;
 
@@ -6,26 +10,42 @@ public static class ApiRoute
 {
     public static void MapApiRoutes(this IEndpointRouteBuilder app)
     {
-        app.MapPost("api/upload", async ([FromForm] IFormFile file) =>
-            {
-                if (file == null || file.Length == 0)
-                    return Results.BadRequest("No file uploaded");
+        app.MapPost(
+                "api/upload",
+                async ([FromForm] IFormFile file) =>
+                {
+                    if (file == null || file.Length == 0)
+                        return Results.BadRequest("No file uploaded");
 
-                var imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/inventory");
+                    var imagesFolder = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot/images/inventory"
+                    );
 
-                if (!Directory.Exists(imagesFolder))
-                    Directory.CreateDirectory(imagesFolder);
+                    if (!Directory.Exists(imagesFolder))
+                        Directory.CreateDirectory(imagesFolder);
 
-                var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
-                var path = Path.Combine(imagesFolder, fileName);
+                    var fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+                    var path = Path.Combine(imagesFolder, fileName);
 
-                using var stream = new FileStream(path, FileMode.Create);
-                await file.CopyToAsync(stream);
+                    using var stream = new FileStream(path, FileMode.Create);
+                    await file.CopyToAsync(stream);
 
-                return Results.Ok(new { fileName });
-
-            })
+                    return Results.Ok(new { fileName });
+                }
+            )
             .WithTags("Upload")
-            .DisableAntiforgery();
+            .DisableAntiforgery()
+            .RequireAuthorization();
+
+        app.MapPost(
+                "/sendOtp",
+                async (IAuthService service, SendOtpDto request) =>
+                {
+                    BaseResponse<OtpResponse> result = await service.SendOtp(request);
+                    return result.ToResult();
+                }
+            )
+            .WithTags("Otp");
     }
 }

@@ -1,6 +1,4 @@
-﻿
-
-namespace salian_api.Dtos.Permission
+﻿namespace salian_api.Dtos.Permission
 {
     public class PermissionCreateDto
     {

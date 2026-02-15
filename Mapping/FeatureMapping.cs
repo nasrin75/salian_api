@@ -11,15 +11,11 @@ namespace salian_api.Mapping
             builder.ToTable("Features");
             builder.HasKey(e => e.Id);
 
-            builder.Property("Name")
-                .HasMaxLength(100)
-                .IsRequired();
+            builder.Property("Name").HasMaxLength(100).IsRequired();
 
-            builder.Property("DeletedAt")
-               .IsRequired(false);
+            builder.Property("DeletedAt").IsRequired(false);
 
             builder.HasQueryFilter(f => f.DeletedAt == null);
-
         }
     }
 }

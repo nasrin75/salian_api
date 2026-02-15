@@ -4,106 +4,80 @@ using salian_api.Entities;
 
 namespace salian_api.Mapping
 {
-        public class InventoryMapping : IEntityTypeConfiguration<InventoryEntity>
+    public class InventoryMapping : IEntityTypeConfiguration<InventoryEntity>
+    {
+        public void Configure(EntityTypeBuilder<InventoryEntity> builder)
         {
-                public void Configure(EntityTypeBuilder<InventoryEntity> builder)
-                {
-                        builder.ToTable("Inventories");
-                        builder.HasKey(x => x.Id);
+            builder.ToTable("Inventories");
+            builder.HasKey(x => x.Id);
 
-                        builder.Property("UserId")
-                                .IsRequired();
+            builder.Property("UserId").IsRequired();
 
-                        builder.Property("EmployeeId")
-                                .IsRequired();
+            builder.Property("EmployeeId").IsRequired();
 
-                        builder.Property("EquipmentId")
-                                .IsRequired();
+            builder.Property("EquipmentId").IsRequired();
 
-                        builder.Property("LocationId")
-                                .IsRequired();
+            builder.Property("LocationId").IsRequired();
 
-                        builder.Property("ItNumber")
-                                .IsRequired();
+            builder.Property("ItNumber").IsRequired();
 
-                        builder.Property("ItParentNumber");
+            builder.Property("ItParentNumber");
 
-                        builder.Property("Status")
-                                .IsRequired();
+            builder.Property("Status").IsRequired();
 
-                        builder.Property("PropertyNumber")
-                                .HasMaxLength(255)
-                                .IsRequired(false);
+            builder.Property("PropertyNumber").HasMaxLength(255).IsRequired(false);
 
-                        builder.Property("SerialNumber")
-                               .HasMaxLength(255)
-                               .IsRequired(false);
+            builder.Property("SerialNumber").HasMaxLength(255).IsRequired(false);
 
+            builder.Property("InvoiceNumber").HasMaxLength(255).IsRequired(false);
 
-                        builder.Property("InvoiceNumber")
-                                .HasMaxLength(255)
-                                .IsRequired(false);
+            builder.Property("InvoiceImage").IsRequired(false);
 
+            builder.Property("Description").HasMaxLength(255).IsRequired(false);
 
-                        builder.Property("InvoiceImage")
-                                .IsRequired(false);
+            builder.Property("BrandName").HasMaxLength(255).IsRequired(false);
 
+            builder.Property("ModelName").HasMaxLength(255).IsRequired(false);
 
-                        builder.Property("Description")
-                                .HasMaxLength(255)
-                                .IsRequired(false);
+            builder.Property("Capacity").HasMaxLength(255).IsRequired(false);
 
-                        builder.Property("BrandName")
-                                .HasMaxLength(255)
-                                .IsRequired(false);
+            builder.Property("Size").IsRequired(false);
 
-                        builder.Property("ModelName")
-                               .HasMaxLength(255)
-                               .IsRequired(false);
+            builder.Property("ExpireWarrantyDate").IsRequired(false);
 
-                        builder.Property("Capacity")
-                                .HasMaxLength(255)
-                                .IsRequired(false);
+            builder.Property("DeliveryDate").IsRequired(false);
 
-                        builder.Property("Size")
-                                .IsRequired(false);
+            builder.Property("CreatedAt").IsRequired();
 
-                        builder.Property("ExpireWarrantyDate")
-                                .IsRequired(false);
+            builder.Property("UpdatedAt").IsRequired();
 
-                        builder.Property("DeliveryDate")
-                               .IsRequired(false);
+            builder.Property("DeletedAt").IsRequired(false);
 
-                        builder.Property("CreatedAt")
-                                .IsRequired();
+            builder.HasQueryFilter(x => x.DeletedAt == null);
 
-                        builder.Property("UpdatedAt")
-                                .IsRequired();
+            builder
+                .HasOne(i => i.Location)
+                .WithMany()
+                .HasForeignKey(i => i.LocationId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-                        builder.Property("DeletedAt")
-                                .IsRequired(false);
+            builder
+                .HasOne(i => i.User)
+                .WithMany()
+                .HasForeignKey(i => i.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-                        builder.HasQueryFilter(x => x.DeletedAt == null);
+            builder
+                .HasOne(i => i.Employee)
+                .WithMany()
+                .HasForeignKey(i => i.EmployeeId)
+                .OnDelete(DeleteBehavior.NoAction);
 
-                        builder.HasOne(i => i.Location)
-                                .WithMany()
-                                .HasForeignKey(i => i.LocationId)
-                                .OnDelete(DeleteBehavior.NoAction);
-
-                        builder.HasOne(i => i.User)
-                            .WithMany()
-                            .HasForeignKey(i => i.UserId)
-                            .OnDelete(DeleteBehavior.NoAction);
-
-                        builder.HasOne(i => i.Employee)
-                            .WithMany()
-                            .HasForeignKey(i => i.EmployeeId)
-                            .OnDelete(DeleteBehavior.NoAction);
-
-                        builder.HasOne(i => i.Equipment)
-                            .WithMany()
-                            .HasForeignKey(i => i.EquipmentId)
-                            .OnDelete(DeleteBehavior.NoAction);
-                }
+            builder
+                .HasOne(i => i.Equipment)
+                .WithMany()
+                .HasForeignKey(i => i.EquipmentId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
+    }
 }

@@ -1,6 +1,4 @@
-﻿
-
-using salian_api.Entities;
+﻿using salian_api.Entities;
 
 namespace salian_api.Dtos.Equipment
 {

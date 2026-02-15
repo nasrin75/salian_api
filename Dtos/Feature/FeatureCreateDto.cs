@@ -1,5 +1,4 @@
-﻿
-namespace salian_api.Dtos.Feature
+﻿namespace salian_api.Dtos.Feature
 {
     public class FeatureCreateDto
     {

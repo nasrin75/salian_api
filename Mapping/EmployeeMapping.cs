@@ -11,20 +11,13 @@ namespace salian_api.Mapping
             builder.ToTable("Employees");
             builder.HasKey(e => e.Id);
 
-            builder.Property("Name")
-                   .HasMaxLength(255)
-                   .IsRequired();
+            builder.Property("Name").HasMaxLength(255).IsRequired();
 
-            builder.Property("Email")
-                   .HasMaxLength(255)
-                   .IsRequired(false);
+            builder.Property("Email").HasMaxLength(255).IsRequired(false);
 
-
-            builder.Property("DeletedAt")
-                .IsRequired(false);
+            builder.Property("DeletedAt").IsRequired(false);
 
             builder.HasQueryFilter(x => x.DeletedAt == null);
-
         }
     }
 }

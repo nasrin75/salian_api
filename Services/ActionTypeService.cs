@@ -31,31 +31,35 @@ namespace salian_api.Services
                 };
 
                 return new BaseResponse<ActionTypeResponse>(response);
-            }catch (Exception ex)
-            {
-                return new BaseResponse<ActionTypeResponse>(null,400,ex.Message);
             }
-
+            catch (Exception ex)
+            {
+                return new BaseResponse<ActionTypeResponse>(null, 400, ex.Message);
+            }
         }
 
         public async Task<BaseResponse> Delete(long id)
         {
-            var actionType = await _dbContex.ActionTypes
-                .FirstOrDefaultAsync(l => l.Id == id);
-            if (actionType == null) return new BaseResponse<ActionTypeResponse?>(null, 400, "ActionType Not Found");
+            var actionType = await _dbContex.ActionTypes.FirstOrDefaultAsync(l => l.Id == id);
+            if (actionType == null)
+                return new BaseResponse<ActionTypeResponse?>(null, 400, "ACTION_TYPE_NOT_FOUND");
 
             actionType.DeletedAt = DateTime.UtcNow;
 
             _dbContex.ActionTypes.Update(actionType);
             await _dbContex.SaveChangesAsync();
 
-            return new BaseResponse<ActionTypeResponse?>(null, 200, "ActionType Successfully Is Deleted");
+            return new BaseResponse<ActionTypeResponse?>(
+                null,
+                200,
+                "ActionType Successfully Is Deleted"
+            );
         }
 
         public async Task<BaseResponse<List<ActionTypeResponse>>> GetAll()
         {
-            List<ActionTypeResponse> actionTypes = await _dbContex.ActionTypes
-                .AsNoTracking()
+            List<ActionTypeResponse> actionTypes = await _dbContex
+                .ActionTypes.AsNoTracking()
                 .Select(l => new ActionTypeResponse
                 {
                     Id = l.Id,
@@ -70,7 +74,8 @@ namespace salian_api.Services
 
         public async Task<BaseResponse<ActionTypeResponse?>> GetByID(long ActionTypeID)
         {
-            var actionType = await _dbContex.ActionTypes.AsNoTracking()
+            var actionType = await _dbContex
+                .ActionTypes.AsNoTracking()
                 .Select(item => new ActionTypeResponse
                 {
                     Id = item.Id,
@@ -80,38 +85,46 @@ namespace salian_api.Services
                 })
                 .FirstOrDefaultAsync(l => l.Id == ActionTypeID);
 
-            if (actionType == null) return new BaseResponse<ActionTypeResponse?>(null, 400, "ActionType Not Found");
-            
+            if (actionType == null)
+                return new BaseResponse<ActionTypeResponse?>(null, 400, "ACTION_TYPE_NOT_FOUND");
+
             return new BaseResponse<ActionTypeResponse>(actionType);
         }
 
         public async Task<BaseResponse<List<ActionTypeResponse>>> Search(SearchActionTypeDto param)
         {
             var query = _dbContex.ActionTypes.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(param.FaName)) query = query.Where(x => x.FaName.Contains(param.FaName));
-            if (!string.IsNullOrWhiteSpace(param.EnName)) query = query.Where(x => x.EnName.Contains(param.EnName));
+            if (!string.IsNullOrWhiteSpace(param.FaName))
+                query = query.Where(x => x.FaName.Contains(param.FaName));
+            if (!string.IsNullOrWhiteSpace(param.EnName))
+                query = query.Where(x => x.EnName.Contains(param.EnName));
 
-            List<ActionTypeResponse> actionTypes = await query.Select(l => new ActionTypeResponse
-            {
-                Id = l.Id,
-                FaName = l.FaName,
-                EnName = l.EnName,
-                IsShow = l.IsShow,
-            }).ToListAsync();
+            List<ActionTypeResponse> actionTypes = await query
+                .Select(l => new ActionTypeResponse
+                {
+                    Id = l.Id,
+                    FaName = l.FaName,
+                    EnName = l.EnName,
+                    IsShow = l.IsShow,
+                })
+                .ToListAsync();
 
             return new BaseResponse<List<ActionTypeResponse>>(actionTypes);
         }
 
         public async Task<BaseResponse<ActionTypeResponse?>> Update(ActionTypeUpdateDto param)
         {
-            var actionType = await _dbContex.ActionTypes
-                .FirstOrDefaultAsync(l => l.Id == param.Id);
+            var actionType = await _dbContex.ActionTypes.FirstOrDefaultAsync(l => l.Id == param.Id);
 
-            if (actionType == null) return new BaseResponse<ActionTypeResponse?>(null, 400, "ActionType Not Found");
+            if (actionType == null)
+                return new BaseResponse<ActionTypeResponse?>(null, 400, "ACTION_TYPE_NOT_FOUND");
 
-            if (param.FaName != null && param.FaName != actionType.FaName) actionType.FaName = param.FaName;
-            if (param.EnName != null && param.EnName != actionType.EnName) actionType.EnName = param.EnName;
-            if (param.IsShow != null && param.IsShow != actionType.IsShow) actionType.IsShow = param.IsShow.Value;
+            if (param.FaName != null && param.FaName != actionType.FaName)
+                actionType.FaName = param.FaName;
+            if (param.EnName != null && param.EnName != actionType.EnName)
+                actionType.EnName = param.EnName;
+            if (param.IsShow != null && param.IsShow != actionType.IsShow)
+                actionType.IsShow = param.IsShow.Value;
 
             _dbContex.Update(actionType);
             await _dbContex.SaveChangesAsync();

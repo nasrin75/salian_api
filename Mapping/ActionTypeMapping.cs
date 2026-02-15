@@ -9,21 +9,15 @@ namespace salian_api.Mapping
         public void Configure(EntityTypeBuilder<ActionTypeEntity> builder)
         {
             builder.ToTable("ActionTypes");
-            builder.HasKey(x=> x.Id );
+            builder.HasKey(x => x.Id);
 
-            builder.Property("FaName")
-                .HasMaxLength(100)
-                .IsRequired();
+            builder.Property("FaName").HasMaxLength(100).IsRequired();
 
-            builder.Property("EnName")
-                .HasMaxLength(100)
-                .IsRequired(false);
+            builder.Property("EnName").HasMaxLength(100).IsRequired(false);
 
-            builder.Property("IsShow")
-               .HasDefaultValue(true);
+            builder.Property("IsShow").HasDefaultValue(true);
 
-            builder.Property("DeletedAt")
-               .IsRequired(false);
+            builder.Property("DeletedAt").IsRequired(false);
 
             builder.HasQueryFilter(r => r.DeletedAt == null);
         }

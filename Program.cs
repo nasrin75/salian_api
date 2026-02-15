@@ -9,12 +9,22 @@ using salian_api.Services;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
+using System.Configuration;
+using salian_api.Config.Extentions;
+using salian_api.Config;
+using Microsoft.AspNetCore.Authorization;
+using salian_api.Config.Permissions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using salian_api.Seeder;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOurSwagger();
 
 /* Init Databse */
 builder.Services.AddDbContext<ApplicationDbContext>(
@@ -23,17 +33,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 /* For customize error message */
 builder.Services.AddLogging();
 builder.Services.AddProblemDetails();
-
-
-// For convert send and recive request as Json format
-/*builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        //options.JsonSerializerOptions.PropertyNamingPolicy = null;
-        options.JsonSerializerOptions.Converters.Add(
-            new JsonStringEnumConverter());
-            //new System.Text.Json.Serialization.JsonStringEnumConverter());
-    });*/
 
 builder.Services.ConfigureHttpJsonOptions(option =>
 {
@@ -50,6 +49,8 @@ builder.Services.AddScoped<IFeatureService, FeatureService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 
 //Add CORS
 builder.Services.AddCors(
@@ -58,7 +59,38 @@ builder.Services.AddCors(
     .AllowAnyMethod()
     .WithOrigins("http://localhost:3000", "http://localhost:5005")));
 
+// Add new configuration
+var authConfiguration = builder.Configuration.GetSection("AuthSettings");
+builder.Services.Configure<AuthSettings>(authConfiguration);
+
+// scafold Jwt Authorization
+var authSettings = authConfiguration.Get<AuthSettings>();
+builder.Services.AddOurAuthentication(authSettings);
+
+// Can access to loginUser
+builder.Services.AddHttpContextAccessor();
+
+// Add seeder part1
+builder.Services.AddScoped<ISeeder,RoleSeeder>();
+builder.Services.AddScoped<ISeeder,UserSeeder>();
+builder.Services.AddScoped<ISeeder,PermissionSeeder>();
+builder.Services.AddScoped<SeederProvider>();
+
+// overwrite and create custome permissions
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
+
 var app = builder.Build();
+
+// Add seeder part2
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+
+    var seeder = scope.ServiceProvider.GetRequiredService<SeederProvider>();
+    await seeder.SeedAllAsync(db, scope.ServiceProvider);
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -84,8 +116,14 @@ app.MapPermissionRoutes("Permission");
 app.MapFeatureRoutes("Feature");
 app.MapInventoryRoutes("Inventory");
 app.MapProfileRoutes("Profile");
+app.MapAuthRoutes("Authentication");
 app.MapApiRoutes();
 
 app.UseCors("MyLocalhost");
+
+//Add Authorization
+app.UseAuthentication();
+app.UseAuthorization();
+
 
 app.Run();

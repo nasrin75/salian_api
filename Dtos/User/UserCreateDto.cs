@@ -1,6 +1,5 @@
-﻿using salian_api.Entities;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
+﻿using System.ComponentModel.DataAnnotations;
+using salian_api.Entities;
 
 namespace salian_api.Dtos.User
 {
