@@ -20,7 +20,13 @@ namespace salian_api.Routes
                         return role.ToResult();
                     }
                 )
-                .RequireAuthorization(new PermissionAuthorizeAttribute(Permissions.Role.GetAll));
+                .RequireAuthorization(
+                    new PermissionAuthorizeAttribute(
+                        Permissions.Role.GetAll,
+                        Permissions.User.Create,
+                        Permissions.User.Edit
+                    )
+                );
 
             route
                 .MapGet(
@@ -67,6 +73,19 @@ namespace salian_api.Routes
                     }
                 )
                 .RequireAuthorization(new PermissionAuthorizeAttribute(Permissions.Role.Delete));
+
+            route
+                .MapPost(
+                    "/permission/add",
+                    async (IRoleService service, AssignRolePermissionDto request) =>
+                    {
+                        BaseResponse result = await service.AssignPermission(request);
+                        return result.ToResult();
+                    }
+                )
+                .RequireAuthorization(
+                    new PermissionAuthorizeAttribute(Permissions.Role.AddPermission)
+                );
         }
     }
 }

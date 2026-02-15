@@ -13,5 +13,6 @@ namespace salian_api.Interface
         Task<BaseResponse<List<UserListResponse>>> Search(UserSearchDto param);
         Task<BaseResponse> Delete(long id);
         Task<BaseResponse<List<PermissionResponse>>> UserPermissions();
+        Task<BaseResponse> AssignPermission(AssignUserPermissionDto request);
     }
 }

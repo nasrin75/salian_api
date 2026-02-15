@@ -1,19 +1,20 @@
 ﻿using System.Data;
 using Microsoft.EntityFrameworkCore;
+using salian_api.Dtos.Role;
 using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
 
 namespace salian_api.Services
 {
-    public class RoleService(ApplicationDbContext dbContext) : IRoleService
+    public class RoleService(ApplicationDbContext _dbContext) : IRoleService
     {
-        public async Task<BaseResponse<RoleResponse>> Create(Dtos.Role.RoleCreateDto dto)
+        public async Task<BaseResponse<RoleResponse>> Create(RoleCreateDto dto)
         {
             var role = new RoleEntity() { FaName = dto.FaName, EnName = dto.EnName };
 
-            var newRole = dbContext.Roles.Add(role).Entity;
-            await dbContext.SaveChangesAsync();
+            var newRole = _dbContext.Roles.Add(role).Entity;
+            await _dbContext.SaveChangesAsync();
 
             RoleResponse response = new RoleResponse
             {
@@ -27,19 +28,19 @@ namespace salian_api.Services
 
         public async Task<BaseResponse> Delete(long id)
         {
-            RoleEntity? role = await dbContext.Roles.FindAsync(id);
+            RoleEntity? role = await _dbContext.Roles.FindAsync(id);
             if (role == null)
                 return new BaseResponse<RoleResponse?>(null, 400, "ROLE_NOT_FOUND");
 
             role.DeletedAt = DateTime.UtcNow;
-            dbContext.Roles.Update(role);
-            await dbContext.SaveChangesAsync();
+            _dbContext.Roles.Update(role);
+            await _dbContext.SaveChangesAsync();
             return new BaseResponse();
         }
 
         public async Task<BaseResponse<List<RoleResponse>>> GetAllRoles()
         {
-            List<RoleResponse> roles = await dbContext
+            List<RoleResponse> roles = await _dbContext
                 .Roles.AsNoTracking()
                 .OrderByDescending(x => x.Id)
                 .Select(r => new RoleResponse
@@ -55,7 +56,7 @@ namespace salian_api.Services
 
         public async Task<BaseResponse<RoleResponse?>> GetRoleByID(long RoleID)
         {
-            var role = await dbContext.Roles.FirstOrDefaultAsync(r => r.Id == RoleID);
+            var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.Id == RoleID);
             if (role == null)
                 return new BaseResponse<RoleResponse?>(null, 400, "ROLE_NOT_FOUND");
             ;
@@ -70,9 +71,9 @@ namespace salian_api.Services
             return new BaseResponse<RoleResponse>(response);
         }
 
-        public async Task<BaseResponse<RoleResponse?>> Update(Dtos.Role.RoleUpdateDto dto)
+        public async Task<BaseResponse<RoleResponse?>> Update(RoleUpdateDto dto)
         {
-            RoleEntity role = await dbContext.Roles.FirstOrDefaultAsync(r => r.Id == dto.Id);
+            RoleEntity role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.Id == dto.Id);
 
             if (role == null)
                 return new BaseResponse<RoleResponse?>(null, 400, "ROLE_NOT_FOUND");
@@ -85,8 +86,8 @@ namespace salian_api.Services
                 role.EnName = dto.EnName;
             }
 
-            dbContext.Roles.Update(role);
-            await dbContext.SaveChangesAsync();
+            _dbContext.Roles.Update(role);
+            await _dbContext.SaveChangesAsync();
 
             RoleResponse response = new RoleResponse()
             {
@@ -96,6 +97,33 @@ namespace salian_api.Services
             };
 
             return new BaseResponse<RoleResponse>(response);
+        }
+
+         public async Task<BaseResponse> AssignPermission(AssignRolePermissionDto request)
+        {
+            RoleEntity role = _dbContext
+                .Roles.Include(r => r.Permissions)
+                .Where(role => role.Id == request.RoleId)
+                .FirstOrDefault();
+            if (role == null)
+                return new BaseResponse<RoleEntity>(null, 400, "ROLE_NOT_FOUND");
+
+            // delete before data
+            role.Permissions.Clear();
+           
+            var permissions = _dbContext
+                .Permissions.Where(p =>
+                    request.PermissionIds.Contains(p.Id)
+                )
+                .ToList();
+            
+            foreach (var permission in permissions)
+            {
+                role.Permissions.Add(permission);
+            }
+
+            await _dbContext.SaveChangesAsync();
+            return new BaseResponse();
         }
     }
 }

@@ -315,5 +315,32 @@ namespace salian_api.Services
                 .ToList();
             return new BaseResponse<List<PermissionResponse>>(permissions);
         }
+
+        public async Task<BaseResponse> AssignPermission(AssignUserPermissionDto request)
+        {
+            UserEntity user = _dbContext
+                .Users.Include(u => u.Permissions)
+                .Where(user => user.Id == request.UserId)
+                .FirstOrDefault();
+            if (user == null)
+                return new BaseResponse<UserEntity>(null, 400, "USER_NOT_FOUND");
+
+            // delete before data
+            user.Permissions.Clear();
+
+            var permissions = _dbContext
+                .Permissions.Where(p =>
+                    request.PermissionIds.Contains(p.Id)
+                )
+                .ToList();
+
+            foreach (var permission in permissions)
+            {
+                user.Permissions.Add(permission);
+            }
+
+            await _dbContext.SaveChangesAsync();
+            return new BaseResponse();
+        }
     }
 }
