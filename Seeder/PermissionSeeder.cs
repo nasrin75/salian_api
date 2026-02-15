@@ -1,7 +1,7 @@
 ﻿using System;
+using salian_api.Config.Permissions;
 using salian_api.Entities;
 using salian_api.Routes;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace salian_api.Seeder
 {
@@ -14,48 +14,48 @@ namespace salian_api.Seeder
                 var permissions = new PermissionEntity[]
                 {
                     //Inventory
-                    new PermissionEntity() { Name = "inventory.list" },
-                    new PermissionEntity() { Name = "inventory.create" },
-                    new PermissionEntity() { Name = "inventory.edit" },
-                    new PermissionEntity() { Name = "inventory.delete" },
-                    new PermissionEntity() { Name = "inventory.history" },
+                    new PermissionEntity() { Name = Permissions.Inventory.GetAll },
+                    new PermissionEntity() { Name = Permissions.Inventory.Create },
+                    new PermissionEntity() { Name = Permissions.Inventory.Edit },
+                    new PermissionEntity() { Name = Permissions.Inventory.Delete },
+                    new PermissionEntity() { Name = Permissions.Inventory.History },
                     //equipment
-                    new PermissionEntity() { Name = "equipment.list" },
-                    new PermissionEntity() { Name = "equipment.create" },
-                    new PermissionEntity() { Name = "equipment.edit" },
-                    new PermissionEntity() { Name = "equipment.delete" },
+                    new PermissionEntity() { Name = Permissions.Equipment.GetAll },
+                    new PermissionEntity() { Name = Permissions.Equipment.Create },
+                    new PermissionEntity() { Name = Permissions.Equipment.Edit },
+                    new PermissionEntity() { Name = Permissions.Equipment.Delete },
                     //User
-                    new PermissionEntity() { Name = "user.list" },
-                    new PermissionEntity() { Name = "user.create" },
-                    new PermissionEntity() { Name = "user.edit" },
-                    new PermissionEntity() { Name = "user.delete" },
-                    new PermissionEntity() { Name = "user.add_permission" },
+                    new PermissionEntity() { Name = Permissions.User.GetAll },
+                    new PermissionEntity() { Name = Permissions.User.Create },
+                    new PermissionEntity() { Name = Permissions.User.Edit },
+                    new PermissionEntity() { Name = Permissions.User.Delete },
+                    new PermissionEntity() { Name = Permissions.User.AddPermission },
                     //Employee
-                    new PermissionEntity() { Name = "employee.list" },
-                    new PermissionEntity() { Name = "employee.create" },
-                    new PermissionEntity() { Name = "employee.edit" },
-                    new PermissionEntity() { Name = "employee.delete" },
-                    //Employee
-                    new PermissionEntity() { Name = "employee.list" },
-                    new PermissionEntity() { Name = "employee.create" },
-                    new PermissionEntity() { Name = "employee.edit" },
-                    new PermissionEntity() { Name = "employee.delete" },
+                    new PermissionEntity() { Name = Permissions.Employee.GetAll },
+                    new PermissionEntity() { Name = Permissions.Employee.Create },
+                    new PermissionEntity() { Name = Permissions.Employee.Edit },
+                    new PermissionEntity() { Name = Permissions.Employee.Delete },
                     //Location
-                    new PermissionEntity() { Name = "location.list" },
-                    new PermissionEntity() { Name = "location.create" },
-                    new PermissionEntity() { Name = "location.edit" },
-                    new PermissionEntity() { Name = "location.delete" },
+                    new PermissionEntity() { Name = Permissions.Location.GetAll },
+                    new PermissionEntity() { Name = Permissions.Location.Create },
+                    new PermissionEntity() { Name = Permissions.Location.Edit },
+                    new PermissionEntity() { Name = Permissions.Location.Delete },
                     //ActionType
-                    new PermissionEntity() { Name = "action_type.list" },
-                    new PermissionEntity() { Name = "action_type.create" },
-                    new PermissionEntity() { Name = "action_type.edit" },
-                    new PermissionEntity() { Name = "action_type.delete" },
+                    new PermissionEntity() { Name = Permissions.ActionType.GetAll },
+                    new PermissionEntity() { Name = Permissions.ActionType.Create },
+                    new PermissionEntity() { Name = Permissions.ActionType.Edit },
+                    new PermissionEntity() { Name = Permissions.ActionType.Delete },
                     //Role
-                    new PermissionEntity() { Name = "role.list" },
-                    new PermissionEntity() { Name = "role.create" },
-                    new PermissionEntity() { Name = "role.edit" },
-                    new PermissionEntity() { Name = "role.delete" },
-                    new PermissionEntity() { Name = "role.add_permission" },
+                    new PermissionEntity() { Name = Permissions.Role.GetAll },
+                    new PermissionEntity() { Name = Permissions.Role.Create },
+                    new PermissionEntity() { Name = Permissions.Role.Edit },
+                    new PermissionEntity() { Name = Permissions.Role.Delete },
+                    new PermissionEntity() { Name = Permissions.Role.AddPermission },
+                    //Feature
+                    new PermissionEntity() { Name = Permissions.Feature.GetAll },
+                    new PermissionEntity() { Name = Permissions.Feature.Create },
+                    new PermissionEntity() { Name = Permissions.Feature.Edit },
+                    new PermissionEntity() { Name = Permissions.Feature.Delete },
                 };
 
                 _dbContext.Permissions.AddRange(permissions);
