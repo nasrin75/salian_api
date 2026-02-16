@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using salian_api.Dtos.Otp;
+using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Response.Otp;
@@ -47,5 +49,21 @@ public static class ApiRoute
                 }
             )
             .WithTags("Otp");
+
+        app.MapGet("/test", (ApplicationDbContext _dbContex) =>
+        {
+            return  _dbContex.Permissions.AsNoTracking()
+                .GroupBy(x => x.Category)
+                //.OrderByDescending(x => x.Id)
+               /* .Select(l => new PermissionResponse
+                {
+                    Id = l.Id,
+                    Name = l.Name,
+                    Title = l.Title,
+                    Category = l.Category,
+                })*/
+
+                .ToListAsync();
+        });
     }
 }

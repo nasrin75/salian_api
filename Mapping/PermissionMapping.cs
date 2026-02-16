@@ -12,6 +12,8 @@ namespace salian_api.Mapping
             builder.HasKey(x => x.Id);
 
             builder.Property("Name").HasMaxLength(100).IsRequired();
+            builder.Property("Title").HasMaxLength(250);
+            builder.Property("Category").HasMaxLength(250);
 
             builder.Property("DeletedAt").IsRequired(false);
 
