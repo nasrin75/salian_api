@@ -7,7 +7,7 @@ using salian_api.Response;
 
 namespace salian_api.Services
 {
-    public class RoleService(ApplicationDbContext _dbContext) : IRoleService
+    public class RoleService(ApplicationDbContext _dbContext) : IRoleService 
     {
         public async Task<BaseResponse<RoleResponse>> Create(RoleCreateDto dto)
         {
@@ -59,7 +59,6 @@ namespace salian_api.Services
             var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.Id == RoleID);
             if (role == null)
                 return new BaseResponse<RoleResponse?>(null, 400, "ROLE_NOT_FOUND");
-            ;
 
             RoleResponse response = new RoleResponse()
             {
@@ -124,6 +123,23 @@ namespace salian_api.Services
 
             await _dbContext.SaveChangesAsync();
             return new BaseResponse();
+        }
+
+        public async Task<BaseResponse<List<PermissionResponse>>> GetRolePermissions(long roleID)
+        {
+            var role=await _dbContext.Roles.Include(r => r.Permissions)
+                .FirstOrDefaultAsync(r =>r.Id == roleID);
+            if (role == null)
+                return new BaseResponse<List<PermissionResponse>>(null, 400, "ROLE_NOT_FOUND");
+
+            var permissions = role.Permissions.Select(p => new PermissionResponse
+            {
+                Id = p.Id,
+                Name = p.Name,
+           }).ToList();
+
+            return new BaseResponse<List<PermissionResponse>>(permissions);
+
         }
     }
 }
