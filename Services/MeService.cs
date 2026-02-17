@@ -19,7 +19,7 @@ namespace salian_api.Services
             if (userID == null)
                 return new BaseResponse<List<PermissionResponse>>(null, 400, "ACCESS_DENY");
 
-            UserEntity user = await _dbContext
+            var user = await _dbContext
                 .Users.Include("Permissions")
                 .Include(u => u.Role)
                 .ThenInclude(r => r.Permissions)
