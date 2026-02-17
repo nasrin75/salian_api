@@ -41,7 +41,7 @@ namespace salian_api.Seeder
                     new PermissionEntity()
                     {
                         Name = Permissions.Inventory.History,
-                        Title = "مشاهده تاریخچه ",
+                        Title = "تاریخچه انبار",
                         Category = "انبار",
                     },
                     //equipment
@@ -94,6 +94,12 @@ namespace salian_api.Seeder
                         Title = "حذف کاربر",
                         Category = "کاربران",
                     },
+                      new PermissionEntity()
+                    {
+                        Name = Permissions.User.History,
+                        Title = "تاریخچه کاربر",
+                        Category = "کاربران",
+                    },
                     new PermissionEntity()
                     {
                         Name = Permissions.User.AddPermission,
@@ -123,6 +129,12 @@ namespace salian_api.Seeder
                     {
                         Name = Permissions.Employee.Delete,
                         Title = "حذف پرسنل",
+                        Category = "پرسنل",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Employee.History,
+                        Title = "تاریخچه پرسنل",
                         Category = "پرسنل",
                     },
                     //Location
