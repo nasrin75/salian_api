@@ -21,14 +21,25 @@ namespace salian_api.Services
 
             UserEntity user = await _dbContext
                 .Users.Include("Permissions")
+                .Include(u => u.Role)
+                .ThenInclude(r => r.Permissions)
                 .FirstOrDefaultAsync(x => x.Id.ToString() == userID);
             if (user == null)
                 return new BaseResponse<List<PermissionResponse>>(null, 400, "USER_NOT_FOUND");
 
-            var permissions = user
+            var userPermissions = user
                 .Permissions.Select(p => new PermissionResponse { Id = p.Id, Name = p.Name })
                 .ToList();
-            return new BaseResponse<List<PermissionResponse>>(permissions);
+            var rolePermissions = user.Role.Permissions.Select(p => new PermissionResponse
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Title = p.Title,
+                Category = p.Category,
+            })
+              .ToList();
+            var allPermissions = userPermissions.Union(rolePermissions).ToList();
+            return new BaseResponse<List<PermissionResponse>>(allPermissions);
         }
     }
 }
