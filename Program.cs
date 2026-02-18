@@ -3,12 +3,8 @@ using System.Configuration;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using salian_api.Config;
 using salian_api.Config.Extentions;
 using salian_api.Config.Permissions;
@@ -73,6 +69,10 @@ builder.Services.Configure<AuthSettings>(authConfiguration);
 // scafold Jwt Authorization
 var authSettings = authConfiguration.Get<AuthSettings>();
 builder.Services.AddOurAuthentication(authSettings);
+
+// Email configuration part1
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddTransient<IMailService, MailService>();
 
 // Can access to loginUser
 builder.Services.AddHttpContextAccessor();
