@@ -1,6 +1,6 @@
-﻿namespace salian_api.Config.Extentions
+﻿namespace salian_api.Config
 {
-    public class MailSettings
+    public class EmailSettings
     {
         public string Host { get; set; }
         public int Port { get; set; }

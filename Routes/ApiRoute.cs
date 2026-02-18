@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using salian_api.Dtos.Email;
 using salian_api.Dtos.Otp;
 using salian_api.Interface;
 using salian_api.Response;
@@ -47,5 +49,15 @@ public static class ApiRoute
                 }
             )
             .WithTags("Otp");
+
+        app.MapPost(
+               "/sendEmail",
+               async (IMailService service, SendMailDto request) =>
+               {
+                   await service.SendEmail(request);
+                  
+               }
+           )
+           .WithTags("SendEmail");
     }
 }
