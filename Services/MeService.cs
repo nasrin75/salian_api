@@ -38,7 +38,7 @@ namespace salian_api.Services
                 Category = p.Category,
             })
               .ToList();
-            var allPermissions = userPermissions.Union(rolePermissions).ToList();
+            var allPermissions = userPermissions.Union(rolePermissions).DistinctBy(p=>p.Id).ToList();
             return new BaseResponse<List<PermissionResponse>>(allPermissions);
         }
     }
