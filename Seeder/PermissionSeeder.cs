@@ -14,48 +14,235 @@ namespace salian_api.Seeder
                 var permissions = new PermissionEntity[]
                 {
                     //Inventory
-                    new PermissionEntity() { Name = Permissions.Inventory.GetAll },
-                    new PermissionEntity() { Name = Permissions.Inventory.Create },
-                    new PermissionEntity() { Name = Permissions.Inventory.Edit },
-                    new PermissionEntity() { Name = Permissions.Inventory.Delete },
-                    new PermissionEntity() { Name = Permissions.Inventory.History },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Inventory.GetAll,
+                        Title = "لیست انبار",
+                        Category = "انبار",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Inventory.Create,
+                        Title = "افزودن قطعه به انبار",
+                        Category = "انبار",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Inventory.Edit,
+                        Title = "ویرایش انبار",
+                        Category = "انبار",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Inventory.Delete,
+                        Title = "حذف از انبار",
+                        Category = "انبار",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Inventory.History,
+                        Title = "تاریخچه انبار",
+                        Category = "انبار",
+                    },
                     //equipment
-                    new PermissionEntity() { Name = Permissions.Equipment.GetAll },
-                    new PermissionEntity() { Name = Permissions.Equipment.Create },
-                    new PermissionEntity() { Name = Permissions.Equipment.Edit },
-                    new PermissionEntity() { Name = Permissions.Equipment.Delete },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Equipment.GetAll,
+                        Title = "لیست قطعات",
+                        Category = "قطعات",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Equipment.Create,
+                        Title = "ساخت قطعه",
+                        Category = "قطعات",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Equipment.Edit,
+                        Title = "ویرایش قطعه",
+                        Category = "قطعات",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Equipment.Delete,
+                        Title = "حذف قطعه",
+                        Category = "قطعات",
+                    },
                     //User
-                    new PermissionEntity() { Name = Permissions.User.GetAll },
-                    new PermissionEntity() { Name = Permissions.User.Create },
-                    new PermissionEntity() { Name = Permissions.User.Edit },
-                    new PermissionEntity() { Name = Permissions.User.Delete },
-                    new PermissionEntity() { Name = Permissions.User.AddPermission },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.User.GetAll,
+                        Title = "لیست کاربران",
+                        Category = "کاربران",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.User.Create,
+                        Title = "ایجاد کاربر",
+                        Category = "کاربران",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.User.Edit,
+                        Title = "ویرایش کاربر",
+                        Category = "کاربران",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.User.Delete,
+                        Title = "حذف کاربر",
+                        Category = "کاربران",
+                    },
+                      new PermissionEntity()
+                    {
+                        Name = Permissions.User.History,
+                        Title = "تاریخچه کاربر",
+                        Category = "کاربران",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.User.AddPermission,
+                        Title = "افزودن دسترسی به کاربران",
+                        Category = "کاربران",
+                    },
                     //Employee
-                    new PermissionEntity() { Name = Permissions.Employee.GetAll },
-                    new PermissionEntity() { Name = Permissions.Employee.Create },
-                    new PermissionEntity() { Name = Permissions.Employee.Edit },
-                    new PermissionEntity() { Name = Permissions.Employee.Delete },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Employee.GetAll,
+                        Title = "لیست پرسنل",
+                        Category = "پرسنل",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Employee.Create,
+                        Title = "ایجاد پرسنل جدید",
+                        Category = "پرسنل",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Employee.Edit,
+                        Title = "ویرایش پرسنل",
+                        Category = "پرسنل",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Employee.Delete,
+                        Title = "حذف پرسنل",
+                        Category = "پرسنل",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Employee.History,
+                        Title = "تاریخچه پرسنل",
+                        Category = "پرسنل",
+                    },
                     //Location
-                    new PermissionEntity() { Name = Permissions.Location.GetAll },
-                    new PermissionEntity() { Name = Permissions.Location.Create },
-                    new PermissionEntity() { Name = Permissions.Location.Edit },
-                    new PermissionEntity() { Name = Permissions.Location.Delete },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Location.GetAll,
+                        Title = "لیست بخش ها",
+                        Category = "بخش ها",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Location.Create,
+                        Title = "ایجاد بخش",
+                        Category = "بخش ها",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Location.Edit,
+                        Title = "ویرایش بخش",
+                        Category = "بخش ها",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Location.Delete,
+                        Title = "حذف بخش",
+                        Category = "بخش ها",
+                    },
                     //ActionType
-                    new PermissionEntity() { Name = Permissions.ActionType.GetAll },
-                    new PermissionEntity() { Name = Permissions.ActionType.Create },
-                    new PermissionEntity() { Name = Permissions.ActionType.Edit },
-                    new PermissionEntity() { Name = Permissions.ActionType.Delete },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.ActionType.GetAll,
+                        Title = "لیست انواع عملیات",
+                        Category = "انواع عملیات",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.ActionType.Create,
+                        Title = "ایجاد انواع عملیات",
+                        Category = "انواع عملیات",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.ActionType.Edit,
+                        Title = "ویرایش انواع عملیات",
+                        Category = "انواع عملیات",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.ActionType.Delete,
+                        Title = "حذف انواع عملیات",
+                        Category = "انواع عملیات",
+                    },
                     //Role
-                    new PermissionEntity() { Name = Permissions.Role.GetAll },
-                    new PermissionEntity() { Name = Permissions.Role.Create },
-                    new PermissionEntity() { Name = Permissions.Role.Edit },
-                    new PermissionEntity() { Name = Permissions.Role.Delete },
-                    new PermissionEntity() { Name = Permissions.Role.AddPermission },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Role.GetAll,
+                        Title = "لیست نقش ها",
+                        Category = "نقش ها",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Role.Create,
+                        Title = "ایجاد نقش",
+                        Category = "نقش ها",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Role.Edit,
+                        Title = "ویرایش نقش",
+                        Category = "نقش ها",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Role.Delete,
+                        Title = "حذف نقش",
+                        Category = "نقش ها",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Role.AddPermission,
+                        Title = "افزودن دسترسی به نقش ها",
+                        Category = "نقش ها",
+                    },
                     //Feature
-                    new PermissionEntity() { Name = Permissions.Feature.GetAll },
-                    new PermissionEntity() { Name = Permissions.Feature.Create },
-                    new PermissionEntity() { Name = Permissions.Feature.Edit },
-                    new PermissionEntity() { Name = Permissions.Feature.Delete },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Feature.GetAll,
+                        Title = "لیست ویژگی قطعات",
+                        Category = "ویژگی قطعات",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Feature.Create,
+                        Title = "ایجاد ویژگی قطعات",
+                        Category = "ویژگی قطعات",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Feature.Edit,
+                        Title = "ویرایش ویژگی قطعات",
+                        Category = "ویژگی قطعات",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.Feature.Delete,
+                        Title = "حذف ویژگی قطعات",
+                        Category = "ویژگی قطعات",
+                    },
                 };
 
                 _dbContext.Permissions.AddRange(permissions);

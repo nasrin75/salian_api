@@ -10,5 +10,7 @@ namespace salian_api.Interface
         Task<BaseResponse<RoleResponse?>> GetRoleByID(long roleID);
         Task<BaseResponse<List<RoleResponse>>> GetAllRoles();
         Task<BaseResponse> Delete(long id);
+        Task<BaseResponse<List<PermissionResponse>>> GetRolePermissions(long roleID);
+        Task<BaseResponse> AssignPermission(AssignRolePermissionDto request);
     }
 }

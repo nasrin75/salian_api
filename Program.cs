@@ -1,24 +1,19 @@
-
-using Microsoft.AspNetCore.Http.HttpResults;
+using System;
+using System.Configuration;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using salian_api.Config;
+using salian_api.Config.Extentions;
+using salian_api.Config.Permissions;
 using salian_api.Entities;
 using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Routes;
-using salian_api.Services;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc;
-using System.Configuration;
-using salian_api.Config.Extentions;
-using salian_api.Config;
-using Microsoft.AspNetCore.Authorization;
-using salian_api.Config.Permissions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using salian_api.Seeder;
-using System;
+using salian_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,8 +22,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOurSwagger();
 
 /* Init Databse */
-builder.Services.AddDbContext<ApplicationDbContext>(
-    o => o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ApplicationDbContext>(o =>
+    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
 /* For customize error message */
 builder.Services.AddLogging();
@@ -36,7 +32,9 @@ builder.Services.AddProblemDetails();
 
 builder.Services.ConfigureHttpJsonOptions(option =>
 {
-    option.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+    option.SerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+    );
 });
 
 builder.Services.AddScoped<IUserService, UserService>();
@@ -50,14 +48,19 @@ builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-
+builder.Services.AddScoped<IMeService, MeService>();
 
 //Add CORS
-builder.Services.AddCors(
-    options => options.AddPolicy("MyLocalhost", builder =>
-    builder.AllowAnyHeader()
-    .AllowAnyMethod()
-    .WithOrigins("http://localhost:3000", "http://localhost:5005")));
+builder.Services.AddCors(options =>
+    options.AddPolicy(
+        "MyLocalhost",
+        builder =>
+            builder
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .WithOrigins("http://localhost:3000", "http://localhost:5005")
+    )
+);
 
 // Add new configuration
 var authConfiguration = builder.Configuration.GetSection("AuthSettings");
@@ -67,13 +70,17 @@ builder.Services.Configure<AuthSettings>(authConfiguration);
 var authSettings = authConfiguration.Get<AuthSettings>();
 builder.Services.AddOurAuthentication(authSettings);
 
+// Email configuration part1
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddTransient<IMailService, MailService>();
+
 // Can access to loginUser
 builder.Services.AddHttpContextAccessor();
 
 // Add seeder part1
-builder.Services.AddScoped<ISeeder,RoleSeeder>();
-builder.Services.AddScoped<ISeeder,UserSeeder>();
-builder.Services.AddScoped<ISeeder,PermissionSeeder>();
+builder.Services.AddScoped<ISeeder, RoleSeeder>();
+builder.Services.AddScoped<ISeeder, UserSeeder>();
+builder.Services.AddScoped<ISeeder, PermissionSeeder>();
 builder.Services.AddScoped<SeederProvider>();
 
 // overwrite and create custome permissions
@@ -91,7 +98,6 @@ using (var scope = app.Services.CreateScope())
     await seeder.SeedAllAsync(db, scope.ServiceProvider);
 }
 
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -103,8 +109,9 @@ if (app.Environment.IsDevelopment())
 
 //app.UseAuthorization();
 
-// Upload files 
+// Upload files
 app.UseStaticFiles();
+
 // add routes
 app.MapUserRoutes("User");
 app.MapRoleRoutes("Role");
@@ -118,12 +125,12 @@ app.MapInventoryRoutes("Inventory");
 app.MapProfileRoutes("Profile");
 app.MapAuthRoutes("Authentication");
 app.MapApiRoutes();
+app.MapMyRoutes();
 
 app.UseCors("MyLocalhost");
 
 //Add Authorization
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.Run();

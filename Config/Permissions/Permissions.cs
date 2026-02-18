@@ -12,6 +12,7 @@ namespace salian_api.Config.Permissions
             public const string Create = "user.create";
             public const string Edit = "user.edit";
             public const string Delete = "user.delete";
+            public const string History = "user.history";
             public const string AddPermission = "user.add_permission";
         }
 
@@ -21,6 +22,7 @@ namespace salian_api.Config.Permissions
             public const string Create = "employee.create";
             public const string Edit = "employee.edit";
             public const string Delete = "employee.delete";
+            public const string History = "employee.history";
         }
 
         public static class Equipment

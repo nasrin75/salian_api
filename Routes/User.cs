@@ -81,11 +81,24 @@ namespace salian_api.Routes
                 .RequireAuthorization(new PermissionAuthorizeAttribute(Permissions.User.GetAll));
 
             route
-                .MapGet(
+                .MapPost(
                     "/permissions",
-                    async (IUserService service) =>
+                    async (IUserService service, long userId) =>
                     {
-                        BaseResponse result = await service.UserPermissions();
+                        BaseResponse result = await service.UserPermissions(userId);
+                        return result.ToResult();
+                    }
+                )
+                .RequireAuthorization(
+                    new PermissionAuthorizeAttribute(Permissions.User.AddPermission)
+                );
+
+            route
+                .MapPost(
+                    "/permission/add",
+                    async (IUserService service, AssignUserPermissionDto request) =>
+                    {
+                        BaseResponse result = await service.AssignPermission(request);
                         return result.ToResult();
                     }
                 )

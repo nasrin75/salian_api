@@ -21,6 +21,8 @@ namespace salian_api.Services
                 {
                     Id = newPermission.Id,
                     Name = newPermission.Name,
+                    Title = newPermission.Title,
+                    Category = newPermission.Category,
                 };
 
                 return new BaseResponse<PermissionResponse>(response);
@@ -42,19 +44,23 @@ namespace salian_api.Services
             _dbContex.Permissions.Update(permission);
             await _dbContex.SaveChangesAsync();
 
-            return new BaseResponse<PermissionResponse?>(
-                null,
-                200,
-                "Permission Successfully Is Deleted"
-            );
+            return new BaseResponse<PermissionResponse?>(null, 200, "PERMISSION_CREATED");
         }
 
         public async Task<BaseResponse<List<PermissionResponse>>> GetAll()
         {
             List<PermissionResponse> permissions = await _dbContex
                 .Permissions.AsNoTracking()
-                .OrderByDescending(x => x.Id)
-                .Select(l => new PermissionResponse { Id = l.Id, Name = l.Name })
+                //.GroupBy(x => x.Category)
+                //.OrderByDescending(x => x.Id)
+                .Select(l => new PermissionResponse
+                {
+                    Id = l.Id,
+                    Name = l.Name,
+                    Title = l.Title,
+                    Category = l.Category,
+                })
+                
                 .ToListAsync();
 
             return new BaseResponse<List<PermissionResponse>>(permissions);
@@ -64,7 +70,13 @@ namespace salian_api.Services
         {
             var permission = await _dbContex
                 .Permissions.AsNoTracking()
-                .Select(item => new PermissionResponse { Id = item.Id, Name = item.Name })
+                .Select(item => new PermissionResponse
+                {
+                    Id = item.Id,
+                    Name = item.Name,
+                    Title = item.Title,
+                    Category = item.Category,
+                })
                 .FirstOrDefaultAsync(l => l.Id == PermissionID);
 
             if (permission == null)
@@ -82,11 +94,21 @@ namespace salian_api.Services
 
             if (param.Name != null && param.Name != permission.Name)
                 permission.Name = param.Name;
+            if (param.Title != null && param.Title != permission.Title)
+                permission.Title = param.Title;
+            if (param.Category != null && param.Category != permission.Category)
+                permission.Category = param.Category;
 
             _dbContex.Update(permission);
             await _dbContex.SaveChangesAsync();
 
-            var response = new PermissionResponse { Id = permission.Id, Name = permission.Name };
+            var response = new PermissionResponse
+            {
+                Id = permission.Id,
+                Name = permission.Name,
+                Title = permission.Title,
+                Category = permission.Category,
+            };
 
             return new BaseResponse<PermissionResponse?>(response);
         }

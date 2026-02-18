@@ -296,24 +296,49 @@ namespace salian_api.Services
             return result;
         }
 
-        public async Task<BaseResponse<List<PermissionResponse>>> UserPermissions()
+        public async Task<BaseResponse<List<PermissionResponse>>> UserPermissions(long userID)
         {
-            var userID = _httpContextAccessor
-                .HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)
-                ?.Value;
-            if (userID == null)
-                return new BaseResponse<List<PermissionResponse>>(null, 400, "ACCESS_DENY");
-
             UserEntity user = await _dbContext
                 .Users.Include("Permissions")
-                .FirstOrDefaultAsync(x => x.Id.ToString() == userID);
+                .FirstOrDefaultAsync(x => x.Id == userID);
             if (user == null)
                 return new BaseResponse<List<PermissionResponse>>(null, 400, "USER_NOT_FOUND");
 
             var permissions = user
-                .Permissions.Select(p => new PermissionResponse { Id = p.Id, Name = p.Name })
+                .Permissions.Select(p => new PermissionResponse
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Title = p.Title,
+                    Category = p.Category,
+                })
                 .ToList();
             return new BaseResponse<List<PermissionResponse>>(permissions);
+        }
+
+        public async Task<BaseResponse> AssignPermission(AssignUserPermissionDto request)
+        {
+            UserEntity user = _dbContext
+                .Users.Include(u => u.Permissions)
+                .Where(user => user.Id == request.UserId)
+                .FirstOrDefault();
+            if (user == null)
+                return new BaseResponse<UserEntity>(null, 400, "USER_NOT_FOUND");
+
+            // delete before data
+            user.Permissions.Clear();
+
+            var permissions = _dbContext
+                .Permissions.Where(p => request.PermissionIds.Contains(p.Id))
+                .ToList();
+
+            foreach (var permission in permissions)
+            {
+                user.Permissions.Add(permission);
+            }
+
+            await _dbContext.SaveChangesAsync();
+            return new BaseResponse();
         }
     }
 }
