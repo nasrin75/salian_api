@@ -1,6 +1,3 @@
-using System;
-using System.Configuration;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +6,7 @@ using salian_api.Config;
 using salian_api.Config.Extentions;
 using salian_api.Config.Permissions;
 using salian_api.Entities;
+using salian_api.Infrastructure.Interceptors;
 using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Routes;
@@ -21,10 +19,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOurSwagger();
 
+
+// Can access to loginUser
+builder.Services.AddHttpContextAccessor();
+// history
+builder.Services.AddScoped<HistoryInterceptor>();
+
 /* Init Databse */
-builder.Services.AddDbContext<ApplicationDbContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+builder.Services.AddDbContext<ApplicationDbContext>((sp, option) =>
+{
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    option.AddInterceptors(sp.GetRequiredService<HistoryInterceptor>());
+}
 );
+
 
 /* For customize error message */
 builder.Services.AddLogging();
@@ -74,14 +82,13 @@ builder.Services.AddOurAuthentication(authSettings);
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailService, MailService>();
 
-// Can access to loginUser
-builder.Services.AddHttpContextAccessor();
 
 // Add seeder part1
 builder.Services.AddScoped<ISeeder, RoleSeeder>();
 builder.Services.AddScoped<ISeeder, UserSeeder>();
 builder.Services.AddScoped<ISeeder, PermissionSeeder>();
 builder.Services.AddScoped<SeederProvider>();
+
 
 // overwrite and create custome permissions
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();

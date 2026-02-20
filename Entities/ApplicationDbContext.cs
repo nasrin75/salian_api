@@ -20,7 +20,8 @@ namespace salian_api.Entities
         public DbSet<InventoryEntity> Inventories { get; set; }
         public DbSet<InventoryFeatureEntity> InventoryFeatures { get; set; }
         public DbSet<FeatureEntity> Features { get; set; }
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+        public DbSet<HistoryEntity> Histories { get; set; }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor _httpContextAccessor) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,73 +39,5 @@ namespace salian_api.Entities
 
             base.OnModelCreating(modelBuilder);
         }
-
-        // public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        // {
-        //     var history = new List<LogEntity>();
-
-        //     var user = _httpContextAccessor.HttpContext?.User;
-
-        //     var userId = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        //     var userName = user?.Identity?.Name;
-        //     var ip = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString();
-
-        //     foreach (var entry in ChangeTracker.Entries())
-        //     {
-        //         if (entry.Entity is AuditLogEntity ||
-        //             entry.State == EntityState.Detached ||
-        //             entry.State == EntityState.Unchanged)
-        //             continue;
-
-        //         var audit = new AuditLogEntity
-        //         {
-        //             UserId = userId,
-        //             UserName = userName,
-        //             TableName = entry.Metadata.GetTableName()!,
-        //             Action = entry.State.ToString(),
-        //             DateTime = DateTime.UtcNow,
-        //             IpAddress = ip
-        //         };
-
-        //         var oldValues = new Dictionary<string, object?>();
-        //         var newValues = new Dictionary<string, object?>();
-
-        //         foreach (var property in entry.Properties)
-        //         {
-        //             string propName = property.Metadata.Name;
-
-        //             if (entry.State == EntityState.Added)
-        //             {
-        //                 newValues[propName] = property.CurrentValue;
-        //             }
-        //             else if (entry.State == EntityState.Deleted)
-        //             {
-        //                 oldValues[propName] = property.OriginalValue;
-        //             }
-        //             else if (entry.State == EntityState.Modified && property.IsModified)
-        //             {
-        //                 oldValues[propName] = property.OriginalValue;
-        //                 newValues[propName] = property.CurrentValue;
-        //             }
-        //         }
-
-        //         audit.OldValues = JsonSerializer.Serialize(oldValues);
-        //         audit.NewValues = JsonSerializer.Serialize(newValues);
-
-        //         history.Add(audit);
-        //     }
-
-        //     var result = await base.SaveChangesAsync(cancellationToken);
-
-        //     if (history.Count > 0)
-        //     {
-        //         LogEntity.AddRange(history);
-        //         await base.SaveChangesAsync(cancellationToken);
-        //     }
-
-        //     return result;
-        //     //Add in program.cs
-        //     //builder.Services.AddHttpContextAccessor();
-        // }
     }
 }

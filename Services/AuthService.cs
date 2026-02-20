@@ -16,7 +16,7 @@ using salian_api.Response.Otp;
 
 namespace salian_api.Services
 {
-    public class AuthService(ApplicationDbContext _dbContext, IOptions<AuthSettings> _authSetting)
+    public class AuthService(ApplicationDbContext _dbContext, IOptions<AuthSettings> _authSetting, IHttpContextAccessor _httpContextAccessor)
         : IAuthService
     {
         public async Task<BaseResponse<LoginResponse>> Login(LoginDto request)
@@ -42,6 +42,18 @@ namespace salian_api.Services
                 Username = request.Username,
                 Token = token,
             };
+
+            // add history
+            _dbContext.Histories.Add(new HistoryEntity
+            {
+                UserId = user.Id,
+                ActionType = ActionType.Login,
+                TableName = "Users",
+                RecordId = user.Id,
+                IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString()
+            });
+
+            await _dbContext.SaveChangesAsync();
 
             return new BaseResponse<LoginResponse>(response);
         }

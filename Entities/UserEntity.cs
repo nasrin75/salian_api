@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static salian_api.Infrastructure.Interceptors.HistoryInterceptor;
 
 namespace salian_api.Entities
 {
@@ -11,6 +12,7 @@ namespace salian_api.Entities
 
         public string Username { get; set; }
 
+        [AuditIgnore]
         public string Password { get; set; }
 
         public string Email { get; set; }
