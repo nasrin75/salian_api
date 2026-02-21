@@ -1,9 +1,10 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using salian_api.Entities;
 using salian_api.Mapping;
 
-namespace salian_api.Entities
+namespace salian_api.Infrastructure.Data
 {
     public class ApplicationDbContext : DbContext
     {

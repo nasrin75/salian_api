@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using salian_api.Config;
 using salian_api.Config.Extentions;
 using salian_api.Config.Permissions;
-using salian_api.Entities;
+using salian_api.Infrastructure.Data;
 using salian_api.Infrastructure.Interceptors;
 using salian_api.Interface;
 using salian_api.Response;

@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
-using salian_api.Entities;
+using salian_api.Infrastructure.Data;
 using salian_api.Interface;
 using salian_api.Response;
 

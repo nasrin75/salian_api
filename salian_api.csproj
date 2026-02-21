@@ -28,7 +28,6 @@
     <None Remove="Infrastructure\Interceptors\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Infrastructure\" />
     <Folder Include="Infrastructure\Interceptors\" />
   </ItemGroup>
 </Project>

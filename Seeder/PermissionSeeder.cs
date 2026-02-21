@@ -1,6 +1,7 @@
 ﻿using System;
 using salian_api.Config.Permissions;
 using salian_api.Entities;
+using salian_api.Infrastructure.Data;
 using salian_api.Routes;
 
 namespace salian_api.Seeder

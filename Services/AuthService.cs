@@ -9,6 +9,7 @@ using salian_api.Config.Permissions;
 using salian_api.Dtos.Auth;
 using salian_api.Dtos.Otp;
 using salian_api.Entities;
+using salian_api.Infrastructure.Data;
 using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Response.Auth;

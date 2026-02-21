@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using salian_api.Dtos.Inventory;
 using salian_api.Entities;
+using salian_api.Infrastructure.Data;
 using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Response.Inventory;
