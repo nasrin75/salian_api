@@ -33,7 +33,7 @@ namespace salian_api.Services.Mail
 
             using (var client = new SmtpClient())
             {
-                await client.ConnectAsync("smtp.gmail.com", _mailSettings.Port, false);
+                await client.ConnectAsync(_mailSettings.Host, _mailSettings.Port, false);
                 await client.AuthenticateAsync(_mailSettings.UserName, _mailSettings.Password);
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);

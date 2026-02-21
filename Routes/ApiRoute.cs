@@ -6,6 +6,7 @@ using salian_api.Response;
 using salian_api.Response.Otp;
 using salian_api.Services.Auth;
 using salian_api.Services.Mail;
+using salian_api.Services.Sms;
 
 namespace salian_api.Routes;
 
@@ -18,7 +19,7 @@ public static class ApiRoute
                 async ([FromForm] IFormFile file) =>
                 {
                     if (file == null || file.Length == 0)
-                        return Results.BadRequest("No file uploaded");
+                        return Results.BadRequest("NO_FILE_UPDATED");
 
                     var imagesFolder = Path.Combine(
                         Directory.GetCurrentDirectory(),
@@ -43,9 +44,9 @@ public static class ApiRoute
 
         app.MapPost(
                 "/sendOtp",
-                async (IAuthService service, SendOtpDto request) =>
+                async (ISmsService service, SendOtpDto request) =>
                 {
-                    BaseResponse<OtpResponse> result = await service.SendOtp(request);
+                    var result = await service.SendOtp(request);
                     return result.ToResult();
                 }
             )

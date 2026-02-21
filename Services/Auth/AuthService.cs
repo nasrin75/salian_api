@@ -1,24 +1,43 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using MailKit.Net.Smtp;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using salian_api.Config;
+using salian_api.Config.Extentions;
 using salian_api.Config.Permissions;
 using salian_api.Dtos.Auth;
-using salian_api.Dtos.Otp;
 using salian_api.Entities;
 using salian_api.Infrastructure.Data;
 using salian_api.Response;
 using salian_api.Response.Auth;
-using salian_api.Response.Otp;
 
 namespace salian_api.Services.Auth
 {
-    public class AuthService(ApplicationDbContext _dbContext, IOptions<AuthSettings> _authSetting, IHttpContextAccessor _httpContextAccessor)
-        : IAuthService
+    public class AuthService : IAuthService
     {
+        private readonly MailSettings _mailSettings;
+        private readonly AuthSettings _authSetting;
+        private readonly ApplicationDbContext _dbContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public AuthService(
+            ApplicationDbContext dbContext,
+            IOptions<AuthSettings> authSetting,
+            IHttpContextAccessor httpContextAccessor,
+            IOptions<MailSettings> mailSettings
+        )
+        {
+            _mailSettings = mailSettings.Value;
+            _dbContext = dbContext;
+            _authSetting = authSetting.Value;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
         public async Task<BaseResponse<LoginResponse>> Login(LoginDto request)
         {
             var user = await _dbContext
@@ -44,50 +63,70 @@ namespace salian_api.Services.Auth
             };
 
             // add history
-           /* _dbContext.Histories.Add(new HistoryEntity
-            {
-                UserId = user.Id,
-                ActionType = ActionType.Login,
-                TableName = "Users",
-                RecordId = user.Id,
-                IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString()
-            });*/
+            /* _dbContext.Histories.Add(new HistoryEntity
+             {
+                 UserId = user.Id,
+                 ActionType = ActionType.Login,
+                 TableName = "Users",
+                 RecordId = user.Id,
+                 IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString()
+             });*/
 
             await _dbContext.SaveChangesAsync();
 
             return new BaseResponse<LoginResponse>(response);
         }
 
-        public async Task<BaseResponse<OtpResponse>> SendOtp(SendOtpDto request)
+        public async Task<BaseResponse> SendResetPasswordEmail(string email)
         {
-            var user = await _dbContext
-                .Users.Where(x =>
-                    
-                        x.Username == request.Username
-                        || x.Email == request.Username
-                        || x.Mobile == request.Username
-                    
-                )
-                .FirstOrDefaultAsync();
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
 
             if (user == null)
-                return new BaseResponse<OtpResponse>(null, 400, "USER_NOT_FOUND");
+                return new BaseResponse(400, "EMAIL_NOT_EXIST");
 
-            foreach (var item in user.LoginTypes)
+            //TODO:have to create token and check don't expire time
+            //
+            var random = new Random();
+            var token = random.Next(99999, 999999);
+          /*  var cacheOptions = new MemoryCacheEntryOptions
             {
-                /* if (item === "otp")
-                 {
-                     Send
-                 }*/
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5),
+            };
+            // Save data in cache
+            _cache.Set(user.Id, token, cacheOptions);*/
+
+            var body = "کد بازیابی رمز عبور شما :: " + token;
+
+            var emailMessage = new MimeMessage();
+            emailMessage.From.Add(
+                new MailboxAddress(_mailSettings.FromName, _mailSettings.FromEmail)
+            );
+            emailMessage.To.Add(new MailboxAddress("", email));
+            emailMessage.Subject = "بازیابی رمزعبور";
+
+            var bodyBuilder = new BodyBuilder { HtmlBody = body };
+
+            emailMessage.Body = bodyBuilder.ToMessageBody();
+            using (var client = new SmtpClient())
+            {
+                await client.ConnectAsync(_mailSettings.Host, _mailSettings.Port, false);
+                await client.AuthenticateAsync(_mailSettings.UserName, _mailSettings.Password);
+                await client.SendAsync(emailMessage);
+                await client.DisconnectAsync(true);
             }
-            return new BaseResponse<OtpResponse>(null, 200, "SENT_OTP");
+            return new BaseResponse();
+        }
+
+        public Task<BaseResponse> VerifyResetPasswordEmail(VerifyResetPasswordDto request)
+        {
+            throw new NotImplementedException();
         }
 
         private string GenerateJwtToken(UserEntity user)
         {
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_authSetting.Value.Secret);
+            var key = Encoding.ASCII.GetBytes(_authSetting.Secret);
             var expireDate = DateTime.UtcNow.AddMinutes(30);
 
             var claims = new ClaimsIdentity();

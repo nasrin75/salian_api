@@ -21,6 +21,17 @@ namespace salian_api.Routes
                     }
                 )
                 .WithTags(tag);
+
+            Route
+                .MapPost(
+                    "ResetPassword",
+                    async (IAuthService service, string email) =>
+                    {
+                        BaseResponse result = await service.SendResetPasswordEmail(email);
+                        return result.ToResult();
+                    }
+                )
+                .WithTags(tag);
         }
     }
 }
