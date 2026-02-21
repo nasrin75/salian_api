@@ -1,6 +1,6 @@
 ﻿
 using salian_api.Dtos.Profile;
-using salian_api.Interface;
+using salian_api.Services.Profile;
 
 namespace salian_api.Response
 {

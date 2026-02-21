@@ -5,13 +5,25 @@ using Microsoft.EntityFrameworkCore;
 using salian_api.Config;
 using salian_api.Config.Extentions;
 using salian_api.Config.Permissions;
+using salian_api.Config.SMS;
 using salian_api.Infrastructure.Data;
 using salian_api.Infrastructure.Interceptors;
-using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Routes;
 using salian_api.Seeder;
-using salian_api.Services;
+using salian_api.Services.ActionType;
+using salian_api.Services.Auth;
+using salian_api.Services.Employee;
+using salian_api.Services.Equipment;
+using salian_api.Services.Feature;
+using salian_api.Services.Inventory;
+using salian_api.Services.Location;
+using salian_api.Services.Mail;
+using salian_api.Services.Me;
+using salian_api.Services.Permission;
+using salian_api.Services.Profile;
+using salian_api.Services.Role;
+using salian_api.Services.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,13 +35,13 @@ builder.Services.AddOurSwagger();
 // Can access to loginUser
 builder.Services.AddHttpContextAccessor();
 // history
-builder.Services.AddScoped<HistoryInterceptor>();
+//builder.Services.AddScoped<HistoryInterceptor>(); //TODO:check and uncomment
 
 /* Init Databse */
 builder.Services.AddDbContext<ApplicationDbContext>((sp, option) =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    option.AddInterceptors(sp.GetRequiredService<HistoryInterceptor>());
+    //option.AddInterceptors(sp.GetRequiredService<HistoryInterceptor>()); //TODO:check and uncomment
 }
 );
 
@@ -82,6 +94,9 @@ builder.Services.AddOurAuthentication(authSettings);
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailService, MailService>();
 
+
+//Sms Provider
+builder.Services.Configure<KavenegarSettings>(builder.Configuration.GetSection("KavenegarApiKey"));
 
 // Add seeder part1
 builder.Services.AddScoped<ISeeder, RoleSeeder>();

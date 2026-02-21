@@ -2,9 +2,10 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using salian_api.Dtos.Email;
 using salian_api.Dtos.Otp;
-using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Response.Otp;
+using salian_api.Services.Auth;
+using salian_api.Services.Mail;
 
 namespace salian_api.Routes;
 
