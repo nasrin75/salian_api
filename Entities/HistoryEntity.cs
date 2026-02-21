@@ -13,15 +13,15 @@ namespace salian_api.Entities
 		public string TableName { get; set; }
 		public long? RecordId { get; set; }
 
-		public string OldValues { get; set; }   // JSON
-		public string NewValues { get; set; }   // JSON
+		public string? OldValues { get; set; }   // JSON
+		public string? NewValues { get; set; }   // JSON
 
-		public string LogNumber { get; set; }
+		//public string LogNumber { get; set; }
 		public string IpAddress { get; set; }
 
 		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-	}
+    }
 	public enum ActionType
 	{
 		Create = 1,
