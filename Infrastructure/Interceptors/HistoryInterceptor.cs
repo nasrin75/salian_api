@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using salian_api.Entities;
 using System.Security.Claims;
+using NuGet.Protocol.Plugins;
 namespace salian_api.Infrastructure.Interceptors
 {
 	public class HistoryInterceptor(IHttpContextAccessor _httpContextAccessor) : SaveChangesInterceptor
@@ -14,7 +15,8 @@ namespace salian_api.Infrastructure.Interceptors
 			InterceptionResult<int> result,
 			CancellationToken cancellationToken = default)
 		{
-			var context = eventData.Context;
+           
+            var context = eventData.Context;
 
 			if (context == null)
 				return await base.SavingChangesAsync(eventData, result, cancellationToken);
@@ -50,11 +52,11 @@ namespace salian_api.Infrastructure.Interceptors
 
 				var userId = _httpContextAccessor.HttpContext?.User?
 					.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-				var audit = new HistoryEntity
+				
+				
+				var history = new HistoryEntity
 				{
 					UserId = string.IsNullOrEmpty(userId) ? null : long.Parse(userId),
-					EmployeeId = string.IsNullOrEmpty(EmployeeId) ? null : long.Parse(EmployeeId),
 					TableName = entry.Metadata.GetTableName(),
 					ActionType = entry.State switch
 					{
@@ -69,7 +71,13 @@ namespace salian_api.Infrastructure.Interceptors
 					CreatedAt = DateTime.UtcNow
 				};
 
-				histories.Add(audit);
+                if (entry.Entity is EmployeeEntity)
+                {
+                    var primaryKey = entry.Properties.First(p => p.Metadata.IsPrimaryKey());
+                    history.EmployeeId = Convert.ToInt64(primaryKey.CurrentValue ?? primaryKey.OriginalValue);
+
+                }
+                histories.Add(history);
 			}
 
 			context.Set<HistoryEntity>().AddRange(histories);
