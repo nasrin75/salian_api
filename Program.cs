@@ -23,6 +23,7 @@ using salian_api.Services.Me;
 using salian_api.Services.Permission;
 using salian_api.Services.Profile;
 using salian_api.Services.Role;
+using salian_api.Services.Sms;
 using salian_api.Services.User;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,6 +70,7 @@ builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMeService, MeService>();
+builder.Services.AddScoped<ISmsService, SmsService>();
 
 //Add CORS
 builder.Services.AddCors(options =>
@@ -96,7 +98,7 @@ builder.Services.AddTransient<IMailService, MailService>();
 
 
 //Sms Provider
-builder.Services.Configure<KavenegarSettings>(builder.Configuration.GetSection("KavenegarApiKey"));
+builder.Services.Configure<KavenegarSettings>(builder.Configuration.GetSection("Kavenegar"));
 
 // Add seeder part1
 builder.Services.AddScoped<ISeeder, RoleSeeder>();
