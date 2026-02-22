@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using salian_api.Dtos.Profile;
 using salian_api.Entities;
+using salian_api.Helper;
 using salian_api.Infrastructure.Data;
 using salian_api.Response;
 
@@ -16,8 +17,8 @@ namespace salian_api.Services.Profile
 
             if (dto.Username != null && dto.Username != user.Username)
                 user.Username = dto.Username;
-            if (dto.NewPassword != null && dto.NewPassword != user.Password)
-                user.Password = dto.NewPassword;
+            if (dto.NewPassword != null && !PasswordHelper.VerifyPassword(dto.NewPassword , user.Password))
+                user.Password = PasswordHelper.HashPassword(dto.NewPassword);
             if (dto.Email != null && dto.Email != user.Email)
                 user.Email = dto.Email;
             if (dto.Mobile != null && dto.Mobile != user.Mobile)

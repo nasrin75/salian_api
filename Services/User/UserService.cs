@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using salian_api.Dtos.User;
 using salian_api.Entities;
+using salian_api.Helper;
 using salian_api.Infrastructure.Data;
 using salian_api.Response;
 using salian_api.Response.User;
@@ -177,7 +178,7 @@ namespace salian_api.Services.User
             if (dto.Mobile != null)
                 user.Mobile = dto.Mobile;
             if (dto.Password != null)
-                user.Password = dto.Password;
+                user.Password = PasswordHelper.HashPassword(dto.Password);
             if (dto.Username != null)
                 user.Username = dto.Username;
             if (dto.IsCheckIp != null)

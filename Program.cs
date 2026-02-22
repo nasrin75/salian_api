@@ -6,6 +6,7 @@ using salian_api.Config;
 using salian_api.Config.Extentions;
 using salian_api.Config.Permissions;
 using salian_api.Config.SMS;
+using salian_api.Helper;
 using salian_api.Infrastructure.Data;
 using salian_api.Infrastructure.Interceptors;
 using salian_api.Response;
@@ -20,6 +21,7 @@ using salian_api.Services.Inventory;
 using salian_api.Services.Location;
 using salian_api.Services.Mail;
 using salian_api.Services.Me;
+using salian_api.Services.Password;
 using salian_api.Services.Permission;
 using salian_api.Services.Profile;
 using salian_api.Services.Role;
@@ -35,6 +37,9 @@ builder.Services.AddOurSwagger();
 
 // Can access to loginUser
 builder.Services.AddHttpContextAccessor();
+// Add Caching
+builder.Services.AddMemoryCache();
+
 // history
 //builder.Services.AddScoped<HistoryInterceptor>(); //TODO:check and uncomment
 
@@ -71,6 +76,9 @@ builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMeService, MeService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
+
+
 
 //Add CORS
 builder.Services.AddCors(options =>
@@ -129,9 +137,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection();
-
-//app.UseAuthorization();
+// 
 
 // Upload files
 app.UseStaticFiles();
@@ -148,6 +154,7 @@ app.MapFeatureRoutes("Feature");
 app.MapInventoryRoutes("Inventory");
 app.MapProfileRoutes("Profile");
 app.MapAuthRoutes("Authentication");
+app.MapPasswordRoutes("Password");
 app.MapApiRoutes();
 app.MapMyRoutes();
 
