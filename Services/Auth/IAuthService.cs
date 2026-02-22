@@ -7,7 +7,5 @@ namespace salian_api.Services.Auth
     public interface IAuthService
     {
         Task<BaseResponse<LoginResponse>> Login(LoginDto request);
-        Task<BaseResponse> SendResetPasswordEmail(string email);
-        Task<BaseResponse> VerifyResetPasswordEmail(VerifyResetPasswordDto request);
     }
 }
