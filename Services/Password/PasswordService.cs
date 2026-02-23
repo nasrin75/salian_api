@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using salian_api.Config.Extentions;
+using salian_api.Config.Mail;
 using salian_api.Dtos.Auth;
 using salian_api.Helper;
 using salian_api.Infrastructure.Data;
