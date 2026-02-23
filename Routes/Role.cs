@@ -1,7 +1,7 @@
 ﻿using salian_api.Config.Permissions;
 using salian_api.Dtos.Role;
-using salian_api.Interface;
 using salian_api.Response;
+using salian_api.Services.Role;
 
 namespace salian_api.Routes
 {

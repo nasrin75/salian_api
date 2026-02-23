@@ -1,8 +1,8 @@
 ﻿using salian_api.Config.Permissions;
 using salian_api.Dtos.Inventory;
-using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Response.Inventory;
+using salian_api.Services.Inventory;
 
 namespace salian_api.Routes
 {

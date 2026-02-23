@@ -1,4 +1,4 @@
-﻿using salian_api.Entities;
+﻿using salian_api.Infrastructure.Data;
 
 namespace salian_api.Seeder
 {

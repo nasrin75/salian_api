@@ -1,7 +1,7 @@
 ﻿using salian_api.Dtos.Auth;
-using salian_api.Interface;
 using salian_api.Response;
 using salian_api.Response.Auth;
+using salian_api.Services.Auth;
 
 namespace salian_api.Routes
 {

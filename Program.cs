@@ -1,19 +1,36 @@
-using System;
-using System.Configuration;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using salian_api.Config;
 using salian_api.Config.Extentions;
+using salian_api.Config.Extentions.Hangfire;
+using salian_api.Config.Mail;
 using salian_api.Config.Permissions;
-using salian_api.Entities;
-using salian_api.Interface;
+using salian_api.Config.SMS;
+using salian_api.Infrastructure.Data;
+using salian_api.Infrastructure.Interceptors;
+using salian_api.Notification;
 using salian_api.Response;
 using salian_api.Routes;
 using salian_api.Seeder;
-using salian_api.Services;
+using salian_api.Services.ActionType;
+using salian_api.Services.Auth;
+using salian_api.Services.Employee;
+using salian_api.Services.Equipment;
+using salian_api.Services.Feature;
+using salian_api.Services.Inventory;
+using salian_api.Services.Location;
+using salian_api.Services.Mail;
+using salian_api.Services.Me;
+using salian_api.Services.Password;
+using salian_api.Services.Permission;
+using salian_api.Services.Profile;
+using salian_api.Services.Role;
+using salian_api.Services.Sms;
+using salian_api.Services.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,9 +38,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOurSwagger();
 
+// Can access to loginUser
+builder.Services.AddHttpContextAccessor();
+
+// Add Caching
+builder.Services.AddMemoryCache();
+
+// history
+//builder.Services.AddScoped<HistoryInterceptor>(); //TODO:check and uncomment
+
 /* Init Databse */
-builder.Services.AddDbContext<ApplicationDbContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+builder.Services.AddDbContext<ApplicationDbContext>(
+    (sp, option) =>
+    {
+        option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+        //option.AddInterceptors(sp.GetRequiredService<HistoryInterceptor>()); //TODO:check and uncomment
+    }
 );
 
 /* For customize error message */
@@ -49,6 +79,8 @@ builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMeService, MeService>();
+builder.Services.AddScoped<ISmsService, SmsService>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 
 //Add CORS
 builder.Services.AddCors(options =>
@@ -70,12 +102,19 @@ builder.Services.Configure<AuthSettings>(authConfiguration);
 var authSettings = authConfiguration.Get<AuthSettings>();
 builder.Services.AddOurAuthentication(authSettings);
 
+// Cron job (Hangfire) part 1
+builder.Services.AddHangfireConfiguration(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+);
+
 // Email configuration part1
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailService, MailService>();
+builder.Services.AddScoped<MailSender>();
 
-// Can access to loginUser
-builder.Services.AddHttpContextAccessor();
+//Sms Provider
+builder.Services.Configure<KavenegarSettings>(builder.Configuration.GetSection("Kavenegar"));
+builder.Services.AddScoped<SmsSender>();
 
 // Add seeder part1
 builder.Services.AddScoped<ISeeder, RoleSeeder>();
@@ -105,12 +144,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// app.UseHttpsRedirection();
-
-//app.UseAuthorization();
-
 // Upload files
 app.UseStaticFiles();
+
+// Cron job (Hangfire) part 2
+app.MapHangfireDashboard(
+    "/jobDashboard",
+    new DashboardOptions
+    {
+        //TODO: uncomment after
+        //Authorization = new[] { new HangfireAuthorizationFilter() },
+        //IsReadOnlyFunc = (DashboardContext context) => true , // just readOnly can't be edit
+    }
+);
 
 // add routes
 app.MapUserRoutes("User");
@@ -124,6 +170,7 @@ app.MapFeatureRoutes("Feature");
 app.MapInventoryRoutes("Inventory");
 app.MapProfileRoutes("Profile");
 app.MapAuthRoutes("Authentication");
+app.MapPasswordRoutes("Password");
 app.MapApiRoutes();
 app.MapMyRoutes();
 

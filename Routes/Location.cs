@@ -1,7 +1,7 @@
 ﻿using salian_api.Config.Permissions;
 using salian_api.Dtos.Location;
-using salian_api.Interface;
 using salian_api.Response;
+using salian_api.Services.Location;
 
 namespace salian_api.Routes
 {

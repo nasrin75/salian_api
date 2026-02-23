@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.Configuration;
 using System.Security.Claims;
 using System.Text;
 
@@ -11,7 +7,6 @@ namespace salian_api.Config.Extentions
 {
     public static class AuthenticationExtention
     {
-
         public static IServiceCollection AddOurAuthentication(this IServiceCollection services,AuthSettings authSetting)
         {
             // Authorization service
@@ -19,8 +14,6 @@ namespace salian_api.Config.Extentions
             services.AddAuthorization();
 
             // JWT Authentication
-            Console.WriteLine("appSet :" + authSetting);
-
             var key = Encoding.ASCII.GetBytes(authSetting.Secret);
             services.AddAuthentication(options =>
             {
@@ -41,6 +34,7 @@ namespace salian_api.Config.Extentions
                         RoleClaimType = ClaimTypes.Role
                     };
                 });
+
             return services;
         }
     }
