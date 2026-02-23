@@ -1,14 +1,18 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using salian_api.Config;
 using salian_api.Config.Extentions;
+using salian_api.Config.Extentions.Hangfire;
+using salian_api.Config.Mail;
 using salian_api.Config.Permissions;
 using salian_api.Config.SMS;
-using salian_api.Helper;
 using salian_api.Infrastructure.Data;
 using salian_api.Infrastructure.Interceptors;
+using salian_api.Notification;
 using salian_api.Response;
 using salian_api.Routes;
 using salian_api.Seeder;
@@ -34,9 +38,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOurSwagger();
 
-
 // Can access to loginUser
 builder.Services.AddHttpContextAccessor();
+
 // Add Caching
 builder.Services.AddMemoryCache();
 
@@ -44,13 +48,13 @@ builder.Services.AddMemoryCache();
 //builder.Services.AddScoped<HistoryInterceptor>(); //TODO:check and uncomment
 
 /* Init Databse */
-builder.Services.AddDbContext<ApplicationDbContext>((sp, option) =>
-{
-    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    //option.AddInterceptors(sp.GetRequiredService<HistoryInterceptor>()); //TODO:check and uncomment
-}
+builder.Services.AddDbContext<ApplicationDbContext>(
+    (sp, option) =>
+    {
+        option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+        //option.AddInterceptors(sp.GetRequiredService<HistoryInterceptor>()); //TODO:check and uncomment
+    }
 );
-
 
 /* For customize error message */
 builder.Services.AddLogging();
@@ -78,8 +82,6 @@ builder.Services.AddScoped<IMeService, MeService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 
-
-
 //Add CORS
 builder.Services.AddCors(options =>
     options.AddPolicy(
@@ -100,20 +102,25 @@ builder.Services.Configure<AuthSettings>(authConfiguration);
 var authSettings = authConfiguration.Get<AuthSettings>();
 builder.Services.AddOurAuthentication(authSettings);
 
+// Cron job (Hangfire) part 1
+builder.Services.AddHangfireConfiguration(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+);
+
 // Email configuration part1
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddTransient<IMailService, MailService>();
-
+builder.Services.AddScoped<MailSender>();
 
 //Sms Provider
 builder.Services.Configure<KavenegarSettings>(builder.Configuration.GetSection("Kavenegar"));
+builder.Services.AddScoped<SmsSender>();
 
 // Add seeder part1
 builder.Services.AddScoped<ISeeder, RoleSeeder>();
 builder.Services.AddScoped<ISeeder, UserSeeder>();
 builder.Services.AddScoped<ISeeder, PermissionSeeder>();
 builder.Services.AddScoped<SeederProvider>();
-
 
 // overwrite and create custome permissions
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
@@ -137,10 +144,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// 
-
 // Upload files
 app.UseStaticFiles();
+
+// Cron job (Hangfire) part 2
+app.MapHangfireDashboard(
+    "/jobDashboard",
+    new DashboardOptions
+    {
+        //TODO: uncomment after
+        //Authorization = new[] { new HangfireAuthorizationFilter() },
+        //IsReadOnlyFunc = (DashboardContext context) => true , // just readOnly can't be edit
+    }
+);
 
 // add routes
 app.MapUserRoutes("User");

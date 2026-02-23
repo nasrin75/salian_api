@@ -1,43 +1,24 @@
-﻿
-using MailKit.Net.Smtp;
-using Microsoft.Extensions.Options;
-using MimeKit;
-using salian_api.Config.Mail;
-using salian_api.Dtos.Email;
+﻿using salian_api.Dtos.Email;
+using salian_api.Notification;
+using salian_api.Response;
 
 namespace salian_api.Services.Mail
 {
     public class MailService : IMailService
     {
-        private readonly MailSettings _mailSettings;
+        private readonly MailSender _mailSender;
 
         /* Injecting the IOptions to the constructor and assigning it’s value to the instance of MailSettings.
              we will be able to access the data from the JSON at runtime*/
-        public MailService(IOptions<MailSettings> mailSettings)
+        public MailService(MailSender mailSender)
         {
-            _mailSettings = mailSettings.Value;
+            _mailSender = mailSender;
         }
 
-        public async Task SendEmail(SendMailDto mailRequrst)
+        public async Task<BaseResponse> SendEmail(SendMailDto mailRequest)
         {
-            var emailMessage = new MimeMessage();
-            emailMessage.From.Add(
-                new MailboxAddress(_mailSettings.FromName, _mailSettings.FromEmail)
-            );
-            emailMessage.To.Add(new MailboxAddress("", mailRequrst.ToEmail));
-            emailMessage.Subject = mailRequrst.Subject;
-
-            var bodyBuilder = new BodyBuilder { HtmlBody = mailRequrst.Body };
-
-            emailMessage.Body = bodyBuilder.ToMessageBody();
-
-            using (var client = new SmtpClient())
-            {
-                await client.ConnectAsync(_mailSettings.Host, _mailSettings.Port, false);
-                await client.AuthenticateAsync(_mailSettings.UserName, _mailSettings.Password);
-                await client.SendAsync(emailMessage);
-                await client.DisconnectAsync(true);
-            }
+            await _mailSender.SendMail(mailRequest.ToEmail, mailRequest.Subject, mailRequest.Body);
+            return new BaseResponse();
         }
     }
 }

@@ -53,13 +53,12 @@ public static class ApiRoute
             .WithTags("Otp");
 
         app.MapPost(
-               "/sendEmail",
-               async (IMailService service, SendMailDto request) =>
-               {
-                   await service.SendEmail(request);
-                  
-               }
-           )
-           .WithTags("SendEmail");
+                "/sendEmail",
+                async (IMailService service, SendMailDto request) =>
+                {
+                    await service.SendEmail(request);
+                }
+            )
+            .WithTags("SendEmail");
     }
 }
