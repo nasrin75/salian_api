@@ -95,7 +95,7 @@ namespace salian_api.Seeder
                         Title = "حذف کاربر",
                         Category = "کاربران",
                     },
-                      new PermissionEntity()
+                    new PermissionEntity()
                     {
                         Name = Permissions.User.History,
                         Title = "تاریخچه کاربر",
@@ -243,6 +243,12 @@ namespace salian_api.Seeder
                         Name = Permissions.Feature.Delete,
                         Title = "حذف ویژگی قطعات",
                         Category = "ویژگی قطعات",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.History.GetAll,
+                        Title = "لیست تاریخچه ها",
+                        Category = "تاریخچه",
                     },
                 };
 

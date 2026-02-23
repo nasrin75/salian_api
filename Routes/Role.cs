@@ -74,17 +74,17 @@ namespace salian_api.Routes
                 )
                 .RequireAuthorization(new PermissionAuthorizeAttribute(Permissions.Role.Delete));
             route
-            .MapPost(
-                "/{roleId}/permissions",
-                async (IRoleService service, long roleId) =>
-                {
-                    BaseResponse result = await service.GetRolePermissions(roleId);
-                    return result.ToResult();
-                }
-            )
-            .RequireAuthorization(
-                new PermissionAuthorizeAttribute(Permissions.Role.AddPermission)
-            );
+                .MapPost(
+                    "/{roleId}/permissions",
+                    async (IRoleService service, long roleId) =>
+                    {
+                        BaseResponse result = await service.GetRolePermissions(roleId);
+                        return result.ToResult();
+                    }
+                )
+                .RequireAuthorization(
+                    new PermissionAuthorizeAttribute(Permissions.Role.AddPermission)
+                );
 
             route
                 .MapPost(

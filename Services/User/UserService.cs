@@ -27,13 +27,12 @@ namespace salian_api.Services.User
             if (!string.IsNullOrEmpty(dto.Email))
             {
                 var existEmail = _dbContext
-                .Users.AsNoTracking()
-                .Where(u => u.Email.ToLower().Trim() == dto.Email.ToLower().Trim())
-                .Count();
+                    .Users.AsNoTracking()
+                    .Where(u => u.Email.ToLower().Trim() == dto.Email.ToLower().Trim())
+                    .Count();
                 if (existEmail > 0)
                     return new BaseResponse<UserResponse>(null, 400, "EAMIL_IS_EXIST");
             }
-           
 
             // convert dto.loginType to LoginTypes's enum, if this string dosen't exist in this enum get exception
             var LoginTypes = dto.LoginTypes.Select(x => Enum.Parse<LoginTypes>(x)).ToList();

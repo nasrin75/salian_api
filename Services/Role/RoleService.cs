@@ -111,9 +111,7 @@ namespace salian_api.Services.Role
             role.Permissions.Clear();
 
             var permissions = _dbContext
-                .Permissions.Where(p =>
-                    request.PermissionIds.Contains(p.Id)
-                )
+                .Permissions.Where(p => request.PermissionIds.Contains(p.Id))
                 .ToList();
 
             foreach (var permission in permissions)
@@ -127,19 +125,17 @@ namespace salian_api.Services.Role
 
         public async Task<BaseResponse<List<PermissionResponse>>> GetRolePermissions(long roleID)
         {
-            var role = await _dbContext.Roles.Include(r => r.Permissions)
+            var role = await _dbContext
+                .Roles.Include(r => r.Permissions)
                 .FirstOrDefaultAsync(r => r.Id == roleID);
             if (role == null)
                 return new BaseResponse<List<PermissionResponse>>(null, 400, "ROLE_NOT_FOUND");
 
-            var permissions = role.Permissions.Select(p => new PermissionResponse
-            {
-                Id = p.Id,
-                Name = p.Name,
-            }).ToList();
+            var permissions = role
+                .Permissions.Select(p => new PermissionResponse { Id = p.Id, Name = p.Name })
+                .ToList();
 
             return new BaseResponse<List<PermissionResponse>>(permissions);
-
         }
     }
 }
