@@ -7,7 +7,7 @@ using salian_api.Response;
 
 namespace salian_api.Services.Employee
 {
-    public class EmployeeService(ApplicationDbContext _dbContex) : IEmployeeService
+    public class EmployeeService(ApplicationDbContext _dbContext) : IEmployeeService
     {
         public async Task<BaseResponse<EmployeeResponse?>> Create(EmployeeCreateDto param)
         {
@@ -20,10 +20,10 @@ namespace salian_api.Services.Employee
                     LocationId = param.LocationId,
                 };
 
-                var newEmployee = _dbContex.Employees.Add(employee).Entity;
-                await _dbContex.SaveChangesAsync();
+                var newEmployee = _dbContext.Employees.Add(employee).Entity;
+                await _dbContext.SaveChangesAsync();
 
-                var response = await _dbContex
+                var response = await _dbContext
                     .Employees.Where(x => x.Id == newEmployee.Id)
                     .Select(u => new EmployeeResponse
                     {
@@ -44,14 +44,14 @@ namespace salian_api.Services.Employee
 
         public async Task<BaseResponse> Delete(long id)
         {
-            var employee = await _dbContex.Employees.FirstOrDefaultAsync(l => l.Id == id);
+            var employee = await _dbContext.Employees.FirstOrDefaultAsync(l => l.Id == id);
             if (employee == null)
                 return new BaseResponse<EmployeeResponse?>(null, 400, "EMPLOYEE_NOT_FOUND");
 
             employee.DeletedAt = DateTime.UtcNow;
 
-            _dbContex.Employees.Update(employee);
-            await _dbContex.SaveChangesAsync();
+            _dbContext.Employees.Update(employee);
+            await _dbContext.SaveChangesAsync();
 
             return new BaseResponse<EmployeeResponse?>(
                 null,
@@ -63,7 +63,7 @@ namespace salian_api.Services.Employee
         [Authorize(Roles = "User")]
         public async Task<BaseResponse<List<EmployeeResponse>>> GetAll()
         {
-            List<EmployeeResponse> employees = await _dbContex
+            List<EmployeeResponse> employees = await _dbContext
                 .Employees.AsNoTracking()
                 .OrderByDescending(x => x.Id)
                 .Select(l => new EmployeeResponse
@@ -81,7 +81,7 @@ namespace salian_api.Services.Employee
 
         public async Task<BaseResponse<EmployeeResponse?>> GetByID(long EmployeeID)
         {
-            var employee = await _dbContex
+            var employee = await _dbContext
                 .Employees.AsNoTracking()
                 .Select(item => new EmployeeResponse
                 {
@@ -101,7 +101,7 @@ namespace salian_api.Services.Employee
 
         public async Task<BaseResponse<List<EmployeeResponse>>> Search(SearchEmployeeDto param)
         {
-            var query = _dbContex.Employees.AsQueryable();
+            var query = _dbContext.Employees.AsQueryable();
             if (!string.IsNullOrWhiteSpace(param.Name))
                 query = query.Where(x => x.Name.Contains(param.Name));
             if (!string.IsNullOrWhiteSpace(param.Email))
@@ -125,7 +125,7 @@ namespace salian_api.Services.Employee
 
         public async Task<BaseResponse<EmployeeResponse?>> Update(EmployeeUpdateDto param)
         {
-            var employee = await _dbContex
+            var employee = await _dbContext
                 .Employees.Include(e => e.Location)
                 .FirstOrDefaultAsync(l => l.Id == param.Id);
 
@@ -139,10 +139,10 @@ namespace salian_api.Services.Employee
             if (param.LocationId != null && param.LocationId != employee.LocationId)
                 employee.LocationId = param.LocationId.Value;
 
-            _dbContex.Update(employee);
-            await _dbContex.SaveChangesAsync();
+            _dbContext.Update(employee);
+            await _dbContext.SaveChangesAsync();
 
-            var response = await _dbContex
+            var response = await _dbContext
                 .Employees.Where(x => x.Id == param.Id)
                 .Select(u => new EmployeeResponse
                 {
