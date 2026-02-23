@@ -13,24 +13,25 @@ namespace salian_api.Routes
     {
         public static void MapPasswordRoutes(this IEndpointRouteBuilder app, string tag)
         {
-            var Route = app.MapGroup("/api");
+            var Route = app.MapGroup("/api").WithTags(tag);
 
-            Route
-                .MapPost(
-                    "/resetPassword",
-                    async (IPasswordService service, string email) =>
-                    {
-                        BaseResponse result = await service.SendResetPasswordByEmail(email);
-                        return result.ToResult();
-                    }
-            )
-            .WithTags(tag);
+            Route.MapPost(
+                "/resetPassword",
+                async (IPasswordService service, string email) =>
+                {
+                    BaseResponse result = await service.SendResetPasswordByEmail(email);
+                    return result.ToResult();
+                }
+            );
 
-            Route.MapPost("verifyResetPassword", async (IPasswordService service,VerifyResetPasswordDto request) =>
-            {
-                BaseResponse result = await service.VerifyResetPasswordByEmail(request);
-                return result.ToResult();
-            });
+            Route.MapPost(
+                "verifyResetPassword",
+                async (IPasswordService service, VerifyResetPasswordDto request) =>
+                {
+                    BaseResponse result = await service.VerifyResetPasswordByEmail(request);
+                    return result.ToResult();
+                }
+            );
         }
     }
 }

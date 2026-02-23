@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using salian_api.Config;
-using salian_api.Config.Extentions;
 using salian_api.Config.Permissions;
 using salian_api.Dtos.Auth;
 using salian_api.Entities;
@@ -16,7 +15,11 @@ using salian_api.Response.Auth;
 
 namespace salian_api.Services.Auth
 {
-    public class AuthService(ApplicationDbContext _dbContext,IHttpContextAccessor _httpContextAccessor, IOptions<AuthSettings> _authSetting) : IAuthService
+    public class AuthService(
+        ApplicationDbContext _dbContext,
+        IHttpContextAccessor _httpContextAccessor,
+        IOptions<AuthSettings> _authSetting
+    ) : IAuthService
     {
         public async Task<BaseResponse<LoginResponse>> Login(LoginDto request)
         {
@@ -24,9 +27,7 @@ namespace salian_api.Services.Auth
                 .Users.Include(x => x.Permissions)
                 .Include(x => x.Role)
                     .ThenInclude(r => r.Permissions)
-                .FirstOrDefaultAsync(x =>
-                    x.Username == request.Username
-                );
+                .FirstOrDefaultAsync(x => x.Username == request.Username);
 
             // return null if user not found
             if (user == null)
@@ -34,7 +35,6 @@ namespace salian_api.Services.Auth
 
             if (PasswordHelper.VerifyPassword(request.Password, user.Password))
             {
-
                 var token = GenerateJwtToken(user);
 
                 var response = new LoginResponse
@@ -61,7 +61,6 @@ namespace salian_api.Services.Auth
             }
 
             return new BaseResponse<LoginResponse>(null, 400, "PASSWORD_IS_WRONG");
-
         }
 
         private string GenerateJwtToken(UserEntity user)
@@ -87,10 +86,9 @@ namespace salian_api.Services.Auth
             var userPermissions = user
                 .Permissions.Select(p => new PermissionResponse { Name = p.Name })
                 .ToList();
-            //Console.WriteLine("user_perm:: " + userPermissions);
+
             foreach (var permission in userPermissions)
             {
-                Console.WriteLine("user_perm:: " + permission.Name);
                 claims.AddClaims(new[] { new Claim(Permissions.Permission, permission.Name) });
             }
 
@@ -100,7 +98,6 @@ namespace salian_api.Services.Auth
                 .ToList();
             foreach (var rolePermission in rolePermissions)
             {
-                Console.WriteLine("role_perm:: " + rolePermission.Name);
                 claims.AddClaims(new[] { new Claim(Permissions.Permission, rolePermission.Name) });
             }
 

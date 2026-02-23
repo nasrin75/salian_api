@@ -1,12 +1,9 @@
-﻿using System;
-using Azure;
-using Kavenegar;
-using Microsoft.AspNetCore.Mvc;
+﻿using Hangfire;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using salian_api.Config.SMS;
 using salian_api.Dtos.Otp;
+using salian_api.Helper;
 using salian_api.Infrastructure.Data;
+using salian_api.Notification;
 using salian_api.Response;
 using salian_api.Response.Otp;
 
@@ -14,7 +11,9 @@ namespace salian_api.Services.Sms
 {
     public class SmsService(
         ApplicationDbContext _dbContext,
-        IOptions<KavenegarSettings> _kavenegarSetting
+        IBackgroundJobClient _backgroundJob,
+        MailSender _mailSender,
+        SmsSender _smsSender
     ) : ISmsService
     {
         public async Task<BaseResponse> SendOtp(SendOtpDto request)
@@ -30,39 +29,28 @@ namespace salian_api.Services.Sms
             if (user == null)
                 return new BaseResponse<OtpResponse>(null, 400, "USER_NOT_FOUND");
 
-            /* 
+            var token = CommonHelper.GenerateToken();
+            string notificationMgs =
+                $"همکار گرامی <br />  کد ورود به سیستم انبارداری IT :{token} <br />  شرکت سالیان";
 
-              foreach (var item in user.LoginTypes)
-              {
-                  /* if (item === "otp")
-                   {
-                        SendSms(user.Mobile);
-                   }
-              }
-        */
+            foreach (var item in user.LoginTypes)
+            {
+                if (item.ToString() == "email")
+                {
+                    _backgroundJob.Enqueue(() =>
+                        _mailSender.SendMail(user.Email, "کد یکبار مصرف", notificationMgs)
+                    );
+                }
+
+                if (item.ToString() == "otp")
+                {
+                    _backgroundJob.Enqueue(() =>
+                        _smsSender.SendSmsWithToken(user.Mobile, token, "Login")
+                    );
+                }
+            }
+
             return new BaseResponse<OtpResponse>(null, 200, user.Mobile);
-        }
-
-        private void SendSms(string mobile)
-        {
-            try
-            {
-                var token = "123555"; // TODO:generate it
-                var api = new KavenegarApi(_kavenegarSetting.Value.ApiKey);
-                var result = api.VerifyLookup(mobile, token, "Login");
-                Console.WriteLine("kavenegar_resp :: " + result);
-                //api.Send(sender, receptor, message); //Note: send sms without token
-            }
-            catch (Kavenegar.Exceptions.ApiException ex)
-            {
-                // when response status code != 200
-                Console.Write("Message : " + ex.Message);
-            }
-            catch (Kavenegar.Exceptions.HttpException ex)
-            {
-                // When accure network connection
-                Console.Write("Message : " + ex.Message);
-            }
         }
     }
 }
