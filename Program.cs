@@ -11,7 +11,6 @@ using salian_api.Config.Mail;
 using salian_api.Config.Permissions;
 using salian_api.Config.SMS;
 using salian_api.Infrastructure.Data;
-using salian_api.Infrastructure.Interceptors;
 using salian_api.Notification;
 using salian_api.Response;
 using salian_api.Routes;
@@ -45,14 +44,14 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddMemoryCache();
 
 // history
-//builder.Services.AddScoped<HistoryInterceptor>(); //TODO:check and uncomment
+builder.Services.AddScoped<HistoryInterceptor>(); //TODO:check and uncomment
 
 /* Init Databse */
 builder.Services.AddDbContext<ApplicationDbContext>(
     (sp, option) =>
     {
         option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-        //option.AddInterceptors(sp.GetRequiredService<HistoryInterceptor>()); //TODO:check and uncomment
+        option.AddInterceptors(sp.GetRequiredService<HistoryInterceptor>()); //TODO:check and uncomment
     }
 );
 

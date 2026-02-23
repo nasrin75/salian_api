@@ -1,94 +1,133 @@
-﻿using System.Text.Json;
+﻿using System.Security.Claims;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using salian_api.Entities;
-using System.Security.Claims;
-using NuGet.Protocol.Plugins;
-namespace salian_api.Infrastructure.Interceptors
+
+public class HistoryInterceptor : SaveChangesInterceptor
 {
-	public class HistoryInterceptor(IHttpContextAccessor _httpContextAccessor) : SaveChangesInterceptor
-	{
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
+    public HistoryInterceptor(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
 
-		public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
-			DbContextEventData eventData,
-			InterceptionResult<int> result,
-			CancellationToken cancellationToken = default)
-		{
-           
-            var context = eventData.Context;
+    public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
+        DbContextEventData eventData,
+        InterceptionResult<int> result,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var context = eventData.Context;
+        if (context == null)
+            return await base.SavingChangesAsync(eventData, result, cancellationToken);
 
-			if (context == null)
-				return await base.SavingChangesAsync(eventData, result, cancellationToken);
+        var histories = new List<HistoryEntity>();
 
-			var histories = new List<HistoryEntity>();
+        foreach (var entry in context.ChangeTracker.Entries())
+        {
+            // don't log history model
+            if (entry.Entity is HistoryEntity)
+                continue;
 
-			foreach (var entry in context.ChangeTracker.Entries())
-			{
-				if (entry.Entity is HistoryEntity ||
-					entry.State == EntityState.Detached ||
-					entry.State == EntityState.Unchanged)
-					continue;
+            if (entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
+                continue;
 
-				var changedColumns = new List<string>();
-				var oldValues = new Dictionary<string, object>();
-				var newValues = new Dictionary<string, object>();
+            var oldValues = new Dictionary<string, object>();
+            var newValues = new Dictionary<string, object>();
 
-				foreach (var property in entry.Properties)
-				{
-					if (entry.State == EntityState.Modified && property.IsModified)
-					{
-						changedColumns.Add(property.Metadata.Name);
-						oldValues[property.Metadata.Name] = property.OriginalValue;
-						newValues[property.Metadata.Name] = property.CurrentValue;
-					}
+            //  primary key → RecordId
+            var primaryKey = entry.Properties.FirstOrDefault(p => p.Metadata.IsPrimaryKey());
 
-					if (entry.State == EntityState.Added)
-						newValues[property.Metadata.Name] = property.CurrentValue;
+            long recordId = 0;
+            if (primaryKey?.CurrentValue != null)
+                long.TryParse(primaryKey.CurrentValue.ToString(), out recordId);
 
-					if (entry.State == EntityState.Deleted)
-						oldValues[property.Metadata.Name] = property.OriginalValue;
-				}
-
-				var userId = _httpContextAccessor.HttpContext?.User?
-					.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-				
-				
-				var history = new HistoryEntity
-				{
-					UserId = string.IsNullOrEmpty(userId) ? null : long.Parse(userId),
-					TableName = entry.Metadata.GetTableName(),
-					ActionType = entry.State switch
-					{
-						EntityState.Added => ActionType.Create,
-						EntityState.Modified => ActionType.Update,
-						EntityState.Deleted => ActionType.Delete,
-						_ => ActionType.Update
-					},
-					OldValues = oldValues.Any() ? JsonSerializer.Serialize(oldValues) : null,
-					NewValues = newValues.Any() ? JsonSerializer.Serialize(newValues) : null,
-					IpAddress = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString(),
-					CreatedAt = DateTime.UtcNow
-				};
-
-                if (entry.Entity is EmployeeEntity)
+            // ---------- CREATE ----------
+            if (entry.State == EntityState.Added)
+            {
+                foreach (var property in entry.Properties)
                 {
-                    var primaryKey = entry.Properties.First(p => p.Metadata.IsPrimaryKey());
-                    history.EmployeeId = Convert.ToInt64(primaryKey.CurrentValue ?? primaryKey.OriginalValue);
+                    if (property.Metadata.IsPrimaryKey())
+                        continue;
 
+                    newValues[property.Metadata.Name] = property.CurrentValue;
                 }
-                histories.Add(history);
-			}
+            }
+            // ---------- DELETE ----------
+            else if (entry.State == EntityState.Deleted)
+            {
+                foreach (var property in entry.Properties)
+                {
+                    if (property.Metadata.IsPrimaryKey())
+                        continue;
 
-			context.Set<HistoryEntity>().AddRange(histories);
+                    oldValues[property.Metadata.Name] = property.OriginalValue;
+                }
+            }
+            // ---------- UPDATE (just changes filed) ----------
+            else if (entry.State == EntityState.Modified)
+            {
+                foreach (var property in entry.Properties)
+                {
+                    if (!property.IsModified)
+                        continue;
 
-			return await base.SavingChangesAsync(eventData, result, cancellationToken);
-		}
+                    var original = property.OriginalValue?.ToString();
+                    var current = property.CurrentValue?.ToString();
 
-		[AttributeUsage(AttributeTargets.Property)]
-		public class AuditIgnoreAttribute : Attribute
-		{
-		}
-	}
+                    if (original == current)
+                        continue;
+
+                    oldValues[property.Metadata.Name] = original;
+                    newValues[property.Metadata.Name] = current;
+                }
+
+                if (!oldValues.Any())
+                    continue;
+            }
+
+            // userId
+            var userIdStr = _httpContextAccessor
+                .HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)
+                ?.Value;
+
+            long? userId = null;
+            if (!string.IsNullOrEmpty(userIdStr))
+                userId = long.Parse(userIdStr);
+
+            // ip
+            var ip = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+
+            histories.Add(
+                new HistoryEntity
+                {
+                    UserId = userId,
+                    EmployeeId = null,
+                    TableName = entry.Metadata.GetTableName(),
+                    RecordId = recordId,
+                    ActionType = entry.State switch
+                    {
+                        EntityState.Added => ActionTypeMap.CREATE,
+                        EntityState.Modified => ActionTypeMap.UPDATE,
+                        EntityState.Deleted => ActionTypeMap.DELETE,
+                        _ => ActionTypeMap.UPDATE,
+                    },
+                    OldValues = oldValues.Any() ? JsonSerializer.Serialize(oldValues) : null,
+                    NewValues = newValues.Any() ? JsonSerializer.Serialize(newValues) : null,
+                    IpAddress = ip,
+                }
+            );
+        }
+
+        if (histories.Any())
+            context.Set<HistoryEntity>().AddRange(histories);
+
+        return await base.SavingChangesAsync(eventData, result, cancellationToken);
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class AuditIgnoreAttribute : Attribute { }
 }
-
