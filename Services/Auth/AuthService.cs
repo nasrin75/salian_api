@@ -46,14 +46,17 @@ namespace salian_api.Services.Auth
                 };
 
                 // add history
-                /* _dbContext.Histories.Add(new HistoryEntity
-                 {
-                     UserId = user.Id,
-                     ActionType = ActionType.Login,
-                     TableName = "Users",
-                     RecordId = user.Id,
-                     IpAddress = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString()
-                 });*/
+                _dbContext.Histories.Add(
+                    new HistoryEntity
+                    {
+                        UserId = user.Id,
+                        ActionType = ActionTypeMap.LOGIN,
+                        TableName = "Users",
+                        RecordId = user.Id,
+                        IpAddress =
+                            _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString(),
+                    }
+                );
 
                 await _dbContext.SaveChangesAsync();
 
