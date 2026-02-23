@@ -54,10 +54,8 @@ namespace salian_api.Services.Location
         {
             var query = _dbContex.Locations.AsQueryable();
 
-            Console.WriteLine("upppp ::: " + status);
             if (!string.IsNullOrEmpty(status) && status != "ALL")
             {
-                Console.WriteLine("inside ::: " + status);
                 query.Where(x => x.IsShow != true);
             }
 
