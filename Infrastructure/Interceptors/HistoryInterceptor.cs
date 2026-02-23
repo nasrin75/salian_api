@@ -105,7 +105,6 @@ public class HistoryInterceptor : SaveChangesInterceptor
                 new HistoryEntity
                 {
                     UserId = userId,
-                    EmployeeId = null,
                     TableName = entry.Metadata.GetTableName(),
                     RecordId = recordId,
                     ActionType = entry.State switch

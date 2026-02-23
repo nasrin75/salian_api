@@ -66,12 +66,18 @@ namespace salian_api.Config.Permissions
             public const string Edit = "action_type.edit";
             public const string Delete = "action_type.delete";
         }
-         public static class Feature
+
+        public static class Feature
         {
             public const string GetAll = "feature.list";
             public const string Create = "feature.create";
             public const string Edit = "feature.edit";
             public const string Delete = "feature.delete";
+        }
+
+        public static class History
+        {
+            public const string GetAll = "history.list";
         }
     }
 }

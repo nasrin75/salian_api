@@ -7,8 +7,7 @@ namespace salian_api.Entities
         public long Id { get; set; }
 
         public long? UserId { get; set; }
-        public long? EmployeeId { get; set; }
-
+        public UserEntity? User { get; set; }
         public ActionTypeMap ActionType { get; set; }
 
         public string TableName { get; set; }

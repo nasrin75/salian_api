@@ -20,6 +20,7 @@ using salian_api.Services.Auth;
 using salian_api.Services.Employee;
 using salian_api.Services.Equipment;
 using salian_api.Services.Feature;
+using salian_api.Services.History;
 using salian_api.Services.Inventory;
 using salian_api.Services.Location;
 using salian_api.Services.Mail;
@@ -80,6 +81,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMeService, MeService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddScoped<IHistoryService, HistoryService>();
 
 //Add CORS
 builder.Services.AddCors(options =>
@@ -170,6 +172,7 @@ app.MapInventoryRoutes("Inventory");
 app.MapProfileRoutes("Profile");
 app.MapAuthRoutes("Authentication");
 app.MapPasswordRoutes("Password");
+app.MapHistoryRoutes("History");
 app.MapApiRoutes();
 app.MapMyRoutes();
 
