@@ -250,6 +250,18 @@ namespace salian_api.Seeder
                         Title = "لیست تاریخچه ها",
                         Category = "تاریخچه",
                     },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.History.GetDetails,
+                        Title = "جزییات تاریخچه",
+                        Category = "تاریخچه",
+                    },
+                    new PermissionEntity()
+                    {
+                        Name = Permissions.History.Delete,
+                        Title = "حذف تاریخچه",
+                        Category = "تاریخچه",
+                    },
                 };
 
                 _dbContext.Permissions.AddRange(permissions);

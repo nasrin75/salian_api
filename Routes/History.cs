@@ -22,13 +22,33 @@ namespace salian_api.Routes
             route
                 .MapPost(
                     "/{entity}/{entityId}/history",
-                    async (IHistoryService service,string entity,long entityId) =>
+                    async (IHistoryService service, string entity, long entityId) =>
                     {
-                        var histories = await service.GetByEntity(entity,entityId);
+                        var histories = await service.GetByEntity(entity, entityId);
                         return histories.ToResult();
                     }
                 )
                 .RequireAuthorization(new PermissionAuthorizeAttribute(Permissions.User.History));
+            route
+                .MapGet(
+                    "history/{id}",
+                    async (IHistoryService service, long id) =>
+                    {
+                        var histories = await service.GetHistory(id);
+                        return histories.ToResult();
+                    }
+                )
+                .RequireAuthorization(new PermissionAuthorizeAttribute(Permissions.User.GetAll));
+            route
+                .MapDelete(
+                    "/history/delete",
+                    async (IHistoryService service, long id) =>
+                    {
+                        var result = await service.Delete(id);
+                        return result.ToResult();
+                    }
+                )
+                .RequireAuthorization(new PermissionAuthorizeAttribute(Permissions.History.Delete));
         }
     }
 }

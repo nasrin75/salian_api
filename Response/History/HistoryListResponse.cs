@@ -2,7 +2,7 @@
 
 namespace salian_api.Response
 {
-    public class HistoryResponse
+    public class HistoryListResponse
     {
         public long Id { get; set; }
 
@@ -11,9 +11,8 @@ namespace salian_api.Response
         public ActionTypeMap ActionType { get; set; }
         public long? EntityId { get; set; }
         public string Entity { get; set; }
-
-        public string? ChangedData { get; set; } // JSON
-
+        public object? NewData { get; set; } // JSON
+        public object? OldData { get; set; } // JSON
         //public string LogNumber { get; set; }
         public string Ip { get; set; }
 

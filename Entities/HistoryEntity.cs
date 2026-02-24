@@ -16,10 +16,10 @@ namespace salian_api.Entities
         public string? OldValues { get; set; } // JSON
         public string? NewValues { get; set; } // JSON
 
-        //public string LogNumber { get; set; }
         public string IpAddress { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? DeletedAt { get; set; } = null;
     }
 
     public enum ActionTypeMap

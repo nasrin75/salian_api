@@ -1,34 +1,43 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using salian_api.Infrastructure.Data;
 using salian_api.Response;
-using salian_api.Response.User;
+using salian_api.Response.History;
 
 namespace salian_api.Services.History
 {
     public class HistoryService(ApplicationDbContext _dbContext) : IHistoryService
     {
-        public async Task<BaseResponse<List<HistoryResponse>>> GetAllHistory()
+        public async Task<BaseResponse<List<HistoryListResponse>>> GetAllHistory()
         {
             var histories = await _dbContext
                 .Histories.AsNoTracking()
                 .Include(h => h.User)
-                .Select(h => new HistoryResponse
+                .ToListAsync();
+
+            var response = histories
+                .Select(h => new HistoryListResponse
                 {
                     Id = h.Id,
                     ActionType = h.ActionType,
                     CreatedAt = h.CreatedAt,
-                    ChangedData = h.OldValues,
                     Ip = h.IpAddress,
+                    NewData = string.IsNullOrWhiteSpace(h.NewValues)
+                        ? null
+                        : JsonSerializer.Deserialize<object>(h.NewValues),
+                    OldData = string.IsNullOrWhiteSpace(h.OldValues)
+                        ? null
+                        : JsonSerializer.Deserialize<object>(h.OldValues),
                     Entity = h.TableName,
                     EntityId = h.RecordId,
-                    User = h.User.Username,
+                    User = h.User?.Username,
                 })
-                .ToListAsync();
+                .ToList();
 
-            return new BaseResponse<List<HistoryResponse>>(histories);
+            return new BaseResponse<List<HistoryListResponse>>(response);
         }
 
-        public async Task<BaseResponse<List<HistoryResponse>>> GetByEntity(
+        public async Task<BaseResponse<List<HistoryListResponse>>> GetByEntity(
             string entity,
             long entityId
         )
@@ -38,12 +47,11 @@ namespace salian_api.Services.History
                 .Include(h => h.User)
                 .Where(h => h.RecordId == entityId)
                 .Where(h => h.TableName.ToLower() == entity.ToLower())
-                .Select(h => new HistoryResponse
+                .Select(h => new HistoryListResponse
                 {
                     Id = h.Id,
                     ActionType = h.ActionType,
                     CreatedAt = h.CreatedAt,
-                    ChangedData = h.OldValues,
                     Ip = h.IpAddress,
                     Entity = h.TableName,
                     EntityId = h.RecordId,
@@ -51,7 +59,44 @@ namespace salian_api.Services.History
                 })
                 .ToListAsync();
 
-            return new BaseResponse<List<HistoryResponse>>(histories);
+            return new BaseResponse<List<HistoryListResponse>>(histories);
+        }
+
+        public async Task<BaseResponse<HistoryResponse>> GetHistory(long id)
+        {
+            var history = await _dbContext
+                .Histories.AsNoTracking()
+                .Include(h => h.User)
+                .FirstOrDefaultAsync(h => h.Id == id);
+            if (history == null)
+                return new BaseResponse<HistoryResponse>(null, 400, "HISTORY_NOT_FOUND");
+
+            var response = new HistoryResponse
+            {
+                Id = history.Id,
+                ActionType = history.ActionType,
+                CreatedAt = history.CreatedAt,
+                NewData = history.OldValues,
+                Ip = history.IpAddress,
+                Entity = history.TableName,
+                EntityId = history.RecordId,
+                User = history.User?.Username,
+            };
+            return new BaseResponse<HistoryResponse>(response);
+        }
+
+        public async Task<BaseResponse> Delete(long id)
+        {
+            var history = await _dbContext.Histories.FirstOrDefaultAsync(l => l.Id == id);
+            if (history == null)
+                return new BaseResponse<HistoryResponse>(null, 400, "HSTORY_NOT_FOUND");
+
+            history.DeletedAt = DateTime.UtcNow;
+
+            _dbContext.Update(history);
+            await _dbContext.SaveChangesAsync();
+
+            return new BaseResponse<HistoryResponse>(null, 200, "History Successfully Is Deleted");
         }
     }
 }

@@ -78,6 +78,8 @@ namespace salian_api.Config.Permissions
         public static class History
         {
             public const string GetAll = "history.list";
+            public const string GetDetails = "history.details";
+            public const string Delete = "history.delete";
         }
     }
 }
