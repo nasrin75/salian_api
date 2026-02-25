@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using salian_api.Dtos.User;
@@ -101,11 +102,19 @@ namespace salian_api.Services.User
             return new BaseResponse();
         }
 
-        public async Task<BaseResponse<List<UserListResponse>>> GetAllUsers()
+        public async Task<BaseResponse<List<UserListResponse>>> GetAllUsers([FromBody] UserSearchParamsDto request)
         {
-            List<UserListResponse> userList = await _dbContext
+            var query = _dbContext
                 .Users.AsNoTracking()
                 .OrderByDescending(x => x.Id)
+                .AsQueryable();
+
+            if(request.Id != null)
+            {
+                query = query.Where(u=>u.Id == request.Id);
+            }
+
+            List<UserListResponse> userList = await query
                 .Select(u => new UserListResponse
                 {
                     Id = u.Id,
@@ -339,6 +348,7 @@ namespace salian_api.Services.User
             foreach (var permission in permissions)
             {
                 user.Permissions.Add(permission);
+                await _dbContext.SaveChangesAsync();
             }
 
             await _dbContext.SaveChangesAsync();
