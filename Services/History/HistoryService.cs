@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using salian_api.Dtos.History;
 using salian_api.Infrastructure.Data;
 using salian_api.Response;
 using salian_api.Response.History;
@@ -8,17 +10,30 @@ namespace salian_api.Services.History
 {
     public class HistoryService(ApplicationDbContext _dbContext) : IHistoryService
     {
-        public async Task<BaseResponse<List<HistoryListResponse>>> GetAllHistory()
+        public async Task<BaseResponse<List<HistoryListResponse>>> GetAllHistory(
+            [FromBody] HistorySearchParamsDto request
+        )
         {
-            var histories = await _dbContext
+            var query = _dbContext
                 .Histories.AsNoTracking()
-                .Include(h => h.User)
-                .ToListAsync();
+                .OrderByDescending(x => x.Id)
+                .AsQueryable();
+            if (!string.IsNullOrWhiteSpace(request.EntityName))
+            {
+                query = query.Where(i => i.TableName.ToLower() == request.EntityName.ToLower());
+            }
+            if (request.EntityId != null)
+            {
+                query = query.Where(i => i.RecordId == request.EntityId);
+            }
+
+            var histories = await query.Include(h => h.User).ToListAsync();
 
             var response = histories
                 .Select(h => new HistoryListResponse
                 {
                     Id = h.Id,
+                    UserId = h.UserId,
                     ActionType = h.ActionType,
                     CreatedAt = h.CreatedAt,
                     Ip = h.IpAddress,
@@ -55,6 +70,12 @@ namespace salian_api.Services.History
                     Ip = h.IpAddress,
                     Entity = h.TableName,
                     EntityId = h.RecordId,
+                    /*NewData = string.IsNullOrWhiteSpace(h.NewValues)
+                        ? null
+                        : JsonSerializer.Deserialize<object>(h.NewValues),
+                    OldData = string.IsNullOrWhiteSpace(h.OldValues)
+                        ? null
+                        : JsonSerializer.Deserialize<object>(h.OldValues),*/
                     User = h.User.Username,
                 })
                 .ToListAsync();

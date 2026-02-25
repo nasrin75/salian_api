@@ -6,6 +6,7 @@ namespace salian_api.Response
     {
         public long Id { get; set; }
 
+        public long? UserId { get; set; }
         public string? User { get; set; }
 
         public ActionTypeMap ActionType { get; set; }

@@ -1,4 +1,5 @@
 ﻿using salian_api.Config.Permissions;
+using salian_api.Dtos.History;
 using salian_api.Services.History;
 
 namespace salian_api.Routes
@@ -10,11 +11,11 @@ namespace salian_api.Routes
             var route = app.MapGroup("api").WithTags(tag);
 
             route
-                .MapGet(
+                .MapPost(
                     "/history",
-                    async (IHistoryService service) =>
+                    async (IHistoryService service, HistorySearchParamsDto request) =>
                     {
-                        var histories = await service.GetAllHistory();
+                        var histories = await service.GetAllHistory(request);
                         return histories.ToResult();
                     }
                 )
