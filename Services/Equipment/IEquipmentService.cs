@@ -11,7 +11,6 @@ namespace salian_api.Services.Equipment
         Task<BaseResponse<EquipmentResponse?>> Update(EquipmentUpdateDto param);
         Task<BaseResponse<EquipmentResponse?>> GetByID(long EquipmentID);
         Task<BaseResponse<List<EquipmentListResponse>>> GetAll();
-        Task<BaseResponse<List<EquipmentResponse>>> Search(SearchEquipmentDto param);
         Task<BaseResponse<List<FeatureResponse>>> GetFeaturesByEquipmentID(long id);
         Task<BaseResponse<List<string>>> GetInventorySubMenu();
         Task<BaseResponse> Delete(long id);

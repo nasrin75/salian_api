@@ -61,13 +61,16 @@ namespace salian_api.Services.Equipment
         public async Task<BaseResponse<List<EquipmentListResponse>>> GetAll()
         {
             List<EquipmentListResponse> Equipments = await _dbContex
-                .Equipments.AsNoTracking()
+                .Equipments.Include(e => e.Inventories)
+                .AsNoTracking()
                 .OrderByDescending(x => x.Id)
                 .Select(e => new EquipmentListResponse
                 {
                     Id = e.Id,
                     Name = e.Name,
                     Type = e.Type,
+                    InUseCount = e.Inventories.Where(i => i.Status == StatusMap.Inuse).Count(),
+                    UsedCount = e.Inventories.Where(i => i.Status == StatusMap.Unuse).Count(),
                 })
                 .ToListAsync();
 
@@ -106,27 +109,6 @@ namespace salian_api.Services.Equipment
                 .ToList();
 
             return new BaseResponse<List<FeatureResponse>>(response);
-        }
-
-        public async Task<BaseResponse<List<EquipmentResponse>>> Search(SearchEquipmentDto param)
-        {
-            var query = _dbContex.Equipments.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(param.Name))
-                query = query.Where(x => x.Name.Contains(param.Name));
-            if (param.Type != null)
-                query = query.Where(l => l.Type == param.Type);
-
-            List<EquipmentResponse> equipments = await query
-                .Select(l => new EquipmentResponse
-                {
-                    Id = l.Id,
-                    Name = l.Name,
-                    Type = l.Type,
-                    IsShowInMenu = l.IsShowInMenu,
-                })
-                .ToListAsync();
-
-            return new BaseResponse<List<EquipmentResponse>>(equipments);
         }
 
         public async Task<BaseResponse<EquipmentResponse?>> Update(EquipmentUpdateDto param)

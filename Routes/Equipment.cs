@@ -54,19 +54,7 @@ namespace salian_api.Routes
                     new PermissionAuthorizeAttribute(Permissions.Equipment.Create)
                 );
 
-            route
-                .MapPost(
-                    "/search",
-                    async (IEquipmentService service, SearchEquipmentDto dto) =>
-                    {
-                        BaseResponse<List<EquipmentResponse>> result = await service.Search(dto);
-                        return result.ToResult();
-                    }
-                )
-                .RequireAuthorization(
-                    new PermissionAuthorizeAttribute(Permissions.Equipment.GetAll)
-                );
-
+          
             route
                 .MapPut(
                     "/edit",
