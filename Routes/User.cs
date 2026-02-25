@@ -13,11 +13,11 @@ namespace salian_api.Routes
             var route = app.MapGroup("/api/user").WithTags(tag);
 
             route
-                .MapGet(
+                .MapPost(
                     "/",
-                    async (IUserService service) =>
+                    async (IUserService service, UserSearchParamsDto request) =>
                     {
-                        BaseResponse<List<UserListResponse>> user = await service.GetAllUsers();
+                        BaseResponse<List<UserListResponse>> user = await service.GetAllUsers(request);
                         return user.ToResult();
                     }
                 )
