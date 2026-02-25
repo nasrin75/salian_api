@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using salian_api.Dtos.Inventory;
 using salian_api.Entities;
@@ -8,17 +9,24 @@ using salian_api.Response.Inventory;
 
 namespace salian_api.Services.Inventory
 {
-    public class InventoryService(ApplicationDbContext _dbContex) : IInventoryService
+    public class InventoryService(
+        ApplicationDbContext _dbContex,
+        IHttpContextAccessor _httpContextAccessor
+    ) : IInventoryService
     {
         public async Task<BaseResponse<InventoryResponse>> Create(
             [FromBody] InventoryCreateDto param
         )
         {
+            var userID = _httpContextAccessor
+                .HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)
+                .Value;
+
             InventoryEntity data = new InventoryEntity
             {
                 ItNumber = param.ItNumber,
                 ItParentNumber = param.ItParentNumber,
-                UserId = 1, //param.UserId, // TODO:get login user
+                UserId = Int64.Parse(userID),
                 EmployeeId = param.EmployeeId,
                 EquipmentId = param.EquipmentId,
                 LocationId = param.LocationId,
@@ -241,8 +249,6 @@ namespace salian_api.Services.Inventory
             if (inventory == null)
                 return new BaseResponse<InventoryResponse?>(null, 400, "INVENTORY_NOT_FOUND");
 
-            if (param.UserId != null && param.UserId != inventory.UserId)
-                inventory.UserId = param.UserId.Value;
             if (param.EmployeeId != null && param.EmployeeId != inventory.EmployeeId)
                 inventory.EmployeeId = param.EmployeeId.Value;
             if (param.EquipmentId != null && param.EquipmentId != inventory.EquipmentId)
