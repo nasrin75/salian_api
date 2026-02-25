@@ -7,7 +7,6 @@ namespace salian_api.Dtos.Inventory
         public long Id { get; set; }
         public long ItNumber { get; set; }
         public long? ItParentNumber { get; set; }
-        public long? UserId { get; set; }
         public long? EmployeeId { get; set; }
         public long? LocationId { get; set; }
         public long? EquipmentId { get; set; }
