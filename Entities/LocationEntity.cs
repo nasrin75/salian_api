@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace salian_api.Entities
 {
@@ -6,6 +7,8 @@ namespace salian_api.Entities
     public class LocationEntity
     {
         public long Id { get; set; }
+
+        [DisplayName]
         public string Title { get; set; }
         public string Abbreviation { get; set; }
         public bool IsShow { get; set; }
