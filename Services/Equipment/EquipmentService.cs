@@ -69,8 +69,12 @@ namespace salian_api.Services.Equipment
                     Id = e.Id,
                     Name = e.Name,
                     Type = e.Type,
-                    InUseCount = e.Inventories.Where(i => i.Status == StatusMap.Inuse).Count(),
-                    UsedCount = e.Inventories.Where(i => i.Status == StatusMap.Unuse).Count(),
+                    UsedCount = e.Inventories.Where(i => i.Status == StatusMap.Inuse).Count(),
+                    UnsedCount = e.Inventories.Where(i => i.Status == StatusMap.Unuse).Count(),
+                    SendToChargeCount = e.Inventories.Where(i => i.Status == StatusMap.SendToCharge).Count(),
+                    BackFromChargeCount = e.Inventories.Where(i => i.Status == StatusMap.BackFromCharge).Count(),
+                    RepairCount = e.Inventories.Where(i => i.Status == StatusMap.Repair).Count(),
+                    UselessCount = e.Inventories.Where(i => i.Status == StatusMap.Useless).Count(),
                 })
                 .ToListAsync();
 

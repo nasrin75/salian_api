@@ -75,7 +75,7 @@ namespace salian_api.Mapping
 
             builder
                 .HasOne(i => i.Equipment)
-                .WithMany()
+                .WithMany(e => e.Inventories)
                 .HasForeignKey(i => i.EquipmentId)
                 .OnDelete(DeleteBehavior.NoAction);
         }

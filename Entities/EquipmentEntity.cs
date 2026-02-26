@@ -13,6 +13,7 @@ namespace salian_api.Entities
         public bool IsShowInMenu { get; set; } = false;
         public DateTime? DeletedAt { get; set; }
         public List<FeatureEntity> Features { get; set; }
+        public List<InventoryEntity> Inventories { get; set; }
     }
 
     public enum TypeMap

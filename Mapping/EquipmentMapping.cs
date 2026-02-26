@@ -20,6 +20,12 @@ namespace salian_api.Mapping
             builder.Property("DeletedAt").IsRequired(false);
 
             builder.HasQueryFilter(e => e.DeletedAt == null);
+
+            builder
+                .HasMany(e => e.Inventories)
+                .WithOne(i => i.Equipment)
+                .HasForeignKey(i => i.EquipmentId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
